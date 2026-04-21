@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ori Solomon — Senior Product Designer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap');
+
+  :root {
+    --p: #1B2BB8;
+    --p2: #2B3CE8;
+    --s: #6933FF;
+    --txt: #0a0a0a;
+    --txt2: rgba(0,0,0,0.56);
+    --txt3: rgba(0,0,0,0.36);
+    --bg: #f5f5f5;
+    --card: #ffffff;
+    --border: rgba(0,0,0,0.08);
+    --r: 20px;
+    --r-sm: 13px;
+    --tag: rgba(27,43,184,0.08);
+    --tag-c: #1B2BB8;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --p: #5B72FF;
+      --p2: #7B92FF;
+      --s: #A077FF;
+      --txt: #f0f0f0;
+      --txt2: rgba(255,255,255,0.56);
+      --txt3: rgba(255,255,255,0.36);
+      --bg: #0c0c0e;
+      --card: rgba(255,255,255,0.06);
+      --border: rgba(255,255,255,0.08);
+      --tag: rgba(91,114,255,0.15);
+      --tag-c: #8B9FFF;
+    }
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--txt);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(245,245,245,0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px; height: 56px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  @media (prefers-color-scheme: dark) {
+    nav { background: rgba(12,12,14,0.85); }
+  }
+  .nav-logo { font-size: 16px; font-weight: 600; letter-spacing: -0.03em; color: var(--txt); }
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a { font-size: 13px; color: var(--txt2); text-decoration: none; }
+  .nav-links a:hover { color: var(--txt); }
+  .nav-cta {
+    font-size: 13px; font-weight: 500; padding: 8px 18px;
+    background: var(--p); color: #fff; border-radius: 100px;
+    text-decoration: none;
+  }
+
+  /* CONTAINERS */
+  .container { max-width: 900px; margin: 0 auto; padding: 0 32px; }
+  .section { padding: 80px 0; }
+
+  /* LABELS */
+  .label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px; font-weight: 500;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--p); margin-bottom: 16px; display: block;
+  }
+  .section-h {
+    font-size: clamp(28px, 4vw, 44px); font-weight: 500;
+    letter-spacing: -0.04em; line-height: 1.1; color: var(--txt);
+    margin-bottom: 12px;
+  }
+  .section-sub { font-size: 15px; color: var(--txt2); max-width: 480px; line-height: 1.7; }
+
+  /* HERO */
+  .hero {
+    padding: 100px 32px 80px;
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center; position: relative; overflow: hidden;
+  }
+  .hero-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--card); border: 1px solid var(--border);
+    padding: 6px 14px; border-radius: 100px; margin-bottom: 32px;
+    font-size: 12px; font-weight: 500; color: var(--txt2);
+  }
+  .hero-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #22c55e; flex-shrink: 0;
+  }
+  .hero h1 {
+    font-size: clamp(42px, 6vw, 72px); font-weight: 500;
+    letter-spacing: -0.04em; line-height: 1.05; color: var(--txt);
+    max-width: 780px; margin-bottom: 20px;
+  }
+  .hero h1 .blue { color: var(--p); }
+  .hero-sub {
+    font-size: 16px; color: var(--txt2); max-width: 500px;
+    line-height: 1.7; margin-bottom: 36px;
+  }
+  .hero-btns {
+    display: flex; gap: 10px; justify-content: center;
+    flex-wrap: wrap; margin-bottom: 60px;
+  }
+  .btn-fill {
+    padding: 12px 24px; background: var(--p); color: #fff;
+    border-radius: 100px; font-size: 14px; font-weight: 500;
+    text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+  }
+  .btn-outline {
+    padding: 12px 24px; background: var(--card); color: var(--txt);
+    border: 1px solid var(--border); border-radius: 100px;
+    font-size: 14px; font-weight: 500; text-decoration: none;
+  }
+
+  /* STATS */
+  .stats-strip {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 1px; background: var(--border);
+    border: 1px solid var(--border); border-radius: var(--r);
+    overflow: hidden; width: 100%; max-width: 680px;
+  }
+  .stat-cell { background: var(--card); padding: 20px 24px; text-align: center; }
+  .stat-n {
+    font-size: 28px; font-weight: 500; letter-spacing: -0.04em;
+    color: var(--p); font-family: 'DM Mono', monospace; margin-bottom: 4px;
+  }
+  .stat-l { font-size: 11px; color: var(--txt3); }
+
+  /* ABOUT */
+  .about { background: var(--bg); }
+  .about-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 48px; align-items: start; margin-top: 48px;
+  }
+  .about-blocks {
+    display: flex; flex-direction: column; gap: 1px;
+    border: 1px solid var(--border); border-radius: var(--r); overflow: hidden;
+  }
+  .about-block { background: var(--card); padding: 18px 22px; }
+  .about-block h4 { font-size: 13px; font-weight: 500; color: var(--p); margin-bottom: 4px; }
+  .about-block p { font-size: 13px; color: var(--txt2); line-height: 1.65; }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 28px; }
+  .chip {
+    padding: 7px 16px; border-radius: 100px; font-size: 13px; font-weight: 500;
+    background: var(--p); color: #fff;
+  }
+
+  /* CASE STUDIES */
+  .cases {
+    background: var(--card);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .case-list {
+    display: flex; flex-direction: column; gap: 1px; margin-top: 48px;
+    border: 1px solid var(--border); border-radius: var(--r); overflow: hidden;
+  }
+  .case-item {
+    background: var(--bg); padding: 36px 40px;
+    display: grid; grid-template-columns: 1fr auto;
+    gap: 32px; align-items: center;
+  }
+  .case-item:hover { background: var(--card); }
+  .case-num {
+    font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500;
+    letter-spacing: 0.1em; color: var(--txt3); margin-bottom: 12px; display: block;
+  }
+  .case-item h3 {
+    font-size: 20px; font-weight: 500; letter-spacing: -0.03em;
+    color: var(--txt); margin-bottom: 10px; line-height: 1.25;
+  }
+  .case-item p {
+    font-size: 14px; color: var(--txt2); line-height: 1.7;
+    margin-bottom: 16px; max-width: 540px;
+  }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag {
+    font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500;
+    padding: 5px 11px; border-radius: 100px; letter-spacing: 0.05em;
+    background: var(--tag); color: var(--tag-c); text-transform: uppercase;
+  }
+  .case-arrow {
+    width: 40px; height: 40px; border-radius: 50%;
+    border: 1px solid var(--border); display: flex;
+    align-items: center; justify-content: center;
+    background: var(--card); color: var(--txt2); font-size: 16px; flex-shrink: 0;
+  }
+
+  /* SKILLS — dark section */
+  .skills-bg { background: #0a0a14; }
+  .skills-bg .label { color: #7B92FF; }
+  .skills-bg .section-h { color: #f0f0f0; }
+  .skills-bg .section-sub { color: rgba(255,255,255,0.52); }
+  .skill-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1px; background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: var(--r); overflow: hidden; margin-top: 48px;
+  }
+  .skill-cell { background: #0a0a14; padding: 24px 22px; }
+  .skill-cell:hover { background: rgba(91,114,255,0.08); }
+  .skill-cell-icon {
+    font-size: 11px; font-weight: 500; margin-bottom: 12px;
+    color: #7B92FF; font-family: 'DM Mono', monospace; letter-spacing: 0.05em;
+  }
+  .skill-cell h4 { font-size: 14px; font-weight: 500; color: #f0f0f0; margin-bottom: 4px; }
+  .skill-cell p { font-size: 12px; color: rgba(255,255,255,0.44); line-height: 1.6; }
+  .values-row-dark { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 36px; }
+  .chip-dark {
+    padding: 8px 18px; border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 100px; font-size: 13px; font-weight: 500;
+    color: rgba(255,255,255,0.72); background: rgba(255,255,255,0.06);
+  }
+
+  /* RESUME */
+  .resume-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--r); overflow: hidden; margin-top: 48px;
+  }
+  .resume-top {
+    background: #0a0a14; padding: 40px; color: #f0f0f0;
+    display: grid; grid-template-columns: 1fr auto;
+    align-items: start; gap: 24px;
+  }
+  .resume-top h2 {
+    font-size: 28px; font-weight: 500; letter-spacing: -0.04em; margin-bottom: 6px;
+  }
+  .resume-top p { font-size: 14px; color: rgba(255,255,255,0.52); }
+  .resume-body { padding: 36px 40px; }
+  .resume-meta { display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 28px; }
+  .meta-item { font-size: 13px; color: var(--txt2); display: flex; align-items: center; gap: 6px; }
+  .meta-item a { color: var(--p); text-decoration: none; }
+  .resume-summary {
+    font-size: 14px; color: var(--txt2); line-height: 1.8;
+    padding: 18px 22px; background: var(--bg);
+    border-radius: var(--r-sm); margin-bottom: 28px;
+  }
+  .strength-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 8px; margin-bottom: 28px;
+  }
+  .strength-item {
+    padding: 14px 18px; background: var(--bg);
+    border-radius: var(--r-sm); font-size: 13px; font-weight: 500;
+    color: var(--txt); border-left: 2px solid var(--p);
+  }
+
+  /* CONTACT */
+  .contact-bg {
+    background: var(--card);
+    border-top: 1px solid var(--border);
+  }
+  .contact-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 64px; align-items: center; margin-top: 48px;
+  }
+  .contact-links { display: flex; flex-direction: column; gap: 8px; }
+  .contact-link {
+    display: flex; align-items: center; gap: 14px; padding: 14px 18px;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: var(--r-sm); text-decoration: none;
+  }
+  .contact-link:hover { border-color: var(--p); }
+  .contact-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: var(--tag); display: flex; align-items: center;
+    justify-content: center; font-size: 14px; flex-shrink: 0;
+  }
+  .contact-link-txt { font-size: 14px; font-weight: 500; color: var(--txt); }
+  .contact-link-sub { font-size: 12px; color: var(--txt3); margin-top: 1px; }
+
+  /* FOOTER */
+  footer {
+    background: #0a0a14; padding: 40px 32px;
+    text-align: center; border-top: 1px solid rgba(255,255,255,0.08);
+  }
+  footer p { font-size: 13px; color: rgba(255,255,255,0.36); line-height: 1.9; }
+  .footer-q {
+    font-family: 'DM Mono', monospace; font-size: 13px;
+    color: rgba(255,255,255,0.52); margin-bottom: 10px;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 680px) {
+    .nav-links, .nav-cta { display: none; }
+    .about-grid, .contact-grid { grid-template-columns: 1fr; }
+    .stats-strip { grid-template-columns: repeat(2, 1fr); }
+    .skill-grid { grid-template-columns: repeat(2, 1fr); }
+    .strength-grid { grid-template-columns: 1fr; }
+    .case-item { grid-template-columns: 1fr; }
+    .case-arrow { display: none; }
+    .resume-top { grid-template-columns: 1fr; }
+    .hero { padding: 64px 20px 48px; }
+    .section { padding: 60px 0; }
+    .container { padding: 0 20px; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <span class="nav-logo">Ori Solomon</span>
+    <div class="nav-links">
+      <a href="#about">About</a>
+      <a href="#work">Work</a>
+      <a href="#skills">Skills</a>
+      <a href="#resume">Resume</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <a href="#contact" class="nav-cta">Get in touch</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-pill">
+      <span class="hero-dot"></span>
+      Open to senior &amp; lead roles
+    </div>
+    <h1>Senior Product Designer<br>&amp; <span class="blue">Systems Architect</span></h1>
+    <p class="hero-sub">Design systems, product strategy, AI-assisted workflows, and scalable UX for complex, data-driven ecosystems.</p>
+    <div class="hero-btns">
+      <a href="#work" class="btn-fill">View case studies →</a>
+      <a href="#resume" class="btn-outline">View resume</a>
+    </div>
+    <div class="stats-strip">
+      <div class="stat-cell"><div class="stat-n">5+</div><div class="stat-l">Years exp</div></div>
+      <div class="stat-cell"><div class="stat-n">400%</div><div class="stat-l">Efficiency gain</div></div>
+      <div class="stat-cell"><div class="stat-n">90+</div><div class="stat-l">Global partners</div></div>
+      <div class="stat-cell"><div class="stat-n">48hr</div><div class="stat-l">Deploy cycle</div></div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="section about" id="about">
+    <div class="container">
+      <span class="label">About</span>
+      <h2 class="section-h">Strategy, systems,<br>and execution.</h2>
+      <p class="section-sub">I work at the intersection of design leadership, systems architecture, and product strategy — transforming complex challenges into scalable design infrastructure.</p>
+      <div class="about-grid">
+        <div>
+          <p style="font-size:15px;color:var(--txt2);line-height:1.8;margin-bottom:20px;">I thrive in complex enterprise environments — fintech, data-heavy platforms, and global partner ecosystems. My strength is building clarity from complexity, enabling product teams to ship faster and build consistently.</p>
+          <p style="font-size:15px;color:var(--txt2);line-height:1.8;">With 5+ years across design systems, token engineering, and AI-native workflows, I bring both the strategy and the execution to make design scale.</p>
+          <div class="chips">
+            <span class="chip">Strategic</span>
+            <span class="chip">Collaborative</span>
+            <span class="chip">Data-Driven</span>
+          </div>
+        </div>
+        <div class="about-blocks">
+          <div class="about-block">
+            <h4>Cross-functional leadership</h4>
+            <p>Embedded in product and engineering squads, driving design-to-dev alignment across global teams.</p>
+          </div>
+          <div class="about-block">
+            <h4>Systems architecture</h4>
+            <p>Built multi-tier token systems and white-label engines deployed across 90+ global partners.</p>
+          </div>
+          <div class="about-block">
+            <h4>Accessibility &amp; WCAG 2.2</h4>
+            <p>AA-compliant design. Accessibility is a quality standard baked into every decision.</p>
+          </div>
+          <div class="about-block">
+            <h4>AI-native workflows</h4>
+            <p>ChatGPT, Gemini, NotebookLM, and Figma Make integrated into design practice and delivery.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CASE STUDIES -->
+  <section class="section cases" id="work">
+    <div class="container">
+      <span class="label">Featured Work</span>
+      <h2 class="section-h">Case Studies</h2>
+      <p class="section-sub">Selected projects showing measurable impact, systems thinking, and scalable architecture.</p>
+      <div class="case-list">
+        <div class="case-item">
+          <div>
+            <span class="case-num">CASE STUDY 01 — TOOL ENGINEERING</span>
+            <h3>The Automated Deployment Engine</h3>
+            <p>Productizing the white-label lifecycle with a custom Figma configuration engine. Reduced partner onboarding from 8 days to 1 hour, achieving a 400% increase in operational throughput.</p>
+            <div class="tags">
+              <span class="tag">Tool Engineering</span>
+              <span class="tag">System Architecture</span>
+              <span class="tag">Process Automation</span>
+            </div>
+          </div>
+          <div class="case-arrow">→</div>
+        </div>
+        <div class="case-item">
+          <div>
+            <span class="case-num">CASE STUDY 02 — ARCHITECTURE</span>
+            <h3>The 3-Tier Architecture: Scaling Fintech Deployment</h3>
+            <p>Engineering a platform-agnostic design language to eliminate technical debt. Reduced delivery from 60 days to 48 hours for 90+ global partners through standardized token logic.</p>
+            <div class="tags">
+              <span class="tag">Architecture &amp; Logic</span>
+              <span class="tag">Design Tokens</span>
+              <span class="tag">Process Automation</span>
+            </div>
+          </div>
+          <div class="case-arrow">→</div>
+        </div>
+        <div class="case-item">
+          <div>
+            <span class="case-num">CASE STUDY 03 — STRATEGY</span>
+            <h3>Intelligence-Driven Product Design &amp; Strategy</h3>
+            <p>Scaling Financial Wellness for 90+ global partners through behavioral logic, trust-building UX, and intelligence-driven product strategy.</p>
+            <div class="tags">
+              <span class="tag">Product Design</span>
+              <span class="tag">Strategy</span>
+              <span class="tag">AI</span>
+              <span class="tag">Fintech</span>
+              <span class="tag">Behavioral Science</span>
+            </div>
+          </div>
+          <div class="case-arrow">→</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section class="section skills-bg" id="skills">
+    <div class="container">
+      <span class="label">Capabilities</span>
+      <h2 class="section-h">Skills &amp; Expertise</h2>
+      <p class="section-sub">A modular, scalable approach to design — from pixels to platforms.</p>
+      <div class="skill-grid">
+        <div class="skill-cell">
+          <div class="skill-cell-icon">DS</div>
+          <h4>Design Systems</h4>
+          <p>Scalable component libraries, governance models, and adoption frameworks.</p>
+        </div>
+        <div class="skill-cell">
+          <div class="skill-cell-icon">TE</div>
+          <h4>Token Engineering</h4>
+          <p>3-tier token architecture for multi-brand, multi-platform deployment.</p>
+        </div>
+        <div class="skill-cell">
+          <div class="skill-cell-icon">PS</div>
+          <h4>Product Strategy</h4>
+          <p>Business-aligned UX decisions, roadmap contribution, measurable outcomes.</p>
+        </div>
+        <div class="skill-cell">
+          <div class="skill-cell-icon">A11Y</div>
+          <h4>WCAG 2.2 / Accessibility</h4>
+          <p>AA-compliant design, contrast systems, and inclusive interaction patterns.</p>
+        </div>
+        <div class="skill-cell">
+          <div class="skill-cell-icon">CT</div>
+          <h4>Custom Tooling</h4>
+          <p>Figma plugins, configuration engines, and automated delivery workflows.</p>
+        </div>
+        <div class="skill-cell">
+          <div class="skill-cell-icon">AI</div>
+          <h4>AI-Native Workflow</h4>
+          <p>ChatGPT, Gemini, NotebookLM, and Figma Make integrated into practice.</p>
+        </div>
+        <div class="skill-cell">
+          <div class="skill-cell-icon">ER</div>
+          <h4>Evidence-Based Research</h4>
+          <p>Behavioral analysis, usability testing, and data-driven iteration cycles.</p>
+        </div>
+        <div class="skill-cell">
+          <div class="skill-cell-icon">SS</div>
+          <h4>System Scalability</h4>
+          <p>Architecture that grows with the product — not against it.</p>
+        </div>
+        <div class="skill-cell">
+          <div class="skill-cell-icon">XP</div>
+          <h4>Cross-Platform Architecture</h4>
+          <p>Unified design logic across web, mobile, and white-label platforms.</p>
+        </div>
+      </div>
+      <div class="values-row-dark">
+        <span class="chip-dark">Strategic thinking</span>
+        <span class="chip-dark">Collaborative execution</span>
+        <span class="chip-dark">Data-driven decisions</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESUME -->
+  <section class="section" id="resume" style="background:var(--bg);">
+    <div class="container">
+      <span class="label">Resume</span>
+      <h2 class="section-h">Ori Solomon</h2>
+      <p class="section-sub">Senior Product Designer · Design Systems &amp; Lead Experience</p>
+      <div class="resume-card">
+        <div class="resume-top">
+          <div>
+            <h2>Senior Product Designer</h2>
+            <p>Design Systems &amp; Lead Experience · Hod Hasharon</p>
+          </div>
+          <a href="#" class="btn-fill" style="font-size:13px;white-space:nowrap;">PDF Resume →</a>
+        </div>
+        <div class="resume-body">
+          <div class="resume-meta">
+            <span class="meta-item">📍 Hod Hasharon</span>
+            <span class="meta-item">✉ <a href="mailto:uixorisolomon@gmail.com">uixorisolomon@gmail.com</a></span>
+            <span class="meta-item">📞 0523555360</span>
+            <span class="meta-item">🔗 <a href="https://linkedin.com/in/ori-solomon" target="_blank">LinkedIn</a></span>
+          </div>
+          <div class="resume-summary">
+            Senior Product Designer with 5+ years of experience in UI/UX, specializing in complex, data-driven ecosystems and scalable design systems. Proven track record reducing deployment cycles, building intelligent tooling, and leading design strategy across global fintech partnerships.
+          </div>
+          <div class="strength-grid">
+            <div class="strength-item">Design System Architecture</div>
+            <div class="strength-item">Accessibility Leadership</div>
+            <div class="strength-item">Strategic Leadership</div>
+            <div class="strength-item">AI-Powered Design</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="section contact-bg" id="contact">
+    <div class="container">
+      <div class="contact-grid">
+        <div>
+          <span class="label">Contact</span>
+          <h2 class="section-h" style="max-width:320px;">Let's build something worth using.</h2>
+          <p style="font-size:15px;color:var(--txt2);line-height:1.75;margin:16px 0 28px;">Open to senior and lead roles in fintech, sports tech, and cyber. Available for collaboration and the right full-time opportunity.</p>
+          <a href="mailto:uixorisolomon@gmail.com" class="btn-fill">Send a message →</a>
+        </div>
+        <div class="contact-links">
+          <a class="contact-link" href="mailto:uixorisolomon@gmail.com">
+            <div class="contact-icon">✉</div>
+            <div>
+              <p class="contact-link-txt">Email</p>
+              <p class="contact-link-sub">uixorisolomon@gmail.com</p>
+            </div>
+          </a>
+          <a class="contact-link" href="https://linkedin.com/in/ori-solomon" target="_blank">
+            <div class="contact-icon" style="font-weight:700;font-size:11px;color:var(--p);">in</div>
+            <div>
+              <p class="contact-link-txt">LinkedIn</p>
+              <p class="contact-link-sub">linkedin.com/in/ori-solomon</p>
+            </div>
+          </a>
+          <a class="contact-link" href="tel:+972523555360">
+            <div class="contact-icon">📱</div>
+            <div>
+              <p class="contact-link-txt">WhatsApp / Phone</p>
+              <p class="contact-link-sub">+972 52 355 5360</p>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p class="footer-q">"UX is never finished, just like this site."</p>
+    <p>© 2026 Ori Solomon. Designed with intent. Built with React. Powered by curiosity.</p>
+    <p style="margin-top:4px;">Coded by me.</p>
+  </footer>
+
+</body>
+</html>
