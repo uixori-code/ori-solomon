@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v1.16.29: source-of-truth protected file, placeholder fixed and recruiter validation moved to Supabase RPC. -->
 
 <!-- v1_16_1: Rebranded with warm red/copper brand system tokens. -->
 <!-- v1_16_18: Updated UC2 detailed case-study images with new direct screenshot assets. -->
@@ -5110,22 +5111,23 @@ window.addEventListener('load',()=>{
   function setMessage(text){ if(msg) msg.textContent = text || ''; }
 
   async function validateRecruiterCode(code){
-    const endpoint = `${SUPABASE_URL}/rest/v1/access_codes?code=eq.${encodeURIComponent(code)}&active=eq.true&select=id,code,label,uses,access_count`;
-    const headers = { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' };
-    const res = await fetch(endpoint, { headers });
-    if(!res.ok) throw new Error('Could not validate access code.');
-    const rows = await res.json();
-    if(!rows || !rows.length) return false;
-    const row = rows[0];
-    const uses = Number(row.uses || 0) + 1;
-    const accessCount = Number(row.access_count || 0) + 1;
-    const patchEndpoint = `${SUPABASE_URL}/rest/v1/access_codes?id=eq.${encodeURIComponent(row.id)}`;
-    await fetch(patchEndpoint, {
-      method:'PATCH',
-      headers: { ...headers, Prefer: 'return=minimal' },
-      body: JSON.stringify({ uses, access_count: accessCount, last_access: new Date().toISOString() })
+    const endpoint = `${SUPABASE_URL}/rest/v1/rpc/validate_access_code`;
+    const headers = {
+      apikey: SUPABASE_KEY,
+      Authorization: `Bearer ${SUPABASE_KEY}`,
+      'Content-Type': 'application/json'
+    };
+
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ p_code: code })
     });
-    return true;
+
+    if(!res.ok) throw new Error('Could not validate access code.');
+
+    const result = await res.json();
+    return !!(result && result.ok === true);
   }
 
   if(form){
