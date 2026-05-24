@@ -1,4 +1,7 @@
 <!DOCTYPE html>
+<!-- v1.16.33: mobile users see desktop-only message before password gate. -->
+<!-- v1.16.32: fixed CS3 budget image paths for all 13 light/dark assets. -->
+<!-- v1.16.31: updated recruiter access code format to ORI-XXXX, cursor visible. -->
 <!-- v1.16.30: RPC access, randomized recruiter codes, cursor always visible. -->
 <!-- v1.16.29: source-of-truth protected file, placeholder fixed and recruiter validation moved to Supabase RPC. -->
 
@@ -2783,6 +2786,83 @@ select,
   cursor: text !important;
 }
 
+
+/* v1.16.33 desktop-only mobile flow */
+.desktop-only-gate {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  body {
+    overflow: hidden !important;
+  }
+
+  .desktop-only-gate {
+    position: fixed;
+    inset: 0;
+    z-index: 2147483647;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background:
+      radial-gradient(circle at 28% 18%, rgba(224, 74, 56, .24), transparent 34%),
+      radial-gradient(circle at 78% 64%, rgba(192, 57, 43, .16), transparent 32%),
+      #0f0f10;
+    color: #fff;
+  }
+
+  .desktop-only-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: .75;
+    background:
+      linear-gradient(135deg, rgba(255,255,255,.06), transparent 38%),
+      radial-gradient(circle at 50% 50%, rgba(255,255,255,.08), transparent 44%);
+  }
+
+  .desktop-only-card {
+    position: relative;
+    width: min(100%, 420px);
+    padding: 32px 26px;
+    border: 1px solid rgba(245, 244, 242, .18);
+    border-radius: 28px;
+    background: rgba(26, 26, 27, .84);
+    box-shadow: 0 24px 80px rgba(0, 0, 0, .38);
+    text-align: left;
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+
+  .desktop-only-card .eyebrow {
+    margin: 0 0 12px;
+    color: #e04a38;
+    font-family: "DM Mono", monospace;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+  }
+
+  .desktop-only-card h1 {
+    margin: 0 0 14px;
+    font-size: clamp(30px, 9vw, 44px);
+    line-height: .95;
+    letter-spacing: -.055em;
+  }
+
+  .desktop-only-card p:not(.eyebrow) {
+    margin: 0;
+    color: rgba(245, 244, 242, .72);
+    font-size: 16px;
+    line-height: 1.55;
+  }
+
+  body > :not(.desktop-only-gate) {
+    display: none !important;
+  }
+}
+
 </style>
 <!-- v1.16.6 local test: hero portrait square transparent PNG, refined NDA note, UC3 bare image layout, and theme comparison nudge. -->
 <style>
@@ -3984,6 +4064,15 @@ body.access-granted input,body.access-granted textarea,body.access-granted butto
 </style></head>
 <!-- v1.16.24 local test: hero video removed and code-level accessibility labels/controls refined. -->
 <body class="access-locked" data-theme="light">
+<div aria-labelledby="desktopOnlyTitle" aria-modal="true" class="desktop-only-gate" id="desktopOnlyGate" role="dialog">
+  <div aria-hidden="true" class="desktop-only-bg"></div>
+  <section class="desktop-only-card">
+    <p class="eyebrow">Desktop only</p>
+    <h1 id="desktopOnlyTitle">Please open this portfolio on desktop.</h1>
+    <p>This portfolio is optimized for a larger screen so the case studies, images, and interactions can be viewed properly.</p>
+  </section>
+</div>
+
 <div aria-labelledby="accessGateTitle" aria-modal="true" class="access-gate" id="accessGate" role="dialog">
 <div aria-hidden="true" class="access-gate-bg"><span></span><span></span><span></span></div>
 <form autocomplete="off" class="access-card" id="accessForm">
@@ -4037,7 +4126,7 @@ body.access-granted input,body.access-granted textarea,body.access-granted butto
 <header aria-label="Main navigation" class="nav" role="navigation"><div class="nav-inner"><button aria-label="Ori Solomon — home" class="brand" data-cursor="Home" onclick="showPage('home')"><span aria-hidden="true" class="brand-avatar"><img alt="" src="./assets/portrait/ori-red.png"/></span><span><span class="brand-name">Ori Solomon</span><span aria-hidden="true" class="brand-role"></span></span></button><ul class="nav-links" role="list"><li><button class="nav-link-btn" onclick="goHomeSection('#about')">About</button></li><li class="dropdown"><button aria-expanded="false" aria-haspopup="true" class="dropbtn">Projects</button><div class="dropdown-menu" role="menu"><button onclick="showPage('cs1')" role="menuitem">The Automated Deployment Engine</button><button onclick="showPage('cs2')" role="menuitem">The 3-Tier Architecture</button><button onclick="showPage('cs3')" role="menuitem">Intelligence-Driven Product Design</button></div></li><li><button class="nav-link-btn" onclick="goHomeSection('#skills')">Skills</button></li><li><button class="nav-link-btn" onclick="showPage('resume')">Resume</button></li><li><button class="nav-link-btn" onclick="goHomeSection('#contact')">Contact</button></li></ul><button aria-expanded="false" aria-label="Open menu" class="mobile-menu-btn" data-cursor="Menu" id="mobileMenuBtn" type="button"><span></span><span></span><span></span></button></div></header><div class="mobile-menu" hidden="" id="mobileMenu"><div class="mobile-menu-inner"><button data-cursor="Home" onclick="closeMobileMenu();showPage('home')">Home</button><button data-cursor="About" onclick="closeMobileMenu();goHomeSection('#about')">About</button><div aria-label="Projects" class="mobile-menu-group"><div class="mobile-menu-label">Projects</div><button class="mobile-sub" data-cursor="Project" onclick="closeMobileMenu();showPage('cs1')">01 The Automated Deployment Engine</button><button class="mobile-sub" data-cursor="Project" onclick="closeMobileMenu();showPage('cs2')">02 The 3-Tier Architecture</button><button class="mobile-sub" data-cursor="Project" onclick="closeMobileMenu();showPage('cs3')">03 Intelligence-Driven Product Design</button></div><button data-cursor="Skills" onclick="closeMobileMenu();goHomeSection('#skills')">Skills</button><button data-cursor="Resume" onclick="closeMobileMenu();showPage('resume')">Resume</button><button data-cursor="Contact" onclick="closeMobileMenu();goHomeSection('#contact')">Contact</button></div></div>
 <main id="main">
 <div class="page active" id="page-home">
-<section class="motion-story hero-awaiting" id="hero"><div class="motion-sticky"><div class="stage" id="motionStage"><div class="hero-copy" id="heroCopy"><div class="hero-badge"><span aria-hidden="true" class="dot"></span>Open to product design &amp; design system roles</div><h1>Product Designer<br/>for <span class="blue">Design Systems</span><br/>&amp; Complex Products</h1><p class="sub">I design product experiences, system infrastructure, and implementation-ready UX for fintech and enterprise teams. Experienced in guiding cross-functional work from discovery to delivery.</p><div aria-label="Key metrics" class="stats" id="statsStrip" role="list"><div class="stat"><strong>5+</strong><span>Years experience</span></div><div class="stat"><strong>90+</strong><span>Global partners</span></div></div><div class="actions"><button class="btn primary" data-cursor="View" onclick="document.getElementById('projects').scrollIntoView({behavior:'smooth'})">View case studies</button></div></div><div class="transfer-card" id="transferCard"><div class="transfer-glow"></div><div class="transfer-visual"><span aria-hidden="true" class="depth-dot depth-dot-1"></span><span aria-hidden="true" class="depth-dot depth-dot-2"></span><span aria-hidden="true" class="depth-dot depth-dot-3"></span><div class="transfer-image"><img alt="Ori Solomon" class="hero-fallback-image" src="./assets/portrait/ori-red.png"/></div><div class="image-label" id="imageLabel"><b>Ori Solomon</b></div></div></div><div class="about-copy" id="about"><span class="label">About</span><h2>Strategy, systems, and execution.</h2><p>I work at the intersection of design leadership, systems architecture, and product strategy.</p><p>I thrive in complex enterprise environments, especially fintech, data-heavy platforms, and global partner ecosystems. My strength is turning complexity into clear, scalable systems that help product teams move faster and build with more confidence.</p><div class="about-grid"><div class="about-card"><b>Cross-functional leadership</b><span>Embedded in product and engineering squads, driving design-to-dev alignment across global teams.</span></div><div class="about-card"><b>Systems architecture</b><span>Built multi-tier token systems and white-label engines deployed across 90+ global partners.</span></div><div class="about-card"><b>Accessibility &amp; WCAG 2.2</b><span>Accessibility is a quality standard baked into every decision.</span></div><div class="about-card"><b>AI-native workflows</b><span>ChatGPT, Gemini, NotebookLM, and Figma Make integrated into design practice.</span></div></div><div class="chips"><span class="chip">Strategic</span><span class="chip">Collaborative</span><span class="chip">Data-Driven</span></div></div></div></div></section>
+<section class="motion-story hero-awaiting" id="hero"><div class="motion-sticky"><div class="stage" id="motionStage"><div class="hero-copy" id="heroCopy"><div class="hero-badge"><span aria-hidden="true" class="dot"></span>Open to product design &amp; design system roles</div><h1>Product Designer<br/>for <span class="blue">Design Systems</span><br/>&amp; Complex Products</h1><p class="sub">I design product experiences, system infrastructure, and implementation-ready UX for fintech and enterprise teams. Experienced in guiding cross-functional work from discovery to delivery.</p><div aria-label="Key metrics" class="stats" id="statsStrip" role="list"><div class="stat"><strong>5+</strong><span>Years experience</span></div><div class="stat"><strong>90+</strong><span>Global partners</span></div></div><div class="actions"><button class="btn primary" data-cursor="View" onclick="document.getElementById('projects').scrollIntoView({behavior:'smooth'})">View case studies</button></div></div><div class="transfer-card" id="transferCard"><div class="transfer-glow"></div><div class="transfer-visual"><span aria-hidden="true" class="depth-dot depth-dot-1"></span><span aria-hidden="true" class="depth-dot depth-dot-2"></span><span aria-hidden="true" class="depth-dot depth-dot-3"></span><div class="transfer-image"><img alt="Ori Solomon" class="hero-fallback-image" src="./assets/cs3/budget-light/budget-01.png"/></div><div class="image-label" id="imageLabel"><b>Ori Solomon</b></div></div></div><div class="about-copy" id="about"><span class="label">About</span><h2>Strategy, systems, and execution.</h2><p>I work at the intersection of design leadership, systems architecture, and product strategy.</p><p>I thrive in complex enterprise environments, especially fintech, data-heavy platforms, and global partner ecosystems. My strength is turning complexity into clear, scalable systems that help product teams move faster and build with more confidence.</p><div class="about-grid"><div class="about-card"><b>Cross-functional leadership</b><span>Embedded in product and engineering squads, driving design-to-dev alignment across global teams.</span></div><div class="about-card"><b>Systems architecture</b><span>Built multi-tier token systems and white-label engines deployed across 90+ global partners.</span></div><div class="about-card"><b>Accessibility &amp; WCAG 2.2</b><span>Accessibility is a quality standard baked into every decision.</span></div><div class="about-card"><b>AI-native workflows</b><span>ChatGPT, Gemini, NotebookLM, and Figma Make integrated into design practice.</span></div></div><div class="chips"><span class="chip">Strategic</span><span class="chip">Collaborative</span><span class="chip">Data-Driven</span></div></div></div></div></section>
 <div aria-hidden="true" class="marquee"><div class="marquee-track"><span>Governance models</span><i>·</i><span>Delivery rituals</span><i>·</i><span>Partner onboarding</span><i>·</i><span>Design QA</span><i>·</i><span>Research synthesis</span><i>·</i><span>Reusable logic</span><i>·</i><span>Stakeholder alignment</span><i>·</i><span>Global localization</span><i>·</i><span>Governance models</span><i>·</i><span>Delivery rituals</span><i>·</i><span>Partner onboarding</span><i>·</i><span>Design QA</span><i>·</i><span>Research synthesis</span><i>·</i><span>Reusable logic</span><i>·</i><span>Stakeholder alignment</span><i>·</i><span>Global localization</span><i>·</i></div></div>
 <section class="section project-section glow-projects" id="projects">
 <div class="container">
@@ -4099,6 +4188,34 @@ body.access-granted input,body.access-granted textarea,body.access-granted butto
 </section>
 <section class="section" id="skills"><div class="container"><span class="label">Capabilities</span><h2 class="section-h">Skills &amp; Expertise</h2><p class="sub">A modular, scalable approach to design, from pixels to platforms.</p><div class="skills-grid"><div class="skill"><small>DS</small><h4>Design Systems</h4><p>Scalable component libraries, governance models, and adoption frameworks.</p></div><div class="skill"><small>TE</small><h4>Token Engineering</h4><p>3-tier token architecture for multi-brand, multi-platform deployment.</p></div><div class="skill"><small>PS</small><h4>Product Strategy</h4><p>Business-aligned UX decisions, roadmap contribution, measurable outcomes.</p></div><div class="skill"><small>A11Y</small><h4>WCAG 2.2 / Accessibility</h4><p>AA-compliant design, contrast systems, and inclusive interaction patterns.</p></div><div class="skill"><small>CT</small><h4>Custom Tooling</h4><p>Configuration engines, system logic, and automated delivery workflows.</p></div><div class="skill"><small>AI</small><h4>AI-Native Workflow</h4><p>ChatGPT, Gemini, NotebookLM, and Figma Make integrated into practice.</p></div><div class="skill"><small>ER</small><h4>Evidence-Based Research</h4><p>Behavioral analysis, usability testing, and data-driven iteration cycles.</p></div><div class="skill"><small>SS</small><h4>System Scalability</h4><p>Architecture that grows with the product, not against it.</p></div><div class="skill"><small>XP</small><h4>Cross-Platform Architecture</h4><p>Unified design logic across web, mobile, and white-label platforms.</p></div></div><div class="vals"><span class="val">Strategic thinking</span><span class="val">Collaborative execution</span><span class="val">Data-driven decisions</span></div></div></section>
 <section class="section contact-bg" id="contact"><div class="container"><div class="contact-grid"><div><span class="label">Contact</span><h2 class="section-h" style="max-width:390px">Let’s talk design, systems, or product work.</h2><p class="sub" style="margin:16px 0 28px">For opportunities, collaborations, or quick intros, WhatsApp is the fastest way to reach me. Email and LinkedIn are open too.</p><a class="btn primary wa-btn" data-cursor="WhatsApp" href="https://wa.me/972523555360?text=Hi%20Ori%2C%20I%20saw%20your%20portfolio%20and%20would%20love%20to%20connect%20about%20a%20product%20design%20or%20design%20systems%20opportunity.%20Are%20you%20available%20for%20a%20quick%20conversation%3F" id="whatsappBtn" rel="noopener noreferrer" target="_blank"><span aria-hidden="true" class="typing"><span class="dotty"></span><span class="dotty"></span><span class="dotty"></span></span><span class="wa-icon"><svg aria-hidden="true" fill="none" viewbox="0 0 24 24"><path d="M5.5 19 6.4 16.2A7.2 7.2 0 1 1 9 18.3L5.5 19Z" stroke="currentColor" stroke-linejoin="round" stroke-width="1.8"></path><path d="M9.4 8.9c.2-.5.5-.5.8-.4l.7.1c.2 0 .4.1.5.4l.5 1.1c.1.2 0 .5-.2.7l-.4.4c.5 1 1.3 1.8 2.3 2.3l.5-.5c.2-.2.5-.3.7-.2l1.1.5c.3.1.4.3.4.6v.7c0 .3-.2.6-.5.7-.6.2-1.6.1-2.8-.5-1.4-.7-2.5-1.6-3.3-2.7-.8-1.2-1.2-2.3-.9-3.2Z" fill="currentColor"></path></svg></span><span class="wa-label">Start a WhatsApp chat</span></a></div><div class="contact-links"><a class="contact-link" data-cursor="Email" href="mailto:uixorisolomon@gmail.com"><div class="contact-icon"><svg aria-hidden="true" fill="none" viewbox="0 0 24 24"><path d="M4 6.5h16v11H4v-11Z" stroke="currentColor" stroke-linejoin="round" stroke-width="1.8"></path><path d="m4.5 7 7.5 6 7.5-6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></div><div><p class="contact-link-txt">Email</p><p class="contact-link-sub">uixorisolomon@gmail.com</p></div></a><a class="contact-link" data-cursor="LinkedIn" href="https://linkedin.com/in/ori-solomon" rel="noopener noreferrer" target="_blank"><div class="contact-icon"><svg aria-hidden="true" fill="none" viewbox="0 0 24 24"><path d="M6.5 10v8" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"></path><path d="M6.5 7.2v.1" stroke="currentColor" stroke-linecap="round" stroke-width="2.8"></path><path d="M11 18v-8" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"></path><path d="M11 13.4c.4-2 1.7-3.4 3.7-3.4 2.2 0 3.8 1.6 3.8 4.4V18" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"></path><path d="M4 4h16v16H4V4Z" stroke="currentColor" stroke-linejoin="round" stroke-width="1.4"></path></svg></div><div><p class="contact-link-txt">LinkedIn</p><p class="contact-link-sub">linkedin.com/in/ori-solomon</p></div></a><a class="contact-link" data-cursor="Call" href="tel:+972523555360"><div class="contact-icon"><svg aria-hidden="true" fill="none" viewbox="0 0 24 24"><path d="M8.1 5.4 9.6 8.7c.3.7.1 1.5-.5 2l-.8.7c1.1 2.1 2.6 3.7 4.8 4.8l.7-.8c.5-.6 1.3-.8 2-.5l3.3 1.5c.7.3 1.1 1 .9 1.7-.4 1.4-1.7 2.4-3.2 2.4C9.5 20.5 3.5 14.5 3.5 7.2c0-1.5 1-2.8 2.4-3.2.7-.2 1.5.2 1.8.9Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"></path></svg></div><div><p class="contact-link-txt">Phone</p><p class="contact-link-sub">+972 52 355 5360</p></div></a></div></div></div></section>
+
+<div class="cs3-budget-preload" hidden aria-hidden="true">
+<img src="./assets/cs3/budget-light/budget-02.png" alt="" aria-hidden="true" loading="lazy" />
+<img src="./assets/cs3/budget-light/budget-03.png" alt="" aria-hidden="true" loading="lazy" />
+<img src="./assets/cs3/budget-light/budget-04.png" alt="" aria-hidden="true" loading="lazy" />
+<img src="./assets/cs3/budget-light/budget-05.png" alt="" aria-hidden="true" loading="lazy" />
+<img src="./assets/cs3/budget-light/budget-06.png" alt="" aria-hidden="true" loading="lazy" />
+<img src="./assets/cs3/budget-light/budget-07.png" alt="" aria-hidden="true" loading="lazy" />
+<img src="./assets/cs3/budget-light/budget-08.png" alt="" aria-hidden="true" loading="lazy" />
+<img src="./assets/cs3/budget-light/budget-09.png" alt="" aria-hidden="true" loading="lazy" />
+<img src="./assets/cs3/budget-light/budget-10.png" alt="" aria-hidden="true" loading="lazy" />
+<img src="./assets/cs3/budget-light/budget-11.png" alt="" aria-hidden="true" loading="lazy" />
+<img src="./assets/cs3/budget-light/budget-12.png" alt="" aria-hidden="true" loading="lazy" />
+<img src="./assets/cs3/budget-light/budget-13.png" alt="" aria-hidden="true" loading="lazy" />
+<img src="./assets/cs3/budget-dark/budget-01.png" alt="" aria-hidden="true" loading="lazy" />
+<img src="./assets/cs3/budget-dark/budget-02.png" alt="" aria-hidden="true" loading="lazy" />
+<img src="./assets/cs3/budget-dark/budget-03.png" alt="" aria-hidden="true" loading="lazy" />
+<img src="./assets/cs3/budget-dark/budget-04.png" alt="" aria-hidden="true" loading="lazy" />
+<img src="./assets/cs3/budget-dark/budget-05.png" alt="" aria-hidden="true" loading="lazy" />
+<img src="./assets/cs3/budget-dark/budget-06.png" alt="" aria-hidden="true" loading="lazy" />
+<img src="./assets/cs3/budget-dark/budget-07.png" alt="" aria-hidden="true" loading="lazy" />
+<img src="./assets/cs3/budget-dark/budget-08.png" alt="" aria-hidden="true" loading="lazy" />
+<img src="./assets/cs3/budget-dark/budget-09.png" alt="" aria-hidden="true" loading="lazy" />
+<img src="./assets/cs3/budget-dark/budget-10.png" alt="" aria-hidden="true" loading="lazy" />
+<img src="./assets/cs3/budget-dark/budget-11.png" alt="" aria-hidden="true" loading="lazy" />
+<img src="./assets/cs3/budget-dark/budget-12.png" alt="" aria-hidden="true" loading="lazy" />
+<img src="./assets/cs3/budget-dark/budget-13.png" alt="" aria-hidden="true" loading="lazy" />
+</div>
 <footer><p class="footer-q">"UX is never finished, just like this site."</p><p>© 2026 Ori Solomon. Designed with intent. Built for the web. Powered by curiosity.</p><p style="margin-top:4px">Designed and coded by Ori Solomon, with GPT and Claude as creative development partners.</p></footer>
 </div>
 <div class="page" id="page-cs1">
@@ -4332,7 +4449,7 @@ body.access-granted input,body.access-granted textarea,body.access-granted butto
 </div>
 </section>
 </div>
-<div class="page" id="page-resume"><section class="section"><div class="container"><span class="label">Resume</span><h1 class="section-h">Ori Solomon</h1><p class="sub">Product Designer · Design Systems &amp; Product Execution</p><div class="resume-card"><div class="resume-top"><div><h3>Product Designer</h3><p>Design Systems, Product Strategy &amp; Cross-functional Delivery</p></div><a class="btn primary" href="./assets/resume/Ori_Solomon_Senior_Product_Designer.pdf" rel="noopener noreferrer" target="_blank">View PDF Resume ↗</a></div><div class="resume-body"><div class="resume-meta"><span><span aria-hidden="true" class="resume-meta-icon"><svg fill="none" viewbox="0 0 24 24"><path d="M12 21s6-5.2 6-11a6 6 0 0 0-12 0c0 5.8 6 11 6 11Z" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"></path><path d="M12 12.2a2.2 2.2 0 1 0 0-4.4 2.2 2.2 0 0 0 0 4.4Z" stroke="currentColor" stroke-width="1.7"></path></svg></span>Hod Hasharon</span><span><span aria-hidden="true" class="resume-meta-icon"><svg fill="none" viewbox="0 0 24 24"><path d="M4 6.5h16v11H4v-11Z" stroke="currentColor" stroke-linejoin="round" stroke-width="1.8"></path><path d="m4.5 7 7.5 6 7.5-6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></span><a href="mailto:uixorisolomon@gmail.com">uixorisolomon@gmail.com</a></span><span><span aria-hidden="true" class="resume-meta-icon"><svg fill="none" viewbox="0 0 24 24"><path d="M8.1 5.4 9.6 8.7c.3.7.1 1.5-.5 2l-.8.7c1.1 2.1 2.6 3.7 4.8 4.8l.7-.8c.5-.6 1.3-.8 2-.5l3.3 1.5c.7.3 1.1 1 .9 1.7-.4 1.4-1.7 2.4-3.2 2.4C9.5 20.5 3.5 14.5 3.5 7.2c0-1.5 1-2.8 2.4-3.2.7-.2 1.5.2 1.8.9Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"></path></svg></span><a href="tel:+972523555360">0523555360</a></span><span><span aria-hidden="true" class="resume-meta-icon"><svg fill="none" viewbox="0 0 24 24"><path d="M6.5 10v8" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"></path><path d="M6.5 7.2v.1" stroke="currentColor" stroke-linecap="round" stroke-width="2.8"></path><path d="M11 18v-8" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"></path><path d="M11 13.4c.4-2 1.7-3.4 3.7-3.4 2.2 0 3.8 1.6 3.8 4.4V18" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"></path><path d="M4 4h16v16H4V4Z" stroke="currentColor" stroke-linejoin="round" stroke-width="1.4"></path></svg></span><a href="https://linkedin.com/in/ori-solomon" rel="noopener noreferrer" target="_blank">LinkedIn ↗</a></span></div><div class="resume-summary">Product Designer with 5+ years of experience across product design, design systems, accessibility, and complex fintech ecosystems. I combine hands-on UI/UX execution with system architecture, product strategy, and cross-functional delivery.</div><div class="strengths"><div class="strength"><b>Design System Architecture</b><span>Token logic, components, and scalable governance.</span></div><div class="strength"><b>Accessibility Leadership</b><span>AA-focused UX patterns and inclusive QA habits.</span></div><div class="strength"><b>Strategic Leadership</b><span>Product framing, alignment, and delivery clarity.</span></div><div class="strength"><b>AI-Powered Design</b><span>Faster exploration, synthesis, and design workflows.</span></div></div><h2 style="font-size:22px;letter-spacing:-.03em;font-weight:540;margin-bottom:14px">Experience</h2><div class="exp-grid"><div class="exp-item"><h4>Senior Product Designer &amp; Design System Lead · Personetics</h4><p>Current role. I own and evolve the design system architecture, including multi-tier token logic, component governance, accessibility improvements, and design-to-development alignment. I work closely with Product, CPO, R&amp;D, and QA to reduce delivery friction, improve consistency across partner deployments, and create workflows that help designers and developers move faster with fewer interpretation gaps.</p></div><div class="exp-item"><h4>UI/UX Designer &amp; Researcher · Patolomius / ComonTec</h4><p>Led end-to-end product design, white-label customization, and research-driven product decisions across complex systems including management tools and crypto-related interfaces.</p></div><div class="exp-item"><h4>Digital Marketing &amp; Operations Specialist · Boss Digital</h4><p>Built a strong strategic foundation in user psychology, data-driven thinking, and international team operations, including a relocation initiative to Germany.</p></div></div></div></div></div></section><footer><p class="footer-q">"UX is never finished, just like this site."</p><p>© 2026 Ori Solomon. Designed with intent. Built for the web. Powered by curiosity.</p><p style="margin-top:4px">Designed and coded by Ori Solomon, with GPT and Claude as creative development partners.</p></footer></div>
+<div class="page" id="page-resume"><section class="section"><div class="container"><span class="label">Resume</span><h1 class="section-h">Ori Solomon</h1><p class="sub">Product Designer · Design Systems &amp; Product Execution</p><div class="resume-card"><div class="resume-top"><div><h3>Product Designer</h3><p>Design Systems, Product Strategy &amp; Cross-functional Delivery</p></div><a class="btn primary" href="./assets/resume/ori-solomon-resume.pdf" rel="noopener noreferrer" target="_blank">View PDF Resume ↗</a></div><div class="resume-body"><div class="resume-meta"><span><span aria-hidden="true" class="resume-meta-icon"><svg fill="none" viewbox="0 0 24 24"><path d="M12 21s6-5.2 6-11a6 6 0 0 0-12 0c0 5.8 6 11 6 11Z" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"></path><path d="M12 12.2a2.2 2.2 0 1 0 0-4.4 2.2 2.2 0 0 0 0 4.4Z" stroke="currentColor" stroke-width="1.7"></path></svg></span>Hod Hasharon</span><span><span aria-hidden="true" class="resume-meta-icon"><svg fill="none" viewbox="0 0 24 24"><path d="M4 6.5h16v11H4v-11Z" stroke="currentColor" stroke-linejoin="round" stroke-width="1.8"></path><path d="m4.5 7 7.5 6 7.5-6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></span><a href="mailto:uixorisolomon@gmail.com">uixorisolomon@gmail.com</a></span><span><span aria-hidden="true" class="resume-meta-icon"><svg fill="none" viewbox="0 0 24 24"><path d="M8.1 5.4 9.6 8.7c.3.7.1 1.5-.5 2l-.8.7c1.1 2.1 2.6 3.7 4.8 4.8l.7-.8c.5-.6 1.3-.8 2-.5l3.3 1.5c.7.3 1.1 1 .9 1.7-.4 1.4-1.7 2.4-3.2 2.4C9.5 20.5 3.5 14.5 3.5 7.2c0-1.5 1-2.8 2.4-3.2.7-.2 1.5.2 1.8.9Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"></path></svg></span><a href="tel:+972523555360">0523555360</a></span><span><span aria-hidden="true" class="resume-meta-icon"><svg fill="none" viewbox="0 0 24 24"><path d="M6.5 10v8" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"></path><path d="M6.5 7.2v.1" stroke="currentColor" stroke-linecap="round" stroke-width="2.8"></path><path d="M11 18v-8" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"></path><path d="M11 13.4c.4-2 1.7-3.4 3.7-3.4 2.2 0 3.8 1.6 3.8 4.4V18" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"></path><path d="M4 4h16v16H4V4Z" stroke="currentColor" stroke-linejoin="round" stroke-width="1.4"></path></svg></span><a href="https://linkedin.com/in/ori-solomon" rel="noopener noreferrer" target="_blank">LinkedIn ↗</a></span></div><div class="resume-summary">Product Designer with 5+ years of experience across product design, design systems, accessibility, and complex fintech ecosystems. I combine hands-on UI/UX execution with system architecture, product strategy, and cross-functional delivery.</div><div class="strengths"><div class="strength"><b>Design System Architecture</b><span>Token logic, components, and scalable governance.</span></div><div class="strength"><b>Accessibility Leadership</b><span>AA-focused UX patterns and inclusive QA habits.</span></div><div class="strength"><b>Strategic Leadership</b><span>Product framing, alignment, and delivery clarity.</span></div><div class="strength"><b>AI-Powered Design</b><span>Faster exploration, synthesis, and design workflows.</span></div></div><h2 style="font-size:22px;letter-spacing:-.03em;font-weight:540;margin-bottom:14px">Experience</h2><div class="exp-grid"><div class="exp-item"><h4>Senior Product Designer &amp; Design System Lead · Personetics</h4><p>Current role. I own and evolve the design system architecture, including multi-tier token logic, component governance, accessibility improvements, and design-to-development alignment. I work closely with Product, CPO, R&amp;D, and QA to reduce delivery friction, improve consistency across partner deployments, and create workflows that help designers and developers move faster with fewer interpretation gaps.</p></div><div class="exp-item"><h4>UI/UX Designer &amp; Researcher · Patolomius / ComonTec</h4><p>Led end-to-end product design, white-label customization, and research-driven product decisions across complex systems including management tools and crypto-related interfaces.</p></div><div class="exp-item"><h4>Digital Marketing &amp; Operations Specialist · Boss Digital</h4><p>Built a strong strategic foundation in user psychology, data-driven thinking, and international team operations, including a relocation initiative to Germany.</p></div></div></div></div></div></section><footer><p class="footer-q">"UX is never finished, just like this site."</p><p>© 2026 Ori Solomon. Designed with intent. Built for the web. Powered by curiosity.</p><p style="margin-top:4px">Designed and coded by Ori Solomon, with GPT and Claude as creative development partners.</p></footer></div>
 </main>
 <script>
 function clamp(n,min,max){return Math.min(Math.max(n,min),max)}function lerp(a,b,t){return a+(b-a)*t}function smoothstep(a,b,x){const t=clamp((x-a)/(b-a),0,1);return t*t*(3-2*t)}
