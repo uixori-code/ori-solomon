@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v1.16.36 -->
+<!-- v1.16.37 -->
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
@@ -4055,21 +4055,36 @@ body.access-granted .case-study-page,body.access-granted .project-card,body.acce
 body.access-granted input,body.access-granted textarea,body.access-granted button,body.access-granted a{user-select:auto;-webkit-user-select:auto}
 @media(max-width:640px){.access-card{padding:26px 20px;border-radius:24px}.access-input-row{flex-direction:column}.access-input-row button{width:100%}}
 </style>
-<style id="v11636-mobile-first-desktop-only-flow">
-/* v1.16.36: Mobile users see desktop-only message before password gate. No Supabase/SQL change needed. */
-@media (max-width: 900px) {
-  body.access-locked > #desktopOnlyGate,
-  body.access-granted > #desktopOnlyGate,
-  #desktopOnlyGate {
-    display: grid !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
-    z-index: 2147483647 !important;
-  }
 
-  body.access-locked > #accessGate,
-  body.access-granted > #accessGate,
+<style id="v11637-mobile-forced-desktop-only-flow">
+/* v1.16.37: forced mobile/tablet desktop-only flow before password */
+html.desktop-only-mode,
+html.desktop-only-mode body {
+  overflow: hidden !important;
+}
+
+html.desktop-only-mode #accessGate {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+html.desktop-only-mode #desktopOnlyGate {
+  display: grid !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 2147483647 !important;
+}
+
+html.desktop-only-mode body > :not(#desktopOnlyGate):not(script):not(style) {
+  display: none !important;
+}
+
+@media (max-width: 1024px), (hover: none) and (pointer: coarse) {
   #accessGate {
     display: none !important;
     visibility: hidden !important;
@@ -4077,19 +4092,65 @@ body.access-granted input,body.access-granted textarea,body.access-granted butto
     pointer-events: none !important;
   }
 
-  body.access-locked > :not(#desktopOnlyGate):not(style):not(script),
-  body.access-granted > :not(#desktopOnlyGate):not(style):not(script),
-  body > :not(#desktopOnlyGate):not(style):not(script) {
-    display: none !important;
-  }
-}
-
-@media (min-width: 901px) {
   #desktopOnlyGate {
+    display: grid !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 2147483647 !important;
+  }
+
+  body > :not(#desktopOnlyGate):not(script):not(style) {
     display: none !important;
   }
 }
 </style>
+<script id="v11637-mobile-forced-script">
+(function () {
+  var isDesktopSize = window.matchMedia && window.matchMedia("(min-width: 1025px)").matches;
+  var isTouchPrimary = window.matchMedia && window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+  var isMobileLike = !isDesktopSize || isTouchPrimary;
+
+  if (!isMobileLike) return;
+
+  document.documentElement.classList.add("desktop-only-mode");
+
+  function forceDesktopOnlyGate() {
+    document.documentElement.classList.add("desktop-only-mode");
+    if (document.body) document.body.classList.add("desktop-only-mode");
+
+    var accessGate = document.getElementById("accessGate");
+    if (accessGate) {
+      accessGate.setAttribute("hidden", "");
+      accessGate.setAttribute("aria-hidden", "true");
+      accessGate.style.setProperty("display", "none", "important");
+      accessGate.style.setProperty("visibility", "hidden", "important");
+      accessGate.style.setProperty("opacity", "0", "important");
+      accessGate.style.setProperty("pointer-events", "none", "important");
+    }
+
+    var desktopOnlyGate = document.getElementById("desktopOnlyGate");
+    if (desktopOnlyGate) {
+      desktopOnlyGate.removeAttribute("hidden");
+      desktopOnlyGate.removeAttribute("aria-hidden");
+      desktopOnlyGate.style.setProperty("display", "grid", "important");
+      desktopOnlyGate.style.setProperty("visibility", "visible", "important");
+      desktopOnlyGate.style.setProperty("opacity", "1", "important");
+      desktopOnlyGate.style.setProperty("pointer-events", "auto", "important");
+      desktopOnlyGate.style.setProperty("position", "fixed", "important");
+      desktopOnlyGate.style.setProperty("inset", "0", "important");
+      desktopOnlyGate.style.setProperty("z-index", "2147483647", "important");
+    }
+  }
+
+  forceDesktopOnlyGate();
+  document.addEventListener("DOMContentLoaded", forceDesktopOnlyGate);
+  window.addEventListener("load", forceDesktopOnlyGate);
+  window.addEventListener("resize", forceDesktopOnlyGate);
+})();
+</script>
 
 </head>
 <!-- v1.16.24 local test: hero video removed and code-level accessibility labels/controls refined. -->
