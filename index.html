@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v1.16.35 -->
+<!-- v1.16.36 -->
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
@@ -4054,7 +4054,44 @@ body.access-granted img{ -webkit-user-drag:none; user-drag:none; }
 body.access-granted .case-study-page,body.access-granted .project-card,body.access-granted .cs-block,body.access-granted .hero,body.access-granted .about-section{user-select:none;-webkit-user-select:none}
 body.access-granted input,body.access-granted textarea,body.access-granted button,body.access-granted a{user-select:auto;-webkit-user-select:auto}
 @media(max-width:640px){.access-card{padding:26px 20px;border-radius:24px}.access-input-row{flex-direction:column}.access-input-row button{width:100%}}
-</style></head>
+</style>
+<style id="v11636-mobile-first-desktop-only-flow">
+/* v1.16.36: Mobile users see desktop-only message before password gate. No Supabase/SQL change needed. */
+@media (max-width: 900px) {
+  body.access-locked > #desktopOnlyGate,
+  body.access-granted > #desktopOnlyGate,
+  #desktopOnlyGate {
+    display: grid !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    z-index: 2147483647 !important;
+  }
+
+  body.access-locked > #accessGate,
+  body.access-granted > #accessGate,
+  #accessGate {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  body.access-locked > :not(#desktopOnlyGate):not(style):not(script),
+  body.access-granted > :not(#desktopOnlyGate):not(style):not(script),
+  body > :not(#desktopOnlyGate):not(style):not(script) {
+    display: none !important;
+  }
+}
+
+@media (min-width: 901px) {
+  #desktopOnlyGate {
+    display: none !important;
+  }
+}
+</style>
+
+</head>
 <!-- v1.16.24 local test: hero video removed and code-level accessibility labels/controls refined. -->
 <body class="access-locked" data-theme="light">
 <div aria-labelledby="desktopOnlyTitle" aria-modal="true" class="desktop-only-gate" id="desktopOnlyGate" role="dialog">
