@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v1.1.12 -->
+<!-- v1.1.13 -->
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
@@ -7127,52 +7127,61 @@ body.access-granted *:not(#genie-splash *) {
 }
 #introOverlay { display: none !important; }
 body.intro-lock { overflow: auto !important; }
-/* ── Hero genie smoke v1.1.11 – screen blend so fire glows on portrait ── */
+/* Fix: genie has unscoped .dot CSS that overrides the portfolio status dot */
+body.access-granted span.dot {
+  width: 6px !important; height: 6px !important;
+  border-radius: 50% !important; border: none !important;
+  background: var(--p) !important;
+  box-shadow: 0 0 0 4px color-mix(in srgb,var(--p) 12%,transparent) !important;
+  animation: none !important; transition: none !important;
+}
+/* ── Hero genie smoke v1.1.13 – contained within card, hard-clipped ── */
 #hero-genie-smoke {
   position: absolute;
   left: 0; right: 0; bottom: 0;
-  height: 78%;
+  height: 44%;           /* only bottom 44% so smoke stays below the face */
   pointer-events: none;
   z-index: 5;
   overflow: hidden;
+  clip-path: inset(0);   /* hard Safari/WebKit clip — blur can't leak outside */
   opacity: 0;
   transition: opacity 1.6s ease;
 }
 body.access-granted #hero-genie-smoke { opacity: 1; }
 
-/* wide fire belly — screen blend makes it glow on the portrait */
+/* wide fire belly — contained to smoke div width */
 #hero-genie-smoke::before {
   content: '';
   position: absolute;
-  left: 50%; bottom: -4%;
-  width: 110%; height: 55%;
+  left: 50%; bottom: 0;
+  width: 90%; height: 70%;
   transform: translateX(-50%);
   border-radius: 50%;
-  background: radial-gradient(ellipse at 50% 80%,
-    rgba(255,120,20,.90) 0%,
-    rgba(230,60,8,.70)  28%,
-    rgba(180,28,4,.42)  52%,
-    rgba(120,10,2,.14)  70%,
-    transparent 84%);
-  filter: blur(22px);
+  background: radial-gradient(ellipse at 50% 90%,
+    rgba(255,120,20,.85)  0%,
+    rgba(230,60,8,.62)   30%,
+    rgba(180,28,4,.36)   56%,
+    rgba(120,10,2,.10)   76%,
+    transparent 88%);
+  filter: blur(18px);
   mix-blend-mode: screen;
   animation: heroFireBelly 5.2s ease-in-out infinite;
 }
 
-/* narrow rising tail — screen blend, brighter orange core */
+/* narrow rising tail */
 #hero-genie-smoke::after {
   content: '';
   position: absolute;
-  left: calc(50% - 28px); bottom: 0;
-  width: 56px; height: 68%;
+  left: calc(50% - 24px); bottom: 0;
+  width: 48px; height: 80%;
   border-radius: 999px;
   background: linear-gradient(to top,
-    rgba(255,160,30,.95)  0%,
-    rgba(255,80,10,.80)  30%,
-    rgba(220,40,6,.48)   58%,
-    rgba(160,18,4,.18)   80%,
+    rgba(255,160,30,.92)  0%,
+    rgba(255,80,10,.72)  32%,
+    rgba(220,40,6,.40)   62%,
+    rgba(160,18,4,.12)   84%,
     transparent 100%);
-  filter: blur(9px);
+  filter: blur(8px);
   mix-blend-mode: screen;
   transform: rotate(4deg);
   transform-origin: bottom center;
@@ -7180,12 +7189,12 @@ body.access-granted #hero-genie-smoke { opacity: 1; }
 }
 
 @keyframes heroFireBelly {
-  0%,100% { opacity:.72; transform:translateX(-50%) scale(.94) translateY(0); }
-  50%      { opacity:1;   transform:translateX(-50%) scale(1.08) translateY(-14px); }
+  0%,100% { opacity:.68; transform:translateX(-50%) scale(.92) translateY(0); }
+  50%      { opacity:.96; transform:translateX(-50%) scale(1.06) translateY(-10px); }
 }
 @keyframes heroFireTail {
-  0%,100% { opacity:.68; transform:rotate(3deg) translateX(0) scaleX(.88); }
-  50%      { opacity:1;   transform:rotate(9deg) translateX(7px) scaleX(1.12); }
+  0%,100% { opacity:.62; transform:rotate(3deg) translateX(0) scaleX(.86); }
+  50%      { opacity:.94; transform:rotate(9deg) translateX(6px) scaleX(1.10); }
 }
 
 /* portrait gentle float */
@@ -7230,7 +7239,7 @@ if (typeof sessionStorage !== 'undefined' &&
 
   <div id="ori-name" aria-hidden="true">Ori Solomon</div>
 
-  <button id="reset-btn" onclick="doReset()">↻ RESET</button>
+  <button id="reset-btn" onclick="doSkip()">→ SKIP</button>
   <button id="splash-theme-toggle" type="button" onclick="toggleSplashTheme()"><span id="splash-theme-icon">☀</span><span id="splash-theme-label">Light mode</span></button>
   <div id="dots"><div class="dot" id="d0"></div><div class="dot" id="d1"></div><div class="dot" id="d2"></div></div>
   <div id="hint">Click the lamp 3 times</div>
@@ -8871,6 +8880,64 @@ window.doReset=function(){
   smokeEl.innerHTML='';sparksEl.innerHTML='';
   overlay.classList.remove('lifted');
   const ls=document.getElementById('lamp-smoke'); ls.classList.remove('show'); ls.innerHTML='';
+};
+
+// Skip: instant full-state reveal of genie + password box, zero animations
+window.doSkip=function(){
+  // 1. Light all 3 lamp dots
+  [0,1,2].forEach(function(i){
+    var d=document.getElementById('d'+i);
+    if(d) d.classList.add('lit');
+  });
+  var dotsContainer=document.getElementById('dots');
+  if(dotsContainer) dotsContainer.classList.add('done');
+
+  // 2. Hide the click-hint text
+  var hintEl=document.getElementById('hint');
+  if(hintEl){hintEl.classList.add('done');hintEl.style.opacity='0';hintEl.style.visibility='hidden';}
+
+  // 3. Genie: skip straight to floating end-state (no rise animation)
+  var genieEl=document.getElementById('genie');
+  if(genieEl){
+    genieEl.style.transition='none';
+    genieEl.style.opacity='1';
+    genieEl.style.transform='translateX(-50%) translateY(0)';
+    genieEl.classList.remove('rise');
+    genieEl.classList.add('float');
+  }
+
+  // 4. Lift the dark overlay so the scene is visible
+  var overlayEl=document.getElementById('dark-overlay');
+  if(overlayEl) overlayEl.classList.add('lifted');
+
+  // 5. Show lamp smoke (CSS animation kicks in via .show class)
+  var lampSmoke=document.getElementById('lamp-smoke');
+  if(lampSmoke) lampSmoke.classList.add('show');
+
+  // 6. Trigger cloud/smoke sequence if ready
+  if(window.createGenieCloudSequence) window.createGenieCloudSequence();
+
+  // 7. Ensure the password dialog is injected then show it
+  var shell=document.getElementById('access-dialog-shell');
+  if(!shell){
+    var sp=document.getElementById('genie-splash');
+    if(sp){
+      shell=document.createElement('div');
+      shell.id='access-dialog-shell';
+      shell.setAttribute('aria-hidden','true');
+      shell.setAttribute('role','dialog');
+      shell.setAttribute('aria-label','Access code dialog');
+      sp.appendChild(shell);
+    }
+  }
+  if(shell){
+    shell.classList.add('is-visible');
+    shell.setAttribute('aria-hidden','false');
+    setTimeout(function(){
+      var inp=shell.querySelector('input[type="password"],input[type="text"]');
+      if(inp) inp.focus();
+    },60);
+  }
 };
 
 })();
