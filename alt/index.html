@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v1.1.15 -->
+<!-- v1.1.16 -->
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
@@ -4159,7 +4159,7 @@ html.desktop-only-mode body > :not(#desktopOnlyGate):not(script):not(style) {
 #genie-splash.exiting{opacity:0;transform:scale(1.04);pointer-events:none}
 #genie-splash.gone{display:none}
 body.splash-active{overflow:hidden}
-body.splash-active > *:not(#genie-splash):not(#start-btn):not(style):not(script){visibility:hidden!important}
+body.splash-active > *:not(#genie-splash):not(#start-btn):not(style):not(script):not(#desktopOnlyGate){visibility:hidden!important}
 #genie-splash *{cursor:auto !important}
 #genie-splash #lamp-wrap,#genie-splash #lamp-wrap *,#genie-splash #reset-btn,#start-btn{cursor:pointer !important}
 #start-btn{position:fixed;top:calc(16% + 110px);left:calc(50% + min(130px,22vw));z-index:100010;
@@ -8560,9 +8560,11 @@ window.addEventListener('load',()=>{
     _unlocked = true;                          // stop intro overlay intercepting scroll
     window._genieUnlocked = true;              // checked by patched introInput to allow scroll
     try{sessionStorage.setItem(SESSION_KEY,'granted');}catch(e){}
-    // Set theme BEFORE access-granted lifts bridge CSS — prevents one-frame dark flash
-    var savedTheme;try{savedTheme=localStorage.getItem('ori-theme');}catch(e){}
-    document.body.setAttribute('data-theme', savedTheme||'light');
+    // Set theme BEFORE access-granted lifts bridge CSS — use whatever genie is currently showing
+    // (genie starts dark; user may have toggled it, which updates data-theme + localStorage)
+    var currentTheme = document.body.getAttribute('data-theme') || 'light';
+    document.body.setAttribute('data-theme', currentTheme);
+    try{localStorage.setItem('ori-theme', currentTheme);}catch(e){}
     document.body.classList.remove('access-locked');
     document.body.classList.add('access-granted');
     // Force favicon to portrait with timestamp cache-bust
@@ -9818,6 +9820,9 @@ function splashToggleTheme(){
   }
   window.toggleSplashTheme = function(){
     splashToggleState = splashToggleState === 'dark' ? 'light' : 'dark';
+    // Sync body attribute so unlock() can read the current theme reliably
+    document.body.setAttribute('data-theme', splashToggleState);
+    try{localStorage.setItem('ori-theme', splashToggleState);}catch(e){}
     syncSplashThemeToggle();
   };
   document.body.setAttribute('data-theme','dark');
