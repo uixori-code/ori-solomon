@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v1.1.14 -->
+<!-- v1.1.15 -->
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
@@ -5329,7 +5329,6 @@ body[data-theme="light"] #genie-splash .genie-cloud-text{color:#461205;}
 
 
 body.access-granted #genie-splash { display: none !important; }
-body:not(.access-granted) .desktop-only-gate,
 body:not(.access-granted) .copy-guard-overlay,
 body:not(.access-granted) .mobile-blockade,
 body:not(.access-granted) #scrollProgress,
@@ -7134,6 +7133,17 @@ body.access-granted *:not(#genie-splash *) {
 }
 #introOverlay { display: none !important; }
 body.intro-lock { overflow: auto !important; }
+/* Desktop-only gate must always render above the genie on mobile */
+#desktopOnlyGate {
+  z-index: 2147483647 !important;
+}
+body.splash-active #desktopOnlyGate,
+html.desktop-only-mode #desktopOnlyGate {
+  visibility: visible !important;
+  display: grid !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
 /* Fix: genie has unscoped .dot CSS that overrides the portfolio status dot */
 body.access-granted span.dot {
   width: 6px !important; height: 6px !important;
@@ -7219,6 +7229,13 @@ body.access-granted #hero-genie-smoke { opacity: 1; }
 <body class="access-locked" data-theme="light">
 <script>
 document.body.classList.remove("access-locked");
+// Sync theme from genie's saved preference before anything renders
+try {
+  var _savedTheme = localStorage.getItem('ori-theme');
+  if (_savedTheme === 'dark' || _savedTheme === 'light') {
+    document.body.setAttribute('data-theme', _savedTheme);
+  }
+} catch(e) {}
 // If already unlocked from a previous visit, grant access immediately
 // before genie JS can add splash-active and hide everything
 if (typeof sessionStorage !== 'undefined' &&
