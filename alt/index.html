@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v1.1.13 -->
+<!-- v1.1.14 -->
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
@@ -5834,7 +5834,7 @@ html body #genie-splash #access-dialog-shell{
   transform:translate3d(-18px,-50%,0) scale(.96)!important;
   width:min(420px,34vw)!important;
   min-width:300px!important;
-  height:clamp(220px,30vh,360px)!important;
+  height:auto!important;
   z-index:135!important;
   pointer-events:none!important;
   opacity:0!important;
@@ -7088,6 +7088,13 @@ body[data-theme="light"] .adshell-input:focus {
 }
 body[data-theme="light"] .adshell-msg.error {
   color: #b01010 !important;
+  background: rgba(180,10,10,.08) !important;
+  border: 1px solid rgba(180,10,10,.20) !important;
+}
+body[data-theme="light"] .adshell-msg.success {
+  color: #0a6e3a !important;
+  background: rgba(10,110,60,.08) !important;
+  border: 1px solid rgba(10,110,60,.20) !important;
 }
 
 /* Ori Solomon name — deeper crimson with solid text-shadow backup */
@@ -8619,9 +8626,13 @@ window.addEventListener('load',()=>{
       +'.adshell-btn:hover{opacity:.9}'
       +'.adshell-btn:active{transform:scale(.98)}'
       +'.adshell-btn:disabled{opacity:.5;cursor:not-allowed}'
-      +'.adshell-msg{font-size:13px;min-height:18px;margin:0;text-align:center;line-height:1.4}'
-      +'.adshell-msg.error{color:#ff6b6b}'
-      +'.adshell-msg.success{color:#6bffb8}';
+      /* msg: 8px from button, 8px from dialog bottom.
+         margin-top:8px = 8px gap from button.
+         margin-bottom:-16px pulls the inner 24px padding down to 24-16=8px gap at bottom. */
+      +'.adshell-msg{font-size:13px;min-height:0;margin:8px 0 -16px 0;padding:8px 12px;text-align:center;line-height:1.4;border-radius:8px}'
+      +'.adshell-msg:empty{margin:0;padding:0}'
+      +'.adshell-msg.error{color:#ff6b6b;background:rgba(255,60,60,.10);border:1px solid rgba(255,60,60,.22)}'
+      +'.adshell-msg.success{color:#6bffb8;background:rgba(60,255,160,.10);border:1px solid rgba(60,255,160,.22)}';
     document.head.appendChild(st);
     var form = document.getElementById('adshell-form');
     var inp  = document.getElementById('adshell-input');
