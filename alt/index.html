@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v1.1.10 -->
+<!-- v1.1.11 -->
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
@@ -7127,67 +7127,65 @@ body.access-granted *:not(#genie-splash *) {
 }
 #introOverlay { display: none !important; }
 body.intro-lock { overflow: auto !important; }
-/* ── Hero genie smoke (CSS, extracted directly from genie #lamp-smoke) ── */
+/* ── Hero genie smoke v1.1.11 – screen blend so fire glows on portrait ── */
 #hero-genie-smoke {
   position: absolute;
   left: 0; right: 0; bottom: 0;
-  height: 80%;
+  height: 78%;
   pointer-events: none;
   z-index: 5;
-  overflow: visible;
+  overflow: hidden;
   opacity: 0;
-  transition: opacity 1.4s ease;
-  background: none;
-  filter: none;
+  transition: opacity 1.6s ease;
 }
 body.access-granted #hero-genie-smoke { opacity: 1; }
 
-/* continuous body plume – exact genie multi-radial */
+/* wide fire belly — screen blend makes it glow on the portrait */
 #hero-genie-smoke::before {
   content: '';
   position: absolute;
-  inset: -3% 0 -1% 0;
-  pointer-events: none;
-  border-radius: 999px;
-  background:
-    radial-gradient(ellipse at 50% 7%,  rgba(245,70,34,.50) 0%, rgba(192,25,10,.38) 34%, rgba(112,6,2,.13) 62%, transparent 78%),
-    radial-gradient(ellipse at 47% 21%, rgba(232,45,18,.42) 0%, rgba(188,20,8,.34) 40%, transparent 72%),
-    radial-gradient(ellipse at 42% 38%, rgba(220,36,14,.38) 0%, rgba(166,14,5,.30) 42%, transparent 73%),
-    radial-gradient(ellipse at 35% 55%, rgba(214,32,12,.40) 0%, rgba(156,10,4,.31) 43%, transparent 74%),
-    radial-gradient(ellipse at 27% 74%, rgba(210,28,10,.42) 0%, rgba(146,8,3,.32) 42%, transparent 74%),
-    radial-gradient(ellipse at 20% 93%, rgba(216,30,10,.46) 0%, rgba(148,8,3,.34) 44%, transparent 76%);
-  filter: blur(26px);
-  opacity: .92;
-  animation: heroUnifiedBreath 5.8s ease-in-out infinite;
+  left: 50%; bottom: -4%;
+  width: 110%; height: 55%;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 80%,
+    rgba(255,120,20,.90) 0%,
+    rgba(230,60,8,.70)  28%,
+    rgba(180,28,4,.42)  52%,
+    rgba(120,10,2,.14)  70%,
+    transparent 84%);
+  filter: blur(22px);
+  mix-blend-mode: screen;
+  animation: heroFireBelly 5.2s ease-in-out infinite;
 }
 
-/* crisp red core from bottom – exact genie tail */
+/* narrow rising tail — screen blend, brighter orange core */
 #hero-genie-smoke::after {
   content: '';
   position: absolute;
-  left: calc(50% - 36px);
-  bottom: 0;
-  width: 72px;
-  height: 48%;
-  pointer-events: none;
+  left: calc(50% - 28px); bottom: 0;
+  width: 56px; height: 68%;
   border-radius: 999px;
-  background:
-    radial-gradient(ellipse at 50% 95%, rgba(225,35,12,.64) 0%, rgba(160,10,4,.28) 42%, transparent 70%),
-    linear-gradient(to top, rgba(222,32,10,.76) 0%, rgba(188,18,6,.52) 42%, rgba(138,6,2,.22) 74%, transparent 100%);
-  filter: blur(13px);
-  transform: rotate(6deg);
+  background: linear-gradient(to top,
+    rgba(255,160,30,.95)  0%,
+    rgba(255,80,10,.80)  30%,
+    rgba(220,40,6,.48)   58%,
+    rgba(160,18,4,.18)   80%,
+    transparent 100%);
+  filter: blur(9px);
+  mix-blend-mode: screen;
+  transform: rotate(4deg);
   transform-origin: bottom center;
-  opacity: .86;
-  animation: heroUnifiedTail 4.6s ease-in-out infinite;
+  animation: heroFireTail 4.2s ease-in-out infinite;
 }
 
-@keyframes heroUnifiedBreath {
-  0%,100% { opacity:.78; transform:translate3d(0,0,0) scale(.985); }
-  48%      { opacity:1;   transform:translate3d(8px,-10px,0) scale(1.025); }
+@keyframes heroFireBelly {
+  0%,100% { opacity:.72; transform:translateX(-50%) scale(.94) translateY(0); }
+  50%      { opacity:1;   transform:translateX(-50%) scale(1.08) translateY(-14px); }
 }
-@keyframes heroUnifiedTail {
-  0%,100% { opacity:.68; transform:rotate(5deg) translateX(0) scaleX(.92); }
-  50%      { opacity:.96; transform:rotate(8deg) translateX(8px) scaleX(1.08); }
+@keyframes heroFireTail {
+  0%,100% { opacity:.68; transform:rotate(3deg) translateX(0) scaleX(.88); }
+  50%      { opacity:1;   transform:rotate(9deg) translateX(7px) scaleX(1.12); }
 }
 
 /* portrait gentle float */
