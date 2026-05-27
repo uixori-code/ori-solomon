@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v1.1.11 -->
+<!-- v1.1.12 -->
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
@@ -8479,6 +8479,7 @@ window.addEventListener('load',()=>{
     if(blocked){ e.preventDefault(); e.stopPropagation(); return false; }
   }, true);
 
+  /* DEV MODE: devtools detection disabled — re-enable before production
   let devtoolsVisible = false;
   function checkDevtools(){
     if(!body.classList.contains('access-granted') || !guard) return;
@@ -8492,6 +8493,7 @@ window.addEventListener('load',()=>{
   }
   window.addEventListener('resize', checkDevtools, {passive:true});
   setInterval(checkDevtools, 1500);
+  */
 })();
 </script>
 <script id="genie-portfolio-unlock">
@@ -8530,10 +8532,12 @@ window.addEventListener('load',()=>{
     document.body.setAttribute('data-theme', savedTheme||'light');
     document.body.classList.remove('access-locked');
     document.body.classList.add('access-granted');
-    // Force favicon to portrait (overrides any cached genie favicon)
+    // Force favicon to portrait with timestamp cache-bust
     try {
+      var _fav='./assets/portrait/ori-red.png?v='+Date.now();
       var fi=document.querySelector('link[rel="icon"]');
-      if(fi){var h=fi.href;fi.href='';fi.href=h;}
+      if(fi){fi.href=_fav;}
+      else{var nl=document.createElement('link');nl.rel='icon';nl.href=_fav;document.head.appendChild(nl);}
     } catch(e){}
     // The genie IS the intro — skip secondary intro overlay and restore scroll
     document.body.classList.remove('intro-lock','hero-sequencing');
@@ -8668,7 +8672,10 @@ window.addEventListener('load',()=>{
 })();
 </script>
 <script id="gsj">
-(function(){document.body.classList.add('splash-active');
+(function(){
+// Skip entire genie animation if already unlocked (refresh / returning visit)
+if(sessionStorage.getItem('ori_portfolio_access_v1')==='granted'){return;}
+document.body.classList.add('splash-active');
 (function(){
 'use strict';
 
