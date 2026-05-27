@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v1.1.8 -->
+<!-- v1.1.10 -->
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
@@ -7127,16 +7127,70 @@ body.access-granted *:not(#genie-splash *) {
 }
 #introOverlay { display: none !important; }
 body.intro-lock { overflow: auto !important; }
-#genie-transfer-layer {
+/* ── Hero genie smoke (CSS, extracted directly from genie #lamp-smoke) ── */
+#hero-genie-smoke {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 3;          /* above image (z-index:1) and ::before overlay (z-index:2) */
+  left: 0; right: 0; bottom: 0;
+  height: 80%;
   pointer-events: none;
-  border-radius: inherit;
-  background: transparent;
+  z-index: 5;
+  overflow: visible;
+  opacity: 0;
+  transition: opacity 1.4s ease;
+  background: none;
+  filter: none;
 }
+body.access-granted #hero-genie-smoke { opacity: 1; }
+
+/* continuous body plume – exact genie multi-radial */
+#hero-genie-smoke::before {
+  content: '';
+  position: absolute;
+  inset: -3% 0 -1% 0;
+  pointer-events: none;
+  border-radius: 999px;
+  background:
+    radial-gradient(ellipse at 50% 7%,  rgba(245,70,34,.50) 0%, rgba(192,25,10,.38) 34%, rgba(112,6,2,.13) 62%, transparent 78%),
+    radial-gradient(ellipse at 47% 21%, rgba(232,45,18,.42) 0%, rgba(188,20,8,.34) 40%, transparent 72%),
+    radial-gradient(ellipse at 42% 38%, rgba(220,36,14,.38) 0%, rgba(166,14,5,.30) 42%, transparent 73%),
+    radial-gradient(ellipse at 35% 55%, rgba(214,32,12,.40) 0%, rgba(156,10,4,.31) 43%, transparent 74%),
+    radial-gradient(ellipse at 27% 74%, rgba(210,28,10,.42) 0%, rgba(146,8,3,.32) 42%, transparent 74%),
+    radial-gradient(ellipse at 20% 93%, rgba(216,30,10,.46) 0%, rgba(148,8,3,.34) 44%, transparent 76%);
+  filter: blur(26px);
+  opacity: .92;
+  animation: heroUnifiedBreath 5.8s ease-in-out infinite;
+}
+
+/* crisp red core from bottom – exact genie tail */
+#hero-genie-smoke::after {
+  content: '';
+  position: absolute;
+  left: calc(50% - 36px);
+  bottom: 0;
+  width: 72px;
+  height: 48%;
+  pointer-events: none;
+  border-radius: 999px;
+  background:
+    radial-gradient(ellipse at 50% 95%, rgba(225,35,12,.64) 0%, rgba(160,10,4,.28) 42%, transparent 70%),
+    linear-gradient(to top, rgba(222,32,10,.76) 0%, rgba(188,18,6,.52) 42%, rgba(138,6,2,.22) 74%, transparent 100%);
+  filter: blur(13px);
+  transform: rotate(6deg);
+  transform-origin: bottom center;
+  opacity: .86;
+  animation: heroUnifiedTail 4.6s ease-in-out infinite;
+}
+
+@keyframes heroUnifiedBreath {
+  0%,100% { opacity:.78; transform:translate3d(0,0,0) scale(.985); }
+  48%      { opacity:1;   transform:translate3d(8px,-10px,0) scale(1.025); }
+}
+@keyframes heroUnifiedTail {
+  0%,100% { opacity:.68; transform:rotate(5deg) translateX(0) scaleX(.92); }
+  50%      { opacity:.96; transform:rotate(8deg) translateX(8px) scaleX(1.08); }
+}
+
+/* portrait gentle float */
 @keyframes genieHeroFloat {
   0%, 100% { transform: scale(var(--img-scale,1.035)) translateY(calc(var(--img-y,0) * 1px)) translateY(0px); }
   50%       { transform: scale(var(--img-scale,1.035)) translateY(calc(var(--img-y,0) * 1px)) translateY(-6px); }
@@ -7269,7 +7323,7 @@ if (typeof sessionStorage !== 'undefined' &&
 <header aria-label="Main navigation" class="nav" role="navigation"><div class="nav-inner"><button aria-label="Ori Solomon — home" class="brand" data-cursor="Home" onclick="showPage('home')"><span aria-hidden="true" class="brand-avatar"><img alt="" src="./assets/portrait/ori-red.png"/></span><span><span class="brand-name">Ori Solomon</span><span aria-hidden="true" class="brand-role"></span></span></button><ul class="nav-links" role="list"><li><button class="nav-link-btn" onclick="goHomeSection('#about')">About</button></li><li class="dropdown"><button aria-expanded="false" aria-haspopup="true" class="dropbtn">Projects</button><div class="dropdown-menu" role="menu"><button onclick="showPage('cs1')" role="menuitem">The Automated Deployment Engine</button><button onclick="showPage('cs2')" role="menuitem">The 3-Tier Architecture</button><button onclick="showPage('cs3')" role="menuitem">Intelligence-Driven Product Design</button></div></li><li><button class="nav-link-btn" onclick="goHomeSection('#skills')">Skills</button></li><li><button class="nav-link-btn" onclick="showPage('resume')">Resume</button></li><li><button class="nav-link-btn" onclick="goHomeSection('#contact')">Contact</button></li></ul><button aria-expanded="false" aria-label="Open menu" class="mobile-menu-btn" data-cursor="Menu" id="mobileMenuBtn" type="button"><span></span><span></span><span></span></button></div></header><div class="mobile-menu" hidden="" id="mobileMenu"><div class="mobile-menu-inner"><button data-cursor="Home" onclick="closeMobileMenu();showPage('home')">Home</button><button data-cursor="About" onclick="closeMobileMenu();goHomeSection('#about')">About</button><div aria-label="Projects" class="mobile-menu-group"><div class="mobile-menu-label">Projects</div><button class="mobile-sub" data-cursor="Project" onclick="closeMobileMenu();showPage('cs1')">01 The Automated Deployment Engine</button><button class="mobile-sub" data-cursor="Project" onclick="closeMobileMenu();showPage('cs2')">02 The 3-Tier Architecture</button><button class="mobile-sub" data-cursor="Project" onclick="closeMobileMenu();showPage('cs3')">03 Intelligence-Driven Product Design</button></div><button data-cursor="Skills" onclick="closeMobileMenu();goHomeSection('#skills')">Skills</button><button data-cursor="Resume" onclick="closeMobileMenu();showPage('resume')">Resume</button><button data-cursor="Contact" onclick="closeMobileMenu();goHomeSection('#contact')">Contact</button></div></div>
 <main id="main">
 <div class="page active" id="page-home">
-<section class="motion-story hero-awaiting" id="hero"><div class="motion-sticky"><div class="stage" id="motionStage"><div class="hero-copy" id="heroCopy"><div class="hero-badge"><span aria-hidden="true" class="dot"></span>Open to product design &amp; design system roles</div><h1>Product Designer<br/>for <span class="blue">Design Systems</span><br/>&amp; Complex Products</h1><p class="sub">I design product experiences, system infrastructure, and implementation-ready UX for fintech and enterprise teams. Experienced in guiding cross-functional work from discovery to delivery.</p><div aria-label="Key metrics" class="stats" id="statsStrip" role="list"><div class="stat"><strong>5+</strong><span>Years experience</span></div><div class="stat"><strong>90+</strong><span>Global partners</span></div></div><div class="actions"><button class="btn primary" data-cursor="View" onclick="document.getElementById('projects').scrollIntoView({behavior:'smooth'})">View case studies</button></div></div><div class="transfer-card" id="transferCard"><div class="transfer-glow"></div><div class="transfer-visual"><span aria-hidden="true" class="depth-dot depth-dot-1"></span><span aria-hidden="true" class="depth-dot depth-dot-2"></span><span aria-hidden="true" class="depth-dot depth-dot-3"></span><div class="transfer-image"><canvas id="genie-transfer-layer"></canvas><img alt="Ori Solomon" class="hero-fallback-image" src="./assets/portrait/ori-red.png"/></div><div class="image-label" id="imageLabel"><b>Ori Solomon</b></div></div></div><div class="about-copy" id="about"><span class="label">About</span><h2>Strategy, systems, and execution.</h2><p>I work at the intersection of design leadership, systems architecture, and product strategy.</p><p>I thrive in complex enterprise environments, especially fintech, data-heavy platforms, and global partner ecosystems. My strength is turning complexity into clear, scalable systems that help product teams move faster and build with more confidence.</p><div class="about-grid"><div class="about-card"><b>Cross-functional leadership</b><span>Embedded in product and engineering squads, driving design-to-dev alignment across global teams.</span></div><div class="about-card"><b>Systems architecture</b><span>Built multi-tier token systems and white-label engines deployed across 90+ global partners.</span></div><div class="about-card"><b>Accessibility &amp; WCAG 2.2</b><span>Accessibility is a quality standard baked into every decision.</span></div><div class="about-card"><b>AI-native workflows</b><span>ChatGPT, Gemini, NotebookLM, and Figma Make integrated into design practice.</span></div></div><div class="chips"><span class="chip">Strategic</span><span class="chip">Collaborative</span><span class="chip">Data-Driven</span></div></div></div></div></section>
+<section class="motion-story hero-awaiting" id="hero"><div class="motion-sticky"><div class="stage" id="motionStage"><div class="hero-copy" id="heroCopy"><div class="hero-badge"><span aria-hidden="true" class="dot"></span>Open to product design &amp; design system roles</div><h1>Product Designer<br/>for <span class="blue">Design Systems</span><br/>&amp; Complex Products</h1><p class="sub">I design product experiences, system infrastructure, and implementation-ready UX for fintech and enterprise teams. Experienced in guiding cross-functional work from discovery to delivery.</p><div aria-label="Key metrics" class="stats" id="statsStrip" role="list"><div class="stat"><strong>5+</strong><span>Years experience</span></div><div class="stat"><strong>90+</strong><span>Global partners</span></div></div><div class="actions"><button class="btn primary" data-cursor="View" onclick="document.getElementById('projects').scrollIntoView({behavior:'smooth'})">View case studies</button></div></div><div class="transfer-card" id="transferCard"><div class="transfer-glow"></div><div class="transfer-visual"><span aria-hidden="true" class="depth-dot depth-dot-1"></span><span aria-hidden="true" class="depth-dot depth-dot-2"></span><span aria-hidden="true" class="depth-dot depth-dot-3"></span><div class="transfer-image"><div id="hero-genie-smoke"></div><img alt="Ori Solomon" class="hero-fallback-image" src="./assets/portrait/ori-red.png"/></div><div class="image-label" id="imageLabel"><b>Ori Solomon</b></div></div></div><div class="about-copy" id="about"><span class="label">About</span><h2>Strategy, systems, and execution.</h2><p>I work at the intersection of design leadership, systems architecture, and product strategy.</p><p>I thrive in complex enterprise environments, especially fintech, data-heavy platforms, and global partner ecosystems. My strength is turning complexity into clear, scalable systems that help product teams move faster and build with more confidence.</p><div class="about-grid"><div class="about-card"><b>Cross-functional leadership</b><span>Embedded in product and engineering squads, driving design-to-dev alignment across global teams.</span></div><div class="about-card"><b>Systems architecture</b><span>Built multi-tier token systems and white-label engines deployed across 90+ global partners.</span></div><div class="about-card"><b>Accessibility &amp; WCAG 2.2</b><span>Accessibility is a quality standard baked into every decision.</span></div><div class="about-card"><b>AI-native workflows</b><span>ChatGPT, Gemini, NotebookLM, and Figma Make integrated into design practice.</span></div></div><div class="chips"><span class="chip">Strategic</span><span class="chip">Collaborative</span><span class="chip">Data-Driven</span></div></div></div></div></section>
 <div aria-hidden="true" class="marquee"><div class="marquee-track"><span>Governance models</span><i>·</i><span>Delivery rituals</span><i>·</i><span>Partner onboarding</span><i>·</i><span>Design QA</span><i>·</i><span>Research synthesis</span><i>·</i><span>Reusable logic</span><i>·</i><span>Stakeholder alignment</span><i>·</i><span>Global localization</span><i>·</i><span>Governance models</span><i>·</i><span>Delivery rituals</span><i>·</i><span>Partner onboarding</span><i>·</i><span>Design QA</span><i>·</i><span>Research synthesis</span><i>·</i><span>Reusable logic</span><i>·</i><span>Stakeholder alignment</span><i>·</i><span>Global localization</span><i>·</i></div></div>
 <section class="section project-section glow-projects" id="projects">
 <div class="container">
@@ -8478,6 +8532,11 @@ window.addEventListener('load',()=>{
     document.body.setAttribute('data-theme', savedTheme||'light');
     document.body.classList.remove('access-locked');
     document.body.classList.add('access-granted');
+    // Force favicon to portrait (overrides any cached genie favicon)
+    try {
+      var fi=document.querySelector('link[rel="icon"]');
+      if(fi){var h=fi.href;fi.href='';fi.href=h;}
+    } catch(e){}
     // The genie IS the intro — skip secondary intro overlay and restore scroll
     document.body.classList.remove('intro-lock','hero-sequencing');
     // Force scroll back on in case any inline style or other class is clamping it
@@ -10516,117 +10575,7 @@ function splashToggleTheme(){
 })();
 </script>
 <script>
-(function() {
-  var canvas = document.getElementById('genie-transfer-layer');
-  if (!canvas) return;
-  var ctx = canvas.getContext('2d');
-  var particles = [];
-  var animId;
-
-  function resize() {
-    var rect = canvas.parentElement.getBoundingClientRect();
-    canvas.width = rect.width || 360;
-    canvas.height = rect.height || 424;
-  }
-
-  function isLight() {
-    return document.body.getAttribute('data-theme') !== 'dark';
-  }
-
-  function spawnParticle() {
-    var w = canvas.width;
-    var h = canvas.height;
-    particles.push({
-      x: w * (0.15 + Math.random() * 0.7),
-      y: h * (0.72 + Math.random() * 0.26),   /* bottom 28% of card */
-      vx: (Math.random() - 0.5) * 0.4,
-      vy: -(0.5 + Math.random() * 0.7),
-      r: 18 + Math.random() * 36,              /* larger puffs */
-      life: 0,
-      maxLife: 110 + Math.random() * 70,
-      wobble: Math.random() * Math.PI * 2,
-      wobbleSpeed: 0.02 + Math.random() * 0.015
-    });
-  }
-
-  function frame() {
-    animId = requestAnimationFrame(frame);
-    var w = canvas.width;
-    var h = canvas.height;
-    ctx.clearRect(0, 0, w, h);
-
-    var light = isLight();
-
-    if (Math.random() < 0.18) spawnParticle();
-
-    for (var i = particles.length - 1; i >= 0; i--) {
-      var p = particles[i];
-      p.life++;
-      if (p.life > p.maxLife) { particles.splice(i, 1); continue; }
-
-      p.wobble += p.wobbleSpeed;
-      p.x += p.vx + Math.sin(p.wobble) * 0.4;
-      p.y += p.vy;
-
-      var progress = p.life / p.maxLife;
-      var alpha = progress < 0.15
-        ? (progress / 0.15) * 0.52
-        : (1 - (progress - 0.15) / 0.85) * 0.52;
-
-      var grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
-      if (light) {
-        grad.addColorStop(0,   'rgba(180,40,10,' + alpha + ')');
-        grad.addColorStop(0.5, 'rgba(120,15,5,' + (alpha * 0.6) + ')');
-        grad.addColorStop(1,   'rgba(60,5,2,0)');
-      } else {
-        grad.addColorStop(0,   'rgba(255,150,58,' + alpha + ')');
-        grad.addColorStop(0.5, 'rgba(161,54,18,' + (alpha * 0.6) + ')');
-        grad.addColorStop(1,   'rgba(86,20,8,0)');
-      }
-
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = grad;
-      ctx.fill();
-    }
-  }
-
-  function start() {
-    resize();
-    frame();
-  }
-
-  window.addEventListener('resize', resize);
-
-  function onAccessGranted() {
-    try {
-      document.documentElement.style.setProperty('overflow', 'auto');
-      document.documentElement.style.setProperty('height', 'auto');
-      document.body.style.setProperty('overflow', 'visible');
-      document.body.style.setProperty('height', 'auto');
-    } catch(e) {}
-    // Delay so portfolio layout is fully painted before measuring the canvas
-    setTimeout(function() {
-      resize();
-      requestAnimationFrame(function() { resize(); frame(); });
-    }, 150);
-  }
-  if (document.body.classList.contains('access-granted')) {
-    onAccessGranted();
-  } else {
-    var observer = new MutationObserver(function(mutations) {
-      mutations.forEach(function(m) {
-        if (m.type === 'attributes' && m.attributeName === 'class') {
-          if (document.body.classList.contains('access-granted')) {
-            observer.disconnect();
-            onAccessGranted();
-          }
-        }
-      });
-    });
-    observer.observe(document.body, { attributes: true });
-  }
-})();
+/* hero-genie-smoke: CSS-only, no JS needed */
 </script>
 </body>
 </html>
