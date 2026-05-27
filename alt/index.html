@@ -10593,7 +10593,11 @@ function splashToggleTheme(){
       document.body.style.setProperty('overflow', 'visible');
       document.body.style.setProperty('height', 'auto');
     } catch(e) {}
-    start();
+    // Delay so portfolio layout is fully painted before measuring the canvas
+    setTimeout(function() {
+      resize();
+      requestAnimationFrame(function() { resize(); frame(); });
+    }, 150);
   }
   if (document.body.classList.contains('access-granted')) {
     onAccessGranted();
