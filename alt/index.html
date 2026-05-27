@@ -8869,6 +8869,8 @@ function startLampSmoke(){
   }
 }
 
+window.startLampSmoke = startLampSmoke; // expose for doSkip
+
 window.doReset=function(){
   clicks=0;done=false;
   dots.forEach(d=>d.classList.remove('lit'));document.getElementById('dots').classList.remove('done');
@@ -8882,42 +8884,63 @@ window.doReset=function(){
   const ls=document.getElementById('lamp-smoke'); ls.classList.remove('show'); ls.innerHTML='';
 };
 
-// Skip: instant full-state reveal of genie + password box, zero animations
+// Skip: instant full-state reveal — freeze all transitions, snap to end-state, then release
 window.doSkip=function(){
-  // 1. Light all 3 lamp dots
+  // Elements to snap instantly
+  var genieEl   = document.getElementById('genie');
+  var overlayEl = document.getElementById('dark-overlay');
+  var lampSmoke = document.getElementById('lamp-smoke');
+  var hintEl    = document.getElementById('hint');
+  var startBtn  = document.getElementById('start-btn');
+
+  // ── FREEZE transitions so every class change is instant ──
+  var freeze = [genieEl, overlayEl, lampSmoke, hintEl, startBtn];
+  freeze.forEach(function(el){ if(el) el.style.transition='none'; });
+  // Also freeze any animation-duration so classes snap
+  if(genieEl) genieEl.style.animationDuration='0s';
+
+  // 1. Light all 3 lamp dots instantly
   [0,1,2].forEach(function(i){
     var d=document.getElementById('d'+i);
-    if(d) d.classList.add('lit');
+    if(d){ d.style.transition='none'; d.classList.add('lit'); }
   });
   var dotsContainer=document.getElementById('dots');
   if(dotsContainer) dotsContainer.classList.add('done');
 
-  // 2. Hide the click-hint text
-  var hintEl=document.getElementById('hint');
+  // 2. Hide the click-hint
   if(hintEl){hintEl.classList.add('done');hintEl.style.opacity='0';hintEl.style.visibility='hidden';}
 
-  // 3. Genie: skip straight to floating end-state (no rise animation)
-  var genieEl=document.getElementById('genie');
+  // 3. Genie: straight to float end-state, no rise animation
   if(genieEl){
-    genieEl.style.transition='none';
     genieEl.style.opacity='1';
     genieEl.style.transform='translateX(-50%) translateY(0)';
     genieEl.classList.remove('rise');
     genieEl.classList.add('float');
   }
 
-  // 4. Lift the dark overlay so the scene is visible
-  var overlayEl=document.getElementById('dark-overlay');
+  // 4. Dark overlay: instantly transparent
   if(overlayEl) overlayEl.classList.add('lifted');
 
-  // 5. Show lamp smoke (CSS animation kicks in via .show class)
-  var lampSmoke=document.getElementById('lamp-smoke');
+  // 5. Lamp smoke: add .show then populate with live puff elements
   if(lampSmoke) lampSmoke.classList.add('show');
+  if(window.startLampSmoke) window.startLampSmoke();
 
-  // 6. Trigger cloud/smoke sequence if ready
+  // 6. Cloud/smoke sequence
   if(window.createGenieCloudSequence) window.createGenieCloudSequence();
 
-  // 7. Ensure the password dialog is injected then show it
+  // ── RELEASE freeze after one paint so ongoing float still animates ──
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      freeze.forEach(function(el){ if(el) el.style.transition=''; });
+      if(genieEl) genieEl.style.animationDuration='';
+      [0,1,2].forEach(function(i){
+        var d=document.getElementById('d'+i);
+        if(d) d.style.transition='';
+      });
+    });
+  });
+
+  // 7. Show password dialog — must use setProperty('important') to beat the !important CSS transition
   var shell=document.getElementById('access-dialog-shell');
   if(!shell){
     var sp=document.getElementById('genie-splash');
@@ -8931,8 +8954,24 @@ window.doSkip=function(){
     }
   }
   if(shell){
+    // Kill the transition with !important so the snap is truly instant
+    shell.style.setProperty('transition','none','important');
+    shell.style.setProperty('opacity','1','important');
+    shell.style.setProperty('transform','translate3d(0,-50%,0) scale(1)','important');
+    shell.style.setProperty('pointer-events','auto','important');
     shell.classList.add('is-visible');
     shell.setAttribute('aria-hidden','false');
+    // Remove inline overrides after one frame — CSS is already at final state
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        if(shell){
+          shell.style.removeProperty('transition');
+          shell.style.removeProperty('opacity');
+          shell.style.removeProperty('transform');
+          shell.style.removeProperty('pointer-events');
+        }
+      });
+    });
     setTimeout(function(){
       var inp=shell.querySelector('input[type="password"],input[type="text"]');
       if(inp) inp.focus();
