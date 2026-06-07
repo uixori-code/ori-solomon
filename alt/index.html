@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v1.1.21 -->
+<!-- v1.1.22 -->
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
@@ -7178,9 +7178,9 @@ body.access-granted span.dot {
   opacity: 0;
   transition: opacity 1.8s ease;
   background:
-    radial-gradient(ellipse 76% 86% at 50% 102%, color-mix(in srgb, var(--p) 34%, var(--card) 66%), transparent 72%),
-    radial-gradient(ellipse 50% 60% at 22% 96%,  color-mix(in srgb, var(--p) 28%, var(--card) 72%), transparent 74%),
-    radial-gradient(ellipse 50% 60% at 80% 94%,  color-mix(in srgb, var(--p) 28%, var(--card) 72%), transparent 74%);
+    radial-gradient(ellipse 76% 86% at 50% 102%, color-mix(in srgb, var(--p) 70%, var(--card) 30%), transparent 72%),
+    radial-gradient(ellipse 50% 60% at 22% 96%,  color-mix(in srgb, var(--p) 60%, var(--card) 40%), transparent 74%),
+    radial-gradient(ellipse 50% 60% at 80% 94%,  color-mix(in srgb, var(--p) 60%, var(--card) 40%), transparent 74%);
   filter: blur(17px);
   animation: heroGenieFadeDrift 14s ease-in-out infinite alternate;
 }
@@ -11024,10 +11024,13 @@ body.theme-nudge .theme-fab{
 <style>
 
 /* v1.16.7 local test: cleaned hero portrait edge + stronger theme toggle nudge */
+/* v1.1.22 — removed the solid mask-image:linear-gradient(#000,#000)!important overrides below:
+   that mask was fully opaque (black-to-black = visible everywhere), it landed AFTER
+   #hero-genie-fade-img's dissolve mask (~line 7156) in source order, and being !important
+   it won the cascade — completely cancelling our bottom fade-out gradient. The drop-shadow
+   filter is unrelated to masking and is kept as-is. */
 #hero .transfer-image img.hero-fallback-image{
   filter:drop-shadow(0 22px 44px rgba(0,0,0,.20))!important;
-  -webkit-mask-image:linear-gradient(#000,#000)!important;
-  mask-image:linear-gradient(#000,#000)!important;
 }
 body[data-theme="dark"] #hero .transfer-image img.hero-fallback-image{
   filter:drop-shadow(0 26px 50px rgba(0,0,0,.42))!important;
