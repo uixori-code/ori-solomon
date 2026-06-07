@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v1.1.18 -->
+<!-- v1.1.19 -->
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
@@ -7152,35 +7152,39 @@ body.access-granted span.dot {
   box-shadow: 0 0 0 4px color-mix(in srgb,var(--p) 12%,transparent) !important;
   animation: none !important; transition: none !important;
 }
-/* ── Hero genie fade v1.1.18 — final red cloudy/smoke dissolve effect (replaces v1.1.13 fire glow), scoped to hero portrait only ── */
+/* ── Hero genie fade v1.1.19 — fixed: reliable bottom dissolve mask + puffs fully contained within card (no leak past rounded corners) ── */
 #hero-genie-fade-img {
-  -webkit-mask-image:
-    linear-gradient(to bottom, #000 38%, rgba(0,0,0,.9) 55%, rgba(0,0,0,.55) 70%, rgba(0,0,0,.2) 85%, transparent 100%),
-    radial-gradient(ellipse 92% 100% at 50% 38%, #000 55%, transparent 92%);
-  -webkit-mask-composite: source-in;
-          mask-image:
-    linear-gradient(to bottom, #000 38%, rgba(0,0,0,.9) 55%, rgba(0,0,0,.55) 70%, rgba(0,0,0,.2) 85%, transparent 100%),
-    radial-gradient(ellipse 92% 100% at 50% 38%, #000 55%, transparent 92%);
-          mask-composite: intersect;
+  -webkit-mask-image: linear-gradient(to bottom,
+    #000 0%, #000 56%,
+    rgba(0,0,0,.82) 68%,
+    rgba(0,0,0,.46) 80%,
+    rgba(0,0,0,.14) 92%,
+    transparent 100%);
+          mask-image: linear-gradient(to bottom,
+    #000 0%, #000 56%,
+    rgba(0,0,0,.82) 68%,
+    rgba(0,0,0,.46) 80%,
+    rgba(0,0,0,.14) 92%,
+    transparent 100%);
 }
 #hero-genie-fade-puffs {
   position: absolute;
-  left: -20%; right: -20%; bottom: -18%;
-  height: 60%;
+  left: 0; right: 0; bottom: 0;   /* contained to card width — no horizontal bleed */
+  height: 48%;                     /* stays within card — no vertical bleed past rounded corners */
   pointer-events: none;
   z-index: 5;
   overflow: hidden;
-  clip-path: inset(0);
+  clip-path: inset(0);             /* hard Safari/WebKit clip — blur can't leak outside */
   opacity: 0;
   transition: opacity 1.6s ease;
   background:
-    radial-gradient(ellipse 130px 85px at 16% 50%, rgba(255,60,40,.8), rgba(255,60,40,0) 72%),
-    radial-gradient(ellipse 165px 105px at 42% 64%, rgba(230,25,20,.78), rgba(230,25,20,0) 72%),
-    radial-gradient(ellipse 145px 92px at 70% 46%, rgba(255,80,50,.78), rgba(255,80,50,0) 72%),
-    radial-gradient(ellipse 190px 120px at 58% 86%, rgba(200,15,15,.7), rgba(200,15,15,0) 74%),
-    radial-gradient(ellipse 155px 98px at 26% 90%, rgba(255,45,35,.68), rgba(255,45,35,0) 74%),
-    radial-gradient(ellipse 175px 110px at 88% 78%, rgba(180,10,10,.6), rgba(180,10,10,0) 76%),
-    radial-gradient(ellipse 120px 80px at 50% 30%, rgba(255,110,80,.55), rgba(255,110,80,0) 72%);
+    radial-gradient(ellipse 130px 85px  at 18% 58%, rgba(255,60,40,.8),  rgba(255,60,40,0)  72%),
+    radial-gradient(ellipse 150px 95px  at 45% 70%, rgba(230,25,20,.78), rgba(230,25,20,0)  72%),
+    radial-gradient(ellipse 135px 84px  at 72% 54%, rgba(255,80,50,.78), rgba(255,80,50,0)  72%),
+    radial-gradient(ellipse 165px 100px at 58% 92%, rgba(200,15,15,.7),  rgba(200,15,15,0)  74%),
+    radial-gradient(ellipse 140px 88px  at 28% 94%, rgba(255,45,35,.68), rgba(255,45,35,0)  74%),
+    radial-gradient(ellipse 150px 92px  at 88% 86%, rgba(180,10,10,.6),  rgba(180,10,10,0)  76%),
+    radial-gradient(ellipse 110px 72px  at 50% 38%, rgba(255,110,80,.55),rgba(255,110,80,0) 72%);
   filter: blur(11px);
   mix-blend-mode: screen;
   animation: heroGenieFadeDrift 13s ease-in-out infinite alternate;
@@ -7189,7 +7193,7 @@ body.access-granted #hero-genie-fade-puffs { opacity: 1; }
 
 @keyframes heroGenieFadeDrift {
   0%   { transform: translateY(0) scale(1) rotate(0deg);        opacity: .85; }
-  100% { transform: translateY(-18px) scale(1.1) rotate(-2deg); opacity: 1; }
+  100% { transform: translateY(-10px) scale(1.06) rotate(-1.5deg); opacity: 1; }
 }
 
 /* portrait gentle float */
