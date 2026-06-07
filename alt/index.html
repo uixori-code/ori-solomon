@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v1.1.22 -->
+<!-- v1.1.23 -->
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
@@ -7170,7 +7170,7 @@ body.access-granted span.dot {
 #hero-genie-fade-puffs {
   position: absolute;
   left: 0; right: 0; bottom: 0;     /* fully inside the card — proven, no leak past the rounded corners */
-  height: 46%;
+  height: 52%;
   pointer-events: none;
   z-index: 5;
   overflow: hidden;
@@ -7178,6 +7178,11 @@ body.access-granted span.dot {
   opacity: 0;
   transition: opacity 1.8s ease;
   background:
+    /* fade-to-BG veil — drawn ON TOP (first layer wins): guarantees the dissolve actually
+       lands on the page's true background color (near-black in dark mode, near-white in
+       light mode) instead of whatever happens to render underneath — this is what removes
+       the hard cut and makes it "fade into black / white on light mode" */
+    linear-gradient(to bottom, transparent 0%, transparent 52%, color-mix(in srgb, var(--bg) 70%, transparent) 76%, var(--bg) 100%),
     radial-gradient(ellipse 76% 86% at 50% 102%, color-mix(in srgb, var(--p) 70%, var(--card) 30%), transparent 72%),
     radial-gradient(ellipse 50% 60% at 22% 96%,  color-mix(in srgb, var(--p) 60%, var(--card) 40%), transparent 74%),
     radial-gradient(ellipse 50% 60% at 80% 94%,  color-mix(in srgb, var(--p) 60%, var(--card) 40%), transparent 74%);
