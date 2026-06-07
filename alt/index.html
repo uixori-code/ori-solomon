@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v1.1.20 -->
+<!-- v1.1.21 -->
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
@@ -7152,7 +7152,7 @@ body.access-granted span.dot {
   box-shadow: 0 0 0 4px color-mix(in srgb,var(--p) 12%,transparent) !important;
   animation: none !important; transition: none !important;
 }
-/* ── Hero genie fade v1.1.20 — cloud now lives OUTSIDE the clipped card (sibling of .transfer-image, inside overflow:visible .transfer-visual/.transfer-card) so it can bleed past the rounded edge and dissolve onto the surrounding page surface, like .transfer-glow already does. Built from var(--p)/color-mix so it automatically reads as a neutral, theme-correct ambient color in both light and dark — no more saturated red blobs that clash in light mode. ── */
+/* ── Hero genie fade v1.1.21 — back to basics: one simple, contained, clearly-visible puffy cloud. Plain radial-gradient blobs blurred together, mixed from var(--card)+var(--p) so the color already matches the card and (since --card and --bg sit close together in both themes) reads as a natural continuation toward the page background — the portrait dissolves into it, it dissolves toward the BG. No masks-on-masks, no blend-mode tricks, no per-theme rules. ── */
 #hero-genie-fade-img {
   -webkit-mask-image: linear-gradient(to bottom,
     #000 0%, #000 56%,
@@ -7169,27 +7169,26 @@ body.access-granted span.dot {
 }
 #hero-genie-fade-puffs {
   position: absolute;
-  left: -16%; right: -16%; bottom: -26%;   /* deliberately bleeds past .transfer-image's rounded edge — the cloud floats on the page surface, like .transfer-glow */
-  height: 70%;
+  left: 0; right: 0; bottom: 0;     /* fully inside the card — proven, no leak past the rounded corners */
+  height: 46%;
   pointer-events: none;
-  z-index: 0;                                /* sits behind the card, same stacking idea as .transfer-glow — peeks out around/below the rounded corners */
+  z-index: 5;
+  overflow: hidden;
+  clip-path: inset(0);
   opacity: 0;
-  transition: opacity 2s ease;
-  -webkit-mask-image: radial-gradient(ellipse 62% 58% at 50% 40%, #000 0%, transparent 76%);
-          mask-image: radial-gradient(ellipse 62% 58% at 50% 40%, #000 0%, transparent 76%);
+  transition: opacity 1.8s ease;
   background:
-    radial-gradient(ellipse 58% 52% at 50% 38%, color-mix(in srgb, var(--p) 34%, transparent), transparent 72%),
-    radial-gradient(ellipse 42% 46% at 28% 62%, color-mix(in srgb, var(--p) 26%, transparent), transparent 74%),
-    radial-gradient(ellipse 44% 46% at 74% 58%, color-mix(in srgb, var(--p) 26%, transparent), transparent 74%),
-    radial-gradient(ellipse 50% 44% at 50% 84%, color-mix(in srgb, var(--p2) 22%, transparent), transparent 76%);
-  filter: blur(30px);
-  animation: heroGenieFadeDrift 16s ease-in-out infinite alternate;
+    radial-gradient(ellipse 76% 86% at 50% 102%, color-mix(in srgb, var(--p) 34%, var(--card) 66%), transparent 72%),
+    radial-gradient(ellipse 50% 60% at 22% 96%,  color-mix(in srgb, var(--p) 28%, var(--card) 72%), transparent 74%),
+    radial-gradient(ellipse 50% 60% at 80% 94%,  color-mix(in srgb, var(--p) 28%, var(--card) 72%), transparent 74%);
+  filter: blur(17px);
+  animation: heroGenieFadeDrift 14s ease-in-out infinite alternate;
 }
-body.access-granted #hero-genie-fade-puffs { opacity: .82; }   /* color-mix(var(--p)) already resolves to the correct per-theme accent — same mechanism .transfer-glow uses — so one constant opacity reads naturally in both light and dark */
+body.access-granted #hero-genie-fade-puffs { opacity: .95; }
 
 @keyframes heroGenieFadeDrift {
-  0%   { transform: translateY(0) scale(1) rotate(0deg);          opacity: .82; }
-  100% { transform: translateY(-12px) scale(1.08) rotate(-1.5deg); opacity: 1; }
+  0%   { transform: translateY(0) scale(1);              opacity: .85; }
+  100% { transform: translateY(-8px) scale(1.05);        opacity: 1; }
 }
 
 /* portrait gentle float */
@@ -7332,7 +7331,7 @@ if (typeof sessionStorage !== 'undefined' &&
 <header aria-label="Main navigation" class="nav" role="navigation"><div class="nav-inner"><button aria-label="Ori Solomon — home" class="brand" data-cursor="Home" onclick="showPage('home')"><span aria-hidden="true" class="brand-avatar"><img alt="" src="./assets/portrait/ori-red.png"/></span><span><span class="brand-name">Ori Solomon</span><span aria-hidden="true" class="brand-role"></span></span></button><ul class="nav-links" role="list"><li><button class="nav-link-btn" onclick="goHomeSection('#about')">About</button></li><li class="dropdown"><button aria-expanded="false" aria-haspopup="true" class="dropbtn">Projects</button><div class="dropdown-menu" role="menu"><button onclick="showPage('cs1')" role="menuitem">The Automated Deployment Engine</button><button onclick="showPage('cs2')" role="menuitem">The 3-Tier Architecture</button><button onclick="showPage('cs3')" role="menuitem">Intelligence-Driven Product Design</button></div></li><li><button class="nav-link-btn" onclick="goHomeSection('#skills')">Skills</button></li><li><button class="nav-link-btn" onclick="showPage('resume')">Resume</button></li><li><button class="nav-link-btn" onclick="goHomeSection('#contact')">Contact</button></li></ul><button aria-expanded="false" aria-label="Open menu" class="mobile-menu-btn" data-cursor="Menu" id="mobileMenuBtn" type="button"><span></span><span></span><span></span></button></div></header><div class="mobile-menu" hidden="" id="mobileMenu"><div class="mobile-menu-inner"><button data-cursor="Home" onclick="closeMobileMenu();showPage('home')">Home</button><button data-cursor="About" onclick="closeMobileMenu();goHomeSection('#about')">About</button><div aria-label="Projects" class="mobile-menu-group"><div class="mobile-menu-label">Projects</div><button class="mobile-sub" data-cursor="Project" onclick="closeMobileMenu();showPage('cs1')">01 The Automated Deployment Engine</button><button class="mobile-sub" data-cursor="Project" onclick="closeMobileMenu();showPage('cs2')">02 The 3-Tier Architecture</button><button class="mobile-sub" data-cursor="Project" onclick="closeMobileMenu();showPage('cs3')">03 Intelligence-Driven Product Design</button></div><button data-cursor="Skills" onclick="closeMobileMenu();goHomeSection('#skills')">Skills</button><button data-cursor="Resume" onclick="closeMobileMenu();showPage('resume')">Resume</button><button data-cursor="Contact" onclick="closeMobileMenu();goHomeSection('#contact')">Contact</button></div></div>
 <main id="main">
 <div class="page active" id="page-home">
-<section class="motion-story hero-awaiting" id="hero"><div class="motion-sticky"><div class="stage" id="motionStage"><div class="hero-copy" id="heroCopy"><div class="hero-badge"><span aria-hidden="true" class="dot"></span>Open to product design &amp; design system roles</div><h1>Product Designer<br/>for <span class="blue">Design Systems</span><br/>&amp; Complex Products</h1><p class="sub">I design product experiences, system infrastructure, and implementation-ready UX for fintech and enterprise teams. Experienced in guiding cross-functional work from discovery to delivery.</p><div aria-label="Key metrics" class="stats" id="statsStrip" role="list"><div class="stat"><strong>5+</strong><span>Years experience</span></div><div class="stat"><strong>90+</strong><span>Global partners</span></div></div><div class="actions"><button class="btn primary" data-cursor="View" onclick="document.getElementById('projects').scrollIntoView({behavior:'smooth'})">View case studies</button></div></div><div class="transfer-card" id="transferCard"><div class="transfer-glow"></div><div class="transfer-visual"><span aria-hidden="true" class="depth-dot depth-dot-1"></span><span aria-hidden="true" class="depth-dot depth-dot-2"></span><span aria-hidden="true" class="depth-dot depth-dot-3"></span><div class="transfer-image"><img alt="Ori Solomon" class="hero-fallback-image" id="hero-genie-fade-img" src="./assets/portrait/ori-red.png"/></div><div id="hero-genie-fade-puffs"></div><div class="image-label" id="imageLabel"><b>Ori Solomon</b></div></div></div><div class="about-copy" id="about"><span class="label">About</span><h2>Strategy, systems, and execution.</h2><p>I work at the intersection of design leadership, systems architecture, and product strategy.</p><p>I thrive in complex enterprise environments, especially fintech, data-heavy platforms, and global partner ecosystems. My strength is turning complexity into clear, scalable systems that help product teams move faster and build with more confidence.</p><div class="about-grid"><div class="about-card"><b>Cross-functional leadership</b><span>Embedded in product and engineering squads, driving design-to-dev alignment across global teams.</span></div><div class="about-card"><b>Systems architecture</b><span>Built multi-tier token systems and white-label engines deployed across 90+ global partners.</span></div><div class="about-card"><b>Accessibility &amp; WCAG 2.2</b><span>Accessibility is a quality standard baked into every decision.</span></div><div class="about-card"><b>Claude-led, agentic workflow</b><span>Claude and Claude Code anchor my practice — MCP-connected agents for design-to-code work — alongside ChatGPT, Gemini, NotebookLM, and Figma Make.</span></div></div><div class="chips"><span class="chip">Strategic</span><span class="chip">Collaborative</span><span class="chip">Data-Driven</span></div></div></div></div></section>
+<section class="motion-story hero-awaiting" id="hero"><div class="motion-sticky"><div class="stage" id="motionStage"><div class="hero-copy" id="heroCopy"><div class="hero-badge"><span aria-hidden="true" class="dot"></span>Open to product design &amp; design system roles</div><h1>Product Designer<br/>for <span class="blue">Design Systems</span><br/>&amp; Complex Products</h1><p class="sub">I design product experiences, system infrastructure, and implementation-ready UX for fintech and enterprise teams. Experienced in guiding cross-functional work from discovery to delivery.</p><div aria-label="Key metrics" class="stats" id="statsStrip" role="list"><div class="stat"><strong>5+</strong><span>Years experience</span></div><div class="stat"><strong>90+</strong><span>Global partners</span></div></div><div class="actions"><button class="btn primary" data-cursor="View" onclick="document.getElementById('projects').scrollIntoView({behavior:'smooth'})">View case studies</button></div></div><div class="transfer-card" id="transferCard"><div class="transfer-glow"></div><div class="transfer-visual"><span aria-hidden="true" class="depth-dot depth-dot-1"></span><span aria-hidden="true" class="depth-dot depth-dot-2"></span><span aria-hidden="true" class="depth-dot depth-dot-3"></span><div class="transfer-image"><img alt="Ori Solomon" class="hero-fallback-image" id="hero-genie-fade-img" src="./assets/portrait/ori-red.png"/><div id="hero-genie-fade-puffs"></div></div><div class="image-label" id="imageLabel"><b>Ori Solomon</b></div></div></div><div class="about-copy" id="about"><span class="label">About</span><h2>Strategy, systems, and execution.</h2><p>I work at the intersection of design leadership, systems architecture, and product strategy.</p><p>I thrive in complex enterprise environments, especially fintech, data-heavy platforms, and global partner ecosystems. My strength is turning complexity into clear, scalable systems that help product teams move faster and build with more confidence.</p><div class="about-grid"><div class="about-card"><b>Cross-functional leadership</b><span>Embedded in product and engineering squads, driving design-to-dev alignment across global teams.</span></div><div class="about-card"><b>Systems architecture</b><span>Built multi-tier token systems and white-label engines deployed across 90+ global partners.</span></div><div class="about-card"><b>Accessibility &amp; WCAG 2.2</b><span>Accessibility is a quality standard baked into every decision.</span></div><div class="about-card"><b>Claude-led, agentic workflow</b><span>Claude and Claude Code anchor my practice — MCP-connected agents for design-to-code work — alongside ChatGPT, Gemini, NotebookLM, and Figma Make.</span></div></div><div class="chips"><span class="chip">Strategic</span><span class="chip">Collaborative</span><span class="chip">Data-Driven</span></div></div></div></div></section>
 <div aria-hidden="true" class="marquee"><div class="marquee-track"><span>Governance models</span><i>·</i><span>Delivery rituals</span><i>·</i><span>Partner onboarding</span><i>·</i><span>Design QA</span><i>·</i><span>Research synthesis</span><i>·</i><span>Reusable logic</span><i>·</i><span>Stakeholder alignment</span><i>·</i><span>Global localization</span><i>·</i><span>Governance models</span><i>·</i><span>Delivery rituals</span><i>·</i><span>Partner onboarding</span><i>·</i><span>Design QA</span><i>·</i><span>Research synthesis</span><i>·</i><span>Reusable logic</span><i>·</i><span>Stakeholder alignment</span><i>·</i><span>Global localization</span><i>·</i></div></div>
 <section class="section project-section glow-projects" id="projects">
 <div class="container">
