@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v1.1.24 -->
+<!-- v1.1.31 -->
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
@@ -4056,6 +4056,45 @@ body.access-granted input,body.access-granted textarea,body.access-granted butto
 @media(max-width:640px){.access-card{padding:26px 20px;border-radius:24px}.access-input-row{flex-direction:column}.access-input-row button{width:100%}}
 </style>
 
+<script id="portfolio-defense-switch">
+/* =====================================================================
+   MASTER DEFENSE SWITCH  (v1.1.29)
+   true  = production: desktop-only gate + inspect/right-click blocking + genie splash all ON
+   false = testing/preview: all of the above OFF so the page is previewable & inspectable.
+   >>> SET THIS BACK TO true BEFORE DEPLOY <<<
+   ===================================================================== */
+window.PORTFOLIO_DEFENSE = true;
+
+(function(){
+  if (window.PORTFOLIO_DEFENSE !== false) return;
+  // Make the splash + access-gate scripts self-skip (they bail when access is 'granted').
+  try { sessionStorage.setItem('ori_portfolio_access_v1', 'granted'); } catch(e) {}
+  function killDefense(){
+    var de = document.documentElement;
+    de.classList.remove('desktop-only-mode');
+    if (document.body){
+      document.body.classList.remove('desktop-only-mode','splash-active','access-locked');
+      document.body.classList.add('access-granted');
+    }
+    ['desktopOnlyGate','genie-splash','start-btn','accessGate'].forEach(function(id){
+      var el = document.getElementById(id); if (el) el.remove();
+    });
+    ['v11637-mobile-forced-desktop-only-flow','genie-splash-injected'].forEach(function(id){
+      var st = document.getElementById(id); if (st) st.disabled = true;
+    });
+    // The genie-splash CSS sets html,body{height:100%;overflow:hidden}; clear any residue so the page scrolls.
+    de.style.setProperty('overflow','visible','important');
+    de.style.setProperty('height','auto','important');
+    if (document.body){
+      document.body.style.setProperty('overflow-x','hidden','important');
+      document.body.style.setProperty('overflow-y','visible','important');
+      document.body.style.setProperty('height','auto','important');
+    }
+  }
+  document.addEventListener('DOMContentLoaded', killDefense);
+  window.addEventListener('load', killDefense);
+})();
+</script>
 <style id="v11637-mobile-forced-desktop-only-flow">
 /* v1.16.37: forced mobile/tablet desktop-only flow before password */
 html.desktop-only-mode,
@@ -4109,6 +4148,7 @@ html.desktop-only-mode body > :not(#desktopOnlyGate):not(script):not(style) {
 </style>
 <script id="v11637-mobile-forced-script">
 (function () {
+  if (window.PORTFOLIO_DEFENSE === false) return;
   var isDesktopSize = window.matchMedia && window.matchMedia("(min-width: 1025px)").matches;
   var isTouchPrimary = window.matchMedia && window.matchMedia("(hover: none) and (pointer: coarse)").matches;
   var isMobileLike = !isDesktopSize || isTouchPrimary;
@@ -7384,6 +7424,52 @@ if (typeof sessionStorage !== 'undefined' &&
 <span aria-hidden="true" class="glow-card-cue">View case study -&gt;</span></article>
 </div>
 </div>
+<div class="pcs-pin-wrap" id="pcsPinWrap">
+<div class="pcs-pin-stage">
+<div class="container pcs-inner">
+<div class="pcs-head">
+<div><span class="label">Featured Work</span><h2 class="section-h">Projects</h2><p class="sub">Three public case studies focused on systems, delivery, and product clarity.</p></div>
+<div aria-label="Project carousel controls" class="pcs-controls">
+<button aria-label="Previous project" class="pcs-arrow" id="pcsPrevBtn" type="button">←</button>
+<button aria-label="Next project" class="pcs-arrow pcs-arrow-next-glow" id="pcsNextBtn" type="button">→</button>
+</div>
+</div>
+<div class="pcs-deck" id="pcsDeck">
+<article aria-label="Open case study: The Automated Deployment Engine" class="project-card glow-project-card" data-cursor="Open" data-index="0" onclick="showPage('cs1')" onkeydown="if(event.key==='Enter')showPage('cs1')" role="button" tabindex="0">
+<div class="glow-project-copy">
+<div aria-hidden="true" class="glow-project-icon">01</div>
+<span class="project-num">Case Study 01 · Tool Engineering</span>
+<h3>The Automated Deployment Engine</h3>
+<p>A governed Figma widget and Master Vanilla framework that turned 60+ hours of manual setup into scalable partner configuration.</p>
+<div class="tags"><span class="tag">Tool Engineering</span><span class="tag">System Architecture</span><span class="tag">Process Automation</span></div>
+</div>
+<div aria-hidden="true" class="glow-project-visual"><picture class="glow-project-picture"><img alt="" class="light-img" src="./assets/project-cards/cs1-card-light.png"/><img alt="" class="dark-img" src="./assets/project-cards/cs1-card-dark.png"/></picture></div>
+<span aria-hidden="true" class="glow-card-cue">View case study -&gt;</span></article>
+<article aria-label="Open case study: The 3-Tier Architecture: Scaling Fintech Deployment" class="project-card glow-project-card" data-cursor="Open" data-index="1" onclick="showPage('cs2')" onkeydown="if(event.key==='Enter')showPage('cs2')" role="button" tabindex="0">
+<div class="glow-project-copy">
+<div aria-hidden="true" class="glow-project-icon">02</div>
+<span class="project-num">Case Study 02 · Architecture</span>
+<h3>The 3-Tier Architecture: Scaling Fintech Deployment</h3>
+<p>A component refactor and 3-tier token architecture that reduced visual deployment from 60 days to 48 hours across Web, iOS, and Android.</p>
+<div class="tags"><span class="tag">Component Refactor</span><span class="tag">Design Tokens</span><span class="tag">Claude-Assisted Workflows</span></div>
+</div>
+<div aria-hidden="true" class="glow-project-visual"><picture class="glow-project-picture"><img alt="" class="light-img" src="./assets/project-cards/cs2-card-light.png" style=""/><img alt="" class="dark-img" src="./assets/project-cards/cs2-card-dark.png" style=""/></picture></div>
+<span aria-hidden="true" class="glow-card-cue">View case study -&gt;</span></article>
+<article aria-label="Open case study: Intelligence-Driven Product Design &amp; Strategy" class="project-card glow-project-card uc3-card" data-cursor="Open" data-index="2" onclick="showPage('cs3')" onkeydown="if(event.key==='Enter')showPage('cs3')" role="button" tabindex="0">
+<div class="glow-project-copy">
+<div aria-hidden="true" class="glow-project-icon">03</div>
+<span class="project-num">Case Study 03 · Strategy</span>
+<h3>Intelligence-Driven Product Design &amp; Strategy</h3>
+<p>A Smart Budgeting redesign that used behavioral logic and AI-assisted setup to increase engagement by 190% for a major UK partner.</p>
+<div class="tags"><span class="tag">Product Design</span><span class="tag">Strategy</span><span class="tag">AI</span><span class="tag">Behavioral Science</span></div>
+</div>
+<div aria-hidden="true" class="glow-project-visual"><picture class="glow-project-picture"><img alt="" class="light-img" src="./assets/project-cards/cs3-card-light.png"/><img alt="Smart budgeting use case tile shown on a dark background." class="dark-img" src="./assets/project-cards/cs3-card-dark.png"/></picture></div>
+<span aria-hidden="true" class="glow-card-cue">View case study -&gt;</span></article>
+</div>
+<div class="pcs-dots" id="pcsDots"><span class="pcs-dot pcs-dot-active"></span><span class="pcs-dot"></span><span class="pcs-dot"></span></div>
+</div>
+</div>
+</div>
 </section>
 <section aria-label="Selected financial institution logos" class="logo-strip">
 <div class="container">
@@ -7632,7 +7718,7 @@ if (typeof sessionStorage !== 'undefined' &&
 </div>
 </section>
 </div>
-<div class="page" id="page-resume"><section class="section"><div class="container"><span class="label">Resume</span><h1 class="section-h">Ori Solomon</h1><p class="sub">Product Designer · Design Systems &amp; Product Execution</p><div class="resume-card"><div class="resume-top"><div><h3>Product Designer</h3><p>Design Systems, Product Strategy &amp; Cross-functional Delivery</p></div><a class="btn primary" href="./assets/resume/ori-solomon-resume.pdf" rel="noopener noreferrer" target="_blank">View PDF Resume ↗</a></div><div class="resume-body"><div class="resume-meta"><span><span aria-hidden="true" class="resume-meta-icon"><svg fill="none" viewbox="0 0 24 24"><path d="M12 21s6-5.2 6-11a6 6 0 0 0-12 0c0 5.8 6 11 6 11Z" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"></path><path d="M12 12.2a2.2 2.2 0 1 0 0-4.4 2.2 2.2 0 0 0 0 4.4Z" stroke="currentColor" stroke-width="1.7"></path></svg></span>Hod Hasharon</span><span><span aria-hidden="true" class="resume-meta-icon"><svg fill="none" viewbox="0 0 24 24"><path d="M4 6.5h16v11H4v-11Z" stroke="currentColor" stroke-linejoin="round" stroke-width="1.8"></path><path d="m4.5 7 7.5 6 7.5-6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></span><a href="mailto:uixorisolomon@gmail.com">uixorisolomon@gmail.com</a></span><span><span aria-hidden="true" class="resume-meta-icon"><svg fill="none" viewbox="0 0 24 24"><path d="M8.1 5.4 9.6 8.7c.3.7.1 1.5-.5 2l-.8.7c1.1 2.1 2.6 3.7 4.8 4.8l.7-.8c.5-.6 1.3-.8 2-.5l3.3 1.5c.7.3 1.1 1 .9 1.7-.4 1.4-1.7 2.4-3.2 2.4C9.5 20.5 3.5 14.5 3.5 7.2c0-1.5 1-2.8 2.4-3.2.7-.2 1.5.2 1.8.9Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"></path></svg></span><a href="tel:+972523555360">0523555360</a></span><span><span aria-hidden="true" class="resume-meta-icon"><svg fill="none" viewbox="0 0 24 24"><path d="M6.5 10v8" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"></path><path d="M6.5 7.2v.1" stroke="currentColor" stroke-linecap="round" stroke-width="2.8"></path><path d="M11 18v-8" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"></path><path d="M11 13.4c.4-2 1.7-3.4 3.7-3.4 2.2 0 3.8 1.6 3.8 4.4V18" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"></path><path d="M4 4h16v16H4V4Z" stroke="currentColor" stroke-linejoin="round" stroke-width="1.4"></path></svg></span><a href="https://linkedin.com/in/ori-solomon" rel="noopener noreferrer" target="_blank">LinkedIn ↗</a></span></div><div class="resume-summary">Product Designer with 5+ years of experience across product design, design systems, accessibility, and complex fintech ecosystems. I combine hands-on UI/UX execution with system architecture, product strategy, and cross-functional delivery.</div><div class="strengths"><div class="strength"><b>Design System Architecture</b><span>Token logic, components, and scalable governance.</span></div><div class="strength"><b>Accessibility Leadership</b><span>AA-focused UX patterns and inclusive QA habits.</span></div><div class="strength"><b>Strategic Leadership</b><span>Product framing, alignment, and delivery clarity.</span></div><div class="strength"><b>AI-Powered Design</b><span>Faster exploration, synthesis, and design workflows.</span></div></div><h2 style="font-size:22px;letter-spacing:-.03em;font-weight:540;margin-bottom:14px">Experience</h2><div class="exp-grid"><div class="exp-item"><h4>Senior Product Designer &amp; Design System Lead · Personetics</h4><p>Current role. I own and evolve the design system architecture, including multi-tier token logic, component governance, accessibility improvements, and design-to-development alignment. I work closely with Product, CPO, R&amp;D, and QA to reduce delivery friction, improve consistency across partner deployments, and create workflows that help designers and developers move faster with fewer interpretation gaps.</p></div><div class="exp-item"><h4>UI/UX Designer &amp; Researcher · Patolomius / ComonTec</h4><p>Led end-to-end product design, white-label customization, and research-driven product decisions across complex systems including management tools and crypto-related interfaces.</p></div><div class="exp-item"><h4>Digital Marketing &amp; Operations Specialist · Boss Digital</h4><p>Built a strong strategic foundation in user psychology, data-driven thinking, and international team operations, including a relocation initiative to Germany.</p></div></div></div></div></div></section><footer><p class="footer-q">"UX is never finished, just like this site."</p><p>© 2026 Ori Solomon. Designed with intent. Built for the web. Powered by curiosity.</p><p style="margin-top:4px">Designed and coded by Ori Solomon, with GPT and Claude as creative development partners.</p></footer></div>
+<div class="page" id="page-resume"><section class="section"><div class="container"><span class="label">Resume</span><h1 class="section-h">Ori Solomon</h1><p class="sub">Product Designer · Design Systems &amp; Product Execution</p><div class="resume-card"><div class="resume-top"><div><h3>Product Designer</h3><p>Design Systems, Product Strategy &amp; Cross-functional Delivery</p></div></div><div class="resume-body"><div class="resume-meta"><span><span aria-hidden="true" class="resume-meta-icon"><svg fill="none" viewbox="0 0 24 24"><path d="M12 21s6-5.2 6-11a6 6 0 0 0-12 0c0 5.8 6 11 6 11Z" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"></path><path d="M12 12.2a2.2 2.2 0 1 0 0-4.4 2.2 2.2 0 0 0 0 4.4Z" stroke="currentColor" stroke-width="1.7"></path></svg></span>Hod Hasharon</span><span><span aria-hidden="true" class="resume-meta-icon"><svg fill="none" viewbox="0 0 24 24"><path d="M4 6.5h16v11H4v-11Z" stroke="currentColor" stroke-linejoin="round" stroke-width="1.8"></path><path d="m4.5 7 7.5 6 7.5-6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></span><a href="mailto:uixorisolomon@gmail.com">uixorisolomon@gmail.com</a></span><span><span aria-hidden="true" class="resume-meta-icon"><svg fill="none" viewbox="0 0 24 24"><path d="M8.1 5.4 9.6 8.7c.3.7.1 1.5-.5 2l-.8.7c1.1 2.1 2.6 3.7 4.8 4.8l.7-.8c.5-.6 1.3-.8 2-.5l3.3 1.5c.7.3 1.1 1 .9 1.7-.4 1.4-1.7 2.4-3.2 2.4C9.5 20.5 3.5 14.5 3.5 7.2c0-1.5 1-2.8 2.4-3.2.7-.2 1.5.2 1.8.9Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"></path></svg></span><a href="tel:+972523555360">0523555360</a></span><span><span aria-hidden="true" class="resume-meta-icon"><svg fill="none" viewbox="0 0 24 24"><path d="M6.5 10v8" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"></path><path d="M6.5 7.2v.1" stroke="currentColor" stroke-linecap="round" stroke-width="2.8"></path><path d="M11 18v-8" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"></path><path d="M11 13.4c.4-2 1.7-3.4 3.7-3.4 2.2 0 3.8 1.6 3.8 4.4V18" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"></path><path d="M4 4h16v16H4V4Z" stroke="currentColor" stroke-linejoin="round" stroke-width="1.4"></path></svg></span><a href="https://linkedin.com/in/ori-solomon" rel="noopener noreferrer" target="_blank">LinkedIn ↗</a></span></div><div class="resume-summary">Product Designer with 5+ years of experience across product design, design systems, accessibility, and complex fintech ecosystems. I combine hands-on UI/UX execution with system architecture, product strategy, and cross-functional delivery.</div><div class="strengths"><div class="strength"><b>Design System Architecture</b><span>Token logic, components, and scalable governance.</span></div><div class="strength"><b>Accessibility Leadership</b><span>AA-focused UX patterns and inclusive QA habits.</span></div><div class="strength"><b>Strategic Leadership</b><span>Product framing, alignment, and delivery clarity.</span></div><div class="strength"><b>AI-Powered Design</b><span>Faster exploration, synthesis, and design workflows.</span></div></div><h2 style="font-size:22px;letter-spacing:-.03em;font-weight:540;margin-bottom:14px">Experience</h2><div class="exp-grid"><div class="exp-item"><h4>Senior Product Designer &amp; Design System Lead · Personetics</h4><p>Current role. I own and evolve the design system architecture, including multi-tier token logic, component governance, accessibility improvements, and design-to-development alignment. I work closely with Product, CPO, R&amp;D, and QA to reduce delivery friction, improve consistency across partner deployments, and create workflows that help designers and developers move faster with fewer interpretation gaps.</p></div><div class="exp-item"><h4>UI/UX Designer &amp; Researcher · Patolomius / ComonTec</h4><p>Led end-to-end product design, white-label customization, and research-driven product decisions across complex systems including management tools and crypto-related interfaces.</p></div><div class="exp-item"><h4>Digital Marketing &amp; Operations Specialist · Boss Digital</h4><p>Built a strong strategic foundation in user psychology, data-driven thinking, and international team operations, including a relocation initiative to Germany.</p></div></div></div></div></div></section><footer><p class="footer-q">"UX is never finished, just like this site."</p><p>© 2026 Ori Solomon. Designed with intent. Built for the web. Powered by curiosity.</p><p style="margin-top:4px">Designed and coded by Ori Solomon, with GPT and Claude as creative development partners.</p></footer></div>
 </main>
 <script>
 function clamp(n,min,max){return Math.min(Math.max(n,min),max)}function lerp(a,b,t){return a+(b-a)*t}function smoothstep(a,b,x){const t=clamp((x-a)/(b-a),0,1);return t*t*(3-2*t)}
@@ -8482,6 +8568,7 @@ window.addEventListener('load',()=>{
   }
 
   // Lightweight anti-copy protections. These discourage casual copying, but cannot fully prevent technical extraction from a browser.
+  if(window.PORTFOLIO_DEFENSE !== false){
   document.addEventListener('contextmenu', function(e){
     if(body.classList.contains('access-granted')) e.preventDefault();
   });
@@ -8495,7 +8582,11 @@ window.addEventListener('load',()=>{
     if(blocked){ e.preventDefault(); e.stopPropagation(); return false; }
   }, true);
 
-  /* DEV MODE: devtools detection disabled — re-enable before production
+  /* v1.1.31: devtools detection re-enabled (gated by PORTFOLIO_DEFENSE).
+     Catches DevTools opened from the browser menu — not just blocked shortcuts —
+     by watching the inner/outer size delta, and covers the page with #copyGuardOverlay.
+     Note: a determined user can still extract markup (undocked DevTools, disabling JS,
+     view-source, or a proxy); this only raises the bar against casual inspection. */
   let devtoolsVisible = false;
   function checkDevtools(){
     if(!body.classList.contains('access-granted') || !guard) return;
@@ -8509,7 +8600,7 @@ window.addEventListener('load',()=>{
   }
   window.addEventListener('resize', checkDevtools, {passive:true});
   setInterval(checkDevtools, 1500);
-  */
+  }
 })();
 </script>
 <script id="genie-portfolio-unlock">
@@ -11056,3 +11147,138 @@ body.theme-nudge .theme-fab{
   body.theme-nudge .theme-fab{animation:none!important;}
 }
 </style>
+<style id="pcsStyles">
+/* v1.1.28: Projects pinned scroll-sweep — reuses the original .glow-project-card
+   design (size + image spread) and only adds the pin/sweep/nav behavior.
+   No original .glow-project-* rule is modified; everything here is additive,
+   scoped under #pcsPinWrap, and gated to desktop (>=1024px). */
+#pcsPinWrap{display:none}
+@media(min-width:1024px){
+  /* overflow MUST stay visible here: position:sticky on .pcs-pin-stage breaks if any
+     ancestor (this section) has overflow:hidden. The image spread is still clipped because
+     each .glow-project-card has its own overflow:hidden, and .pcs-pin-stage clips at the viewport. */
+  #projects.glow-projects{overflow:visible!important}
+  #projects.glow-projects > .container{display:none!important}
+  #pcsPinWrap{display:block;position:relative;height:300vh}
+}
+.pcs-pin-stage{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+.pcs-inner{width:100%}
+.pcs-head{display:flex;justify-content:space-between;align-items:flex-end;gap:28px;margin-bottom:32px}
+.pcs-head .label{font:700 11px/1 'DM Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--p);display:block;margin-bottom:10px}
+.pcs-controls{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.pcs-arrow{width:48px;height:48px;border-radius:999px;border:1px solid var(--txt);background:transparent;color:var(--txt);display:inline-flex;align-items:center;justify-content:center;font-size:22px;line-height:1;cursor:pointer;transition:background .24s ease,color .24s ease,transform .24s ease,box-shadow .24s ease}
+.pcs-arrow:hover{background:var(--txt);color:var(--bg);transform:translateY(-2px);box-shadow:var(--card-shadow-md)}
+.pcs-arrow-next-glow{background:var(--p);border-color:var(--p);color:#fff;animation:pcsPulseGlow 2.2s ease-in-out infinite}
+.pcs-arrow-next-glow:hover{animation-play-state:paused}
+@keyframes pcsPulseGlow{
+  0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--p) 45%,transparent);transform:scale(1)}
+  50%{box-shadow:0 0 0 9px color-mix(in srgb,var(--p) 0%,transparent);transform:scale(1.08)}
+}
+/* deck holds the original cards absolutely stacked so they can cross-fade/parallax.
+   Height grown + content tightened so the tallest card (CS03: 4-line title + 4 tags)
+   fits with no clipping, and all three read as the same box. */
+.pcs-deck{position:relative;height:min(82vh,660px);margin-bottom:22px}
+#pcsPinWrap .glow-project-card{position:absolute!important;inset:0!important;flex:none!important;width:auto!important;min-height:0!important;margin:0!important;scroll-snap-align:none!important;padding:40px 54px!important;will-change:transform,opacity}
+/* tighten title + tag spacing in the carousel so all 3 cards' content fits the shared box */
+#pcsPinWrap .glow-project-card h3{font-size:clamp(30px,3.2vw,46px)!important;margin-bottom:16px!important}
+#pcsPinWrap .glow-project-card .tags{margin-top:24px!important}
+.pcs-dots{display:flex;gap:8px;justify-content:center}
+.pcs-dot{width:8px;height:8px;border-radius:999px;background:var(--line);transition:all .3s ease}
+.pcs-dot.pcs-dot-active{width:24px;background:var(--p)}
+/* Fix: the desktop-only gate must NEVER flash on real desktops. The original rule
+   (body.splash-active #desktopOnlyGate) forces it visible during the splash on every
+   device; re-hide it on pointer-fine / wide screens so it only ever shows on mobile. */
+@media (min-width:1025px) and (hover:hover) and (pointer:fine){
+  body.splash-active #desktopOnlyGate{display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important}
+}
+</style>
+<script>
+(function(){
+  var pinWrap = document.getElementById('pcsPinWrap');
+  if(!pinWrap) return;
+  var cards = Array.prototype.slice.call(pinWrap.querySelectorAll('#pcsDeck .glow-project-card'));
+  var copies = cards.map(function(c){ return c.querySelector('.glow-project-copy'); });
+  var visuals = cards.map(function(c){ return c.querySelector('.glow-project-visual'); });
+  var dots = Array.prototype.slice.call(pinWrap.querySelectorAll('#pcsDots .pcs-dot'));
+  var prevBtn = document.getElementById('pcsPrevBtn');
+  var nextBtn = document.getElementById('pcsNextBtn');
+  var count = cards.length;
+  var ticking = false;
+
+  function mod(n){ return ((n % count) + count) % count; }
+
+  function ease(d){
+    var sign = d < 0 ? -1 : 1;
+    var a = Math.min(1, Math.abs(d));
+    return sign * (a * a * (3 - 2 * a));
+  }
+
+  function render(t){
+    cards.forEach(function(card, i){
+      var delta = Math.max(-1, Math.min(1, t - i));
+      var d = ease(delta);
+      var opacity = 1 - Math.abs(d);
+      card.style.opacity = opacity;
+      card.style.transform = 'translateX(' + (d * 22) + 'px)';
+      card.style.zIndex = Math.round(opacity * 100);
+      card.style.pointerEvents = Math.abs(t - i) < 0.05 ? 'auto' : 'none';
+      if(copies[i]) copies[i].style.transform = 'translateX(' + (d * 90) + 'px)';
+      if(visuals[i]) visuals[i].style.transform = 'translateX(' + (d * 40) + 'px)';
+    });
+    var nearest = mod(Math.round(t));
+    dots.forEach(function(dot, i){ dot.classList.toggle('pcs-dot-active', i === nearest); });
+  }
+
+  function currentProgress(){
+    var rect = pinWrap.getBoundingClientRect();
+    var total = pinWrap.offsetHeight - window.innerHeight;
+    if(total <= 0) return 0;
+    var scrolled = -rect.top;
+    return Math.min(1, Math.max(0, scrolled / total));
+  }
+
+  var targetT = 0;
+  var currentT = 0;
+
+  function loop(){
+    if(pinWrap.offsetHeight > 0){
+      currentT += (targetT - currentT) * 0.12;
+      if (Math.abs(targetT - currentT) < 0.0008) currentT = targetT;
+      render(currentT);
+    }
+    requestAnimationFrame(loop);
+  }
+
+  function onScroll(){
+    if(ticking) return;
+    ticking = true;
+    requestAnimationFrame(function(){
+      targetT = currentProgress() * (count - 1);
+      ticking = false;
+    });
+  }
+
+  function goToIndex(targetIndex){
+    var total = pinWrap.offsetHeight - window.innerHeight;
+    if(total <= 0) return;
+    var targetProgress = mod(targetIndex) / (count - 1);
+    var pinTopDoc = window.scrollY + pinWrap.getBoundingClientRect().top;
+    var targetY = pinTopDoc + targetProgress * total;
+    window.scrollTo({ top: targetY, behavior: 'smooth' });
+  }
+
+  prevBtn.addEventListener('click', function(){
+    var nearest = Math.round(currentProgress() * (count - 1));
+    goToIndex(nearest - 1);
+  });
+  nextBtn.addEventListener('click', function(){
+    var nearest = Math.round(currentProgress() * (count - 1));
+    goToIndex(nearest + 1);
+  });
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  targetT = currentT = currentProgress() * (count - 1);
+  requestAnimationFrame(loop);
+})();
+</script>
