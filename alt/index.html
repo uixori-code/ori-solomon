@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v1.2.2 -->
+<!-- v1.2.3 -->
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
@@ -7149,9 +7149,7 @@ body[data-theme="light"] #genie-splash #ori-name {
 }
 
 
-/* v1.1.2 fix: remove access-locked immediately so splash-bridge CSS takes over */
-/* v1.1.3 fix: portfolio's own access gate must never show — genie is the only gate */
-#accessGate { display: none !important; visibility: hidden !important; pointer-events: none !important; }
+/* v1.2.3: restored — #accessGate is the live password gate again (genie splash no longer exists in this build) */
 /* v1.1.8 fix: on refresh, splash-active must not hide an already-unlocked portfolio */
 body.access-granted.splash-active > *:not(#genie-splash) {
   visibility: visible !important;
@@ -7250,19 +7248,21 @@ body.access-granted #hero-genie-fade-puffs { opacity: .95; }
 <!-- v1.16.24 local test: hero video removed and code-level accessibility labels/controls refined. -->
 <body class="access-locked" data-theme="light">
 <script>
-document.body.classList.remove("access-locked");
-// Sync theme from genie's saved preference before anything renders
+// Sync theme from saved preference before anything renders
 try {
   var _savedTheme = localStorage.getItem('ori-theme');
   if (_savedTheme === 'dark' || _savedTheme === 'light') {
     document.body.setAttribute('data-theme', _savedTheme);
   }
 } catch(e) {}
-// If already unlocked from a previous visit, grant access immediately
-// before genie JS can add splash-active and hide everything
- // v1.2.1: no-genie public build — grant access immediately (no code, straight to homepage)
- try { sessionStorage.setItem('ori_portfolio_access_v1','granted'); } catch(e) {}
- document.body.classList.add('access-granted');
+// v1.2.3: restore the access-code gate. Only grant immediately if a
+// previous successful code entry is still valid in this session.
+try {
+  if (sessionStorage.getItem('ori_portfolio_access_v1') === 'granted') {
+    document.body.classList.remove('access-locked');
+    document.body.classList.add('access-granted');
+  }
+} catch(e) {}
 </script>
 
 <div aria-labelledby="desktopOnlyTitle" aria-modal="true" class="desktop-only-gate" id="desktopOnlyGate" role="dialog">
@@ -7288,6 +7288,16 @@ try {
 <p aria-live="polite" class="access-message" id="accessMessage" role="status"></p>
 </form>
 </div>
+<script>
+// v1.2.3: show the gate immediately for anyone without a valid session,
+// while it still defaults to hidden in markup to avoid a flash for granted users.
+try {
+  if (sessionStorage.getItem('ori_portfolio_access_v1') !== 'granted') {
+    var _gateEl = document.getElementById('accessGate');
+    if (_gateEl) { _gateEl.hidden = false; _gateEl.removeAttribute('aria-hidden'); }
+  }
+} catch(e) {}
+</script>
 <div aria-hidden="true" class="copy-guard-overlay" id="copyGuardOverlay">
 <div>
 <strong>Private portfolio protected</strong>
