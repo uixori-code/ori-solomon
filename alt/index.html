@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v1.3.0 -->
+<!-- v1.3.1 — Phase 1 cleanup + mobile fixes: hero portrait visibility and UC3 card layout on small screens -->
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
@@ -2813,6 +2813,53 @@ body[data-theme="dark"] .flip-punch-row{border-bottom-color:rgba(224,74,56,.14)}
 @media(prefers-reduced-motion:reduce){
   .card-front-face{display:none!important}
   .card-back-face{transform:none!important;opacity:1!important}
+}
+</style>
+<style id="v131-mobile-fixes">
+/* v1.3.1 mobile fixes: hero portrait visibility + project-card phone tiles on small screens */
+@media(max-width:1000px){
+  /* The flip never runs on mobile; the back face must keep its absolute inset sizing
+     or its height collapses to 0 (all children are absolutely positioned). */
+  .card-back-face{
+    position:absolute!important;
+    inset:0!important;
+    transform:none!important;
+    opacity:1!important;
+  }
+}
+@media(max-width:1100px){
+  /* UC3 card: the late v1.16.23 override forces the phones tile absolute over the whole card.
+     On small screens it must flow below the text as its own block. */
+  .glow-project-card.uc3-card .glow-project-visual,
+  body[data-theme="dark"] .glow-project-card.uc3-card .glow-project-visual{
+    position:relative!important;
+    inset:auto!important;
+    width:100%!important;
+    height:340px!important;
+    margin-top:4px!important;
+    border-radius:24px!important;
+    overflow:hidden!important;
+  }
+  .glow-project-card.uc3-card .glow-project-picture,
+  body[data-theme="dark"] .glow-project-card.uc3-card .glow-project-picture{
+    position:absolute!important;
+    inset:-8% -14%!important;
+    width:auto!important;
+    height:auto!important;
+    overflow:hidden!important;
+  }
+  .glow-project-card.uc3-card .glow-project-picture img,
+  body[data-theme="dark"] .glow-project-card.uc3-card .glow-project-picture img{
+    object-fit:cover!important;
+    object-position:center!important;
+  }
+  /* keep the other two visuals contained as well */
+  .glow-project-visual{height:340px!important}
+}
+@media(max-width:720px){
+  .glow-project-visual{height:280px!important}
+  .glow-project-card.uc3-card .glow-project-visual,
+  body[data-theme="dark"] .glow-project-card.uc3-card .glow-project-visual{height:280px!important}
 }
 </style>
 </head>
