@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v1.3.1 — Phase 1 cleanup + mobile fixes: hero portrait visibility and UC3 card layout on small screens -->
+<!-- v1.3.4 —  -->
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
@@ -14,7 +14,7 @@
   --p:#C0392B;--p2:#8B1A1A;--txt:#1a1a1a;--txt2:rgba(26,26,26,.62);--txt3:rgba(26,26,26,.58);--bg:#FAFAF9;--card:#FFFFFF;--surface:#F2F2F0;--line:rgba(26,26,26,.09);--soft:rgba(192,57,43,.07);--tag:rgba(192,57,43,.07);--tag-c:#C0392B;--shadow:0 12px 48px rgba(34,22,18,.10);--card-shadow:0 1px 8px rgba(26,26,26,.08);--card-shadow-md:0 6px 24px rgba(26,26,26,.10);--card-shadow-lg:0 12px 48px rgba(26,26,26,.14);--glow-color:rgba(220,80,60,.28);--glass:color-mix(in srgb,var(--card) 78%,transparent);--glass-strong:rgba(255,255,255,.84);--radius:24px;--interactive:#111111;--interactive-ink:#FFFFFF;--interactive-soft:rgba(17,17,17,.08);--interactive-line:rgba(17,17,17,.26)
 }
 body[data-theme="dark"]{--p:#E04A38;--p2:#C0392B;--txt:#F5F4F2;--txt2:rgba(245,244,242,.66);--txt3:rgba(245,244,242,.62);--bg:#0F0F10;--card:#1A1A1B;--surface:#161617;--line:rgba(245,244,242,.10);--soft:rgba(224,74,56,.14);--tag:rgba(224,74,56,.14);--tag-c:#E04A38;--shadow:0 28px 80px rgba(0,0,0,.36);--card-shadow:inset 0 1px 0 rgba(255,255,255,.04),0 1px 8px rgba(0,0,0,.40);--card-shadow-md:inset 0 1px 0 rgba(255,255,255,.05),0 6px 24px rgba(0,0,0,.46);--card-shadow-lg:inset 0 1px 0 rgba(255,255,255,.06),0 12px 48px rgba(0,0,0,.55);--glow-color:rgba(224,74,56,.32);--glass:rgba(26,26,27,.72);--glass-strong:rgba(26,26,27,.84);--interactive:#F5F4F2;--interactive-ink:#111111;--interactive-soft:rgba(245,244,242,.12);--interactive-line:rgba(245,244,242,.34)}
-*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--txt);-webkit-font-smoothing:antialiased;line-height:1.5;overflow-x:hidden}button,a{font:inherit;color:inherit}button{border:0;background:none;cursor:pointer}a{text-decoration:none}img{max-width:100%;display:block}*:focus-visible{outline:2px solid var(--p);outline-offset:4px;border-radius:8px}.skip{position:absolute;top:-70px;left:16px;z-index:999;background:var(--p);color:white;padding:10px 14px;border-radius:12px;font-weight:700;font-size:13px}.skip:focus{top:14px}
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}body{font-family:var(--font-choice,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif);background:var(--bg);color:var(--txt);-webkit-font-smoothing:antialiased;line-height:1.5;overflow-x:hidden}button,a{font:inherit;color:inherit}button{border:0;background:none;cursor:pointer}a{text-decoration:none}img{max-width:100%;display:block}*:focus-visible{outline:2px solid var(--p);outline-offset:4px;border-radius:8px}.skip{position:absolute;top:-70px;left:16px;z-index:999;background:var(--p);color:white;padding:10px 14px;border-radius:12px;font-weight:700;font-size:13px}.skip:focus{top:14px}
 .page{display:none}.page.active{display:block}.container{max-width:1120px;margin:0 auto;padding:0 24px}.section{padding:76px 0}.label{display:block;font:500 12px/1 'DM Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--p);margin-bottom:12px}.section-h{font-size:clamp(32px,5vw,58px);font-weight:520;letter-spacing:-.055em;line-height:1.02}.sub{font-size:15px;color:var(--txt2);line-height:1.82;max-width:650px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 22px;border-radius:999px;font-size:14px;font-weight:700;border:1px solid var(--line);background:var(--card);cursor:pointer;color:var(--txt);transition:transform .18s ease,opacity .18s ease,border-color .18s ease}.btn.primary{background:var(--p);border-color:var(--p);color:#fff;box-shadow:0 16px 36px color-mix(in srgb,var(--p) 22%,transparent)}.btn:hover{transform:translateY(-1px);opacity:.94}.tags{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px}.tag{display:inline-flex;align-items:center;gap:6px;padding:0;border-radius:0;background:transparent;color:var(--txt3);font:500 12px/1 'DM Mono',monospace;text-transform:uppercase;letter-spacing:.08em}.tag::before{content:'•';color:var(--p);font-size:13px;line-height:0}.mini-tags{margin-top:10px}
 /* nav */.nav{position:sticky;top:0;z-index:120;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}.nav-inner{max-width:1120px;height:74px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:22px}.brand{display:flex;align-items:center;gap:12px;min-width:224px;color:var(--txt)}.brand-avatar{width:40px;height:40px;border-radius:999px;overflow:hidden;border:1px solid var(--line);background:var(--card);box-shadow:0 8px 24px rgba(0,0,0,.08);flex-shrink:0}.brand-avatar img{width:100%;height:100%;object-fit:cover;object-position:center top}.brand-name{display:block;font-size:15px;font-weight:700;letter-spacing:-.03em;line-height:1.08}.brand-role{display:block;font-size:12px;color:var(--txt3);margin-top:3px}.nav-links{list-style:none;display:flex;align-items:center;justify-content:center;gap:26px;flex:1}.nav-link-btn,.dropbtn{font-size:13px;color:var(--txt2);padding:14px 0}.nav-link-btn:hover,.dropbtn:hover{color:var(--txt)}.nav-cta{min-width:118px;display:inline-flex;align-items:center;justify-content:center;padding:11px 17px;border-radius:999px;background:var(--p);color:#fff;font-weight:700;font-size:13px;box-shadow:0 14px 30px color-mix(in srgb,var(--p) 18%,transparent)}.dropdown{position:relative;padding-bottom:16px;margin-bottom:-16px}.dropdown::after{content:'';position:absolute;left:-16px;right:-16px;top:100%;height:18px}.dropdown-menu{position:absolute;top:calc(100% + 4px);left:50%;transform:translateX(-50%);min-width:306px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:10px;display:none;box-shadow:var(--shadow);z-index:160}.dropdown:hover .dropdown-menu,.dropdown:focus-within .dropdown-menu{display:block}.dropdown-menu button{display:block;width:100%;padding:12px 13px;border-radius:12px;text-align:left;color:var(--txt);font-size:13px;line-height:1.42}.dropdown-menu button:hover{background:var(--soft)}
 /* floating toggle */.theme-fab{position:fixed;right:22px;bottom:22px;z-index:180;display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--glass-strong);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:var(--shadow);border-radius:999px;padding:10px 14px 10px 10px;color:var(--txt);font-weight:700;font-size:13px}.theme-track{width:44px;height:24px;border:1px solid var(--line);background:var(--soft);border-radius:999px;position:relative}.theme-thumb{position:absolute;left:2px;top:2px;width:18px;height:18px;border-radius:999px;background:var(--txt);color:var(--bg);display:grid;place-items:center;font-size:12px;transition:left .22s ease,background .22s ease,color .22s ease}body[data-theme="dark"] .theme-thumb{left:22px;background:#fff;color:#111}.theme-label{white-space:nowrap}
@@ -173,36 +173,12 @@ body[data-theme="dark"] .strength{background:linear-gradient(145deg,color-mix(in
 .strength-icon{margin:0 0 14px!important;align-self:flex-start!important}
 
 @media(max-width:720px) and (prefers-reduced-motion:no-preference){
-  .transfer-card.mobile-wow .transfer-image{animation:mobileHeroPop .96s cubic-bezier(.18,1,.22,1) .06s both;transform-origin:center 18%;will-change:transform,filter}
-  .transfer-card.mobile-wow .transfer-image::after{content:'';position:absolute;inset:-36%;pointer-events:none;background:linear-gradient(110deg,transparent 36%,rgba(255,255,255,.55) 48%,transparent 60%);opacity:0;transform:translateX(-72%) rotate(8deg);mix-blend-mode:screen;animation:mobileHeroShine .82s ease .28s both}
-  body[data-theme="dark"] .transfer-card.mobile-wow .transfer-image::after{background:linear-gradient(110deg,transparent 36%,rgba(255,255,255,.34) 48%,transparent 60%)}
-  .transfer-card.mobile-wow .transfer-image img{animation:mobileHeroImageLift .96s cubic-bezier(.18,1,.22,1) .06s both;will-change:transform}
-  .transfer-card.mobile-wow .transfer-glow{animation:mobileHeroGlow 1.05s ease .04s both}
-  .transfer-card.mobile-wow .image-label{animation:mobileHeroLabel .74s cubic-bezier(.18,1,.22,1) .34s both}
+  /* v1.3.3: one clean entrance for the whole card instead of 5 staggered sub-animations */
+  .transfer-card.mobile-wow{animation:heroCardEntrance .7s cubic-bezier(.18,1,.22,1) both;will-change:transform,opacity}
 }
-@keyframes mobileHeroPop{
-  0%{opacity:0;transform:translateY(18px) scale(.92) rotateX(10deg) rotateZ(-2deg);filter:blur(10px)}
-  48%{opacity:1;transform:translateY(-6px) scale(1.035) rotateX(0) rotateZ(1deg);filter:blur(0)}
-  100%{opacity:1;transform:translateY(0) scale(1) rotateX(0) rotateZ(0);filter:blur(0)}
-}
-@keyframes mobileHeroImageLift{
-  0%{transform:scale(1.12) translateY(12px)}
-  55%{transform:scale(1.04) translateY(-4px)}
-  100%{transform:scale(var(--img-scale,1.035)) translateY(0)}
-}
-@keyframes mobileHeroShine{
-  0%{opacity:0;transform:translateX(-72%) rotate(8deg)}
-  20%{opacity:.9}
-  100%{opacity:0;transform:translateX(72%) rotate(8deg)}
-}
-@keyframes mobileHeroGlow{
-  0%{opacity:0;transform:translateY(12px) scale(.86)}
-  45%{opacity:.86;transform:translateY(0) scale(1.14)}
-  100%{opacity:.55;transform:translateY(0) scale(1)}
-}
-@keyframes mobileHeroLabel{
-  0%{opacity:0;transform:translateY(12px) translateZ(42px) scale(.96)}
-  100%{opacity:1;transform:translateY(0) translateZ(42px) scale(1)}
+@keyframes heroCardEntrance{
+  0%{opacity:0;transform:translateY(16px) scale(.96)}
+  100%{opacity:1;transform:translateY(0) scale(1)}
 }
 
 /* 1.12.4 fixes */
@@ -2862,6 +2838,140 @@ body[data-theme="dark"] .flip-punch-row{border-bottom-color:rgba(224,74,56,.14)}
   body[data-theme="dark"] .glow-project-card.uc3-card .glow-project-visual{height:280px!important}
 }
 </style>
+<style id="v132-phase2-partial">
+/* v1.3.2: favicon logos softer scale (source now 64px, was 128px) + expandable "more shots" toggle */
+.logo-mark{width:40px!important;height:40px!important;flex:0 0 40px!important}
+.logo-mark img,.logo-card.logo-wide .logo-mark img{width:40px!important;height:40px!important;max-width:40px!important;max-height:40px!important;padding:6px!important}
+.cs-more-toggle{
+  display:inline-flex!important;
+  align-items:center;
+  gap:7px;
+  margin:18px 0 4px;
+  cursor:pointer;
+}
+.cs-more-toggle::after{
+  content:'+';
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:16px;height:16px;
+  border-radius:999px;
+  background:var(--interactive-soft);
+  color:var(--interactive);
+  font-size:13px;
+  font-weight:800;
+  line-height:1;
+  transition:transform .2s ease;
+}
+.cs-more-toggle[aria-expanded="true"]::after{
+  content:'−';
+}
+.cs-more-shots{margin-top:18px!important}
+.cs-more-shots[hidden]{display:none!important}
+</style>
+<style id="v133-rebrand-configurator">
+/* v1.3.3: Rebrand configurator — live theming demo. Additive only, scoped to its own selectors
+   plus body[data-radius] / --font-choice, neither of which any existing rule already used. */
+.rebrand-fab{
+  position:fixed;left:22px;bottom:22px;z-index:180;
+  display:flex;align-items:center;gap:10px;
+  border:1px solid var(--line);background:var(--glass-strong);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  box-shadow:var(--shadow);border-radius:999px;padding:10px 16px 10px 10px;
+  color:var(--txt);font-weight:700;font-size:13px;cursor:pointer;
+}
+.rebrand-fab-icon{
+  width:24px;height:24px;border-radius:999px;background:var(--p);flex-shrink:0;
+  display:grid;place-items:center;color:#fff;font-size:12px;transition:background .2s ease;
+}
+.rebrand-panel{
+  position:fixed;left:22px;bottom:78px;z-index:181;
+  width:min(300px,calc(100vw - 44px));
+  background:var(--card);border:1px solid var(--line);border-radius:22px;
+  box-shadow:var(--shadow);padding:18px;
+  opacity:0;transform:translateY(12px) scale(.97);pointer-events:none;
+  transition:opacity .22s ease,transform .22s cubic-bezier(.22,1,.36,1);
+}
+.rebrand-panel.is-open{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}
+.rebrand-panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.rebrand-panel-title{font-size:13px;font-weight:800;color:var(--txt)}
+.rebrand-panel-sub{font-size:11px;color:var(--txt3);margin-top:2px}
+.rebrand-close{width:26px;height:26px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--txt2);font-size:13px;line-height:1;cursor:pointer}
+.rebrand-row{margin-bottom:16px}
+.rebrand-row:last-child{margin-bottom:0}
+.rebrand-row h5{font:700 11px/1 'DM Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--txt3);margin-bottom:10px}
+.rebrand-swatches{display:flex;gap:9px}
+.rebrand-swatch{
+  width:28px;height:28px;border-radius:999px;border:2px solid transparent;cursor:pointer;
+  transition:transform .15s ease,border-color .15s ease;padding:0;
+}
+.rebrand-swatch.is-active{border-color:var(--txt);transform:scale(1.14)}
+.rebrand-opts{display:flex;gap:6px}
+.rebrand-opt{
+  flex:1;padding:8px 6px;border-radius:12px;border:1px solid var(--line);
+  background:var(--bg);color:var(--txt2);font-size:11px;font-weight:700;text-align:center;cursor:pointer;
+  transition:border-color .15s ease,color .15s ease,background .15s ease;
+}
+.rebrand-opt.is-active{border-color:var(--interactive);color:var(--interactive);background:var(--interactive-soft)}
+.rebrand-reset{
+  margin-top:16px;width:100%;padding:9px;border-radius:999px;border:1px solid var(--line);
+  background:transparent;color:var(--txt3);font-size:11px;font-weight:700;cursor:pointer;
+  transition:color .15s ease,border-color .15s ease;
+}
+.rebrand-reset:hover{color:var(--txt);border-color:var(--txt2)}
+
+/* radius presets — only applied when the panel sets body[data-radius].
+   v1.3.4 fix: .stat and .skill are cells inside a "seam" grid (1px gap + background
+   fakes dividers, parent alone owns the rounded corners + overflow:hidden). Rounding
+   the cells themselves fights that technique and splits the card apart visually —
+   moved to the .stats / .skills-grid containers instead, matching how the design
+   already works for every other radius value. */
+body[data-radius="sharp"] .glow-project-card,
+body[data-radius="sharp"] .stats,
+body[data-radius="sharp"] .about-card,
+body[data-radius="sharp"] .skills-grid,
+body[data-radius="sharp"] .exp-item,
+body[data-radius="sharp"] .resume-card,
+body[data-radius="sharp"] .cs-side-card,
+body[data-radius="sharp"] .metric,
+body[data-radius="sharp"] .transfer-image{border-radius:8px!important}
+body[data-radius="sharp"] .btn,
+body[data-radius="sharp"] .tag,
+body[data-radius="sharp"] .pill,
+body[data-radius="sharp"] .val{border-radius:8px!important}
+
+body[data-radius="round"] .glow-project-card,
+body[data-radius="round"] .about-card,
+body[data-radius="round"] .skills-grid,
+body[data-radius="round"] .exp-item,
+body[data-radius="round"] .resume-card,
+body[data-radius="round"] .cs-side-card,
+body[data-radius="round"] .metric{border-radius:32px!important}
+body[data-radius="round"] .stats{border-radius:26px!important}
+body[data-radius="round"] .transfer-image{border-radius:48px!important}
+
+/* v1.3.4 fix: pin the big tuned display headlines to the default font stack always.
+   Georgia/serif is proportionally wider and broke word-wrap on clamp()-sized headlines
+   tuned for the default typeface. The typeface picker now only affects body copy,
+   labels, nav, and buttons — which is where a "typeface" choice reads as a real
+   system change anyway, without breaking layout. */
+.hero-copy h1,
+.section-h,
+.about-copy h2,
+.glow-project-card h3,
+.cs-content h1,
+.cs-block h2,
+.resume-top h3,
+.card-front-face .flip-punch-num{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif!important;
+}
+
+@media(max-width:720px){
+  .rebrand-fab{left:14px;bottom:14px;padding:10px 12px 10px 10px}
+  .rebrand-fab-label{display:none}
+  .rebrand-panel{left:14px;right:14px;bottom:70px;width:auto}
+}
+</style>
 </head>
 <body class="access-locked" data-theme="light">
 <script>
@@ -2909,6 +3019,28 @@ try {
 <a class="skip" href="#main">Skip to main content</a>
 <div aria-hidden="true" class="cursor-ring" id="cursorRing"></div><div aria-hidden="true" class="cursor-dot" id="cursorDot"></div><div aria-hidden="true" class="cursor-text" id="cursorText">Open</div>
 <button aria-label="Toggle dark mode" aria-pressed="false" class="theme-fab" data-cursor="Theme" id="themeToggle" type="button"><span aria-hidden="true" class="theme-track"><span class="theme-thumb" id="themeIcon">☾</span></span><span class="theme-label" id="themeLabel">Dark mode</span></button>
+<button aria-expanded="false" aria-haspopup="true" class="rebrand-fab" data-cursor="Rebrand" id="rebrandFab" type="button"><span aria-hidden="true" class="rebrand-fab-icon" id="rebrandFabIcon">◆</span><span class="rebrand-fab-label">Rebrand this site</span></button>
+<div aria-label="Rebrand this site — live theming demo" class="rebrand-panel" id="rebrandPanel" role="dialog">
+<div class="rebrand-panel-head"><div><div class="rebrand-panel-title">Rebrand this site</div><div class="rebrand-panel-sub">Live preview of the token system behind my case studies</div></div><button aria-label="Close" class="rebrand-close" id="rebrandClose" type="button">×</button></div>
+<div class="rebrand-row"><h5>Brand Color</h5><div class="rebrand-swatches" id="rebrandSwatches" role="radiogroup" aria-label="Brand color">
+<button class="rebrand-swatch is-active" data-p="#C0392B" data-p2="#8B1A1A" aria-label="Crimson (original)" aria-pressed="true" style="background:#C0392B" type="button"></button>
+<button class="rebrand-swatch" data-p="#2563EB" data-p2="#1E3A8A" aria-label="Blue" aria-pressed="false" style="background:#2563EB" type="button"></button>
+<button class="rebrand-swatch" data-p="#059669" data-p2="#065F46" aria-label="Green" aria-pressed="false" style="background:#059669" type="button"></button>
+<button class="rebrand-swatch" data-p="#7C3AED" data-p2="#5B21B6" aria-label="Purple" aria-pressed="false" style="background:#7C3AED" type="button"></button>
+<button class="rebrand-swatch" data-p="#D97706" data-p2="#92400E" aria-label="Amber" aria-pressed="false" style="background:#D97706" type="button"></button>
+</div></div>
+<div class="rebrand-row"><h5>Corner Radius</h5><div class="rebrand-opts" id="rebrandRadius" role="radiogroup" aria-label="Corner radius">
+<button class="rebrand-opt" data-radius="sharp" aria-pressed="false" type="button">Sharp</button>
+<button class="rebrand-opt is-active" data-radius="soft" aria-pressed="true" type="button">Soft</button>
+<button class="rebrand-opt" data-radius="round" aria-pressed="false" type="button">Round</button>
+</div></div>
+<div class="rebrand-row"><h5>Typeface</h5><div class="rebrand-opts" id="rebrandFont" role="radiogroup" aria-label="Typeface">
+<button class="rebrand-opt is-active" data-font="modern" aria-pressed="true" type="button">Modern</button>
+<button class="rebrand-opt" data-font="serif" aria-pressed="false" type="button">Serif</button>
+<button class="rebrand-opt" data-font="rounded" aria-pressed="false" type="button">Rounded</button>
+</div></div>
+<button class="rebrand-reset" id="rebrandReset" type="button">Reset to original</button>
+</div>
 <header aria-label="Main navigation" class="nav" role="navigation"><div class="nav-inner"><button aria-label="Ori Solomon — home" class="brand" data-cursor="Home" onclick="showPage('home')"><span aria-hidden="true" class="brand-avatar"><img alt="" src="./assets/portrait/ori-red.png"/></span><span><span class="brand-name">Ori Solomon</span><span aria-hidden="true" class="brand-role"></span></span></button><ul class="nav-links" role="list"><li><button class="nav-link-btn" onclick="goHomeSection('#about')">About</button></li><li class="dropdown"><button aria-expanded="false" aria-haspopup="true" class="dropbtn">Projects</button><div class="dropdown-menu" role="menu"><button onclick="showPage('cs1')" role="menuitem">The Automated Deployment Engine</button><button onclick="showPage('cs2')" role="menuitem">The 3-Tier Architecture</button><button onclick="showPage('cs3')" role="menuitem">Intelligence-Driven Product Design</button></div></li><li><button class="nav-link-btn" onclick="goHomeSection('#skills')">Skills</button></li><li><button class="nav-link-btn" onclick="showPage('resume')">Resume</button></li><li><button class="nav-link-btn" onclick="goHomeSection('#contact')">Contact</button></li></ul><button aria-expanded="false" aria-label="Open menu" class="mobile-menu-btn" data-cursor="Menu" id="mobileMenuBtn" type="button"><span></span><span></span><span></span></button></div></header><div class="mobile-menu" hidden="" id="mobileMenu"><div class="mobile-menu-inner"><button data-cursor="Home" onclick="closeMobileMenu();showPage('home')">Home</button><button data-cursor="About" onclick="closeMobileMenu();goHomeSection('#about')">About</button><div aria-label="Projects" class="mobile-menu-group"><div class="mobile-menu-label">Projects</div><button class="mobile-sub" data-cursor="Project" onclick="closeMobileMenu();showPage('cs1')">01 The Automated Deployment Engine</button><button class="mobile-sub" data-cursor="Project" onclick="closeMobileMenu();showPage('cs2')">02 The 3-Tier Architecture</button><button class="mobile-sub" data-cursor="Project" onclick="closeMobileMenu();showPage('cs3')">03 Intelligence-Driven Product Design</button></div><button data-cursor="Skills" onclick="closeMobileMenu();goHomeSection('#skills')">Skills</button><button data-cursor="Resume" onclick="closeMobileMenu();showPage('resume')">Resume</button><button data-cursor="Contact" onclick="closeMobileMenu();goHomeSection('#contact')">Contact</button></div></div>
 <main id="main">
 <div class="page active" id="page-home">
@@ -2969,7 +3101,7 @@ try {
 </div>
 </div>
 <div aria-hidden="true" class="logo-marquee">
-<div class="logo-track"><a aria-label="BPI website" class="logo-card" href="https://bpi.com.ph" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="BPI logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=bpi.com.ph&amp;sz=128"/></span><span class="logo-name">BPI</span></a><a aria-label="Desjardins website" class="logo-card" href="https://desjardins.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Desjardins logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=desjardins.com&amp;sz=128"/></span><span class="logo-name">Desjardins</span></a><a aria-label="Mashreq website" class="logo-card" href="https://mashreqbank.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Mashreq logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=mashreqbank.com&amp;sz=128"/></span><span class="logo-name">Mashreq</span></a><a aria-label="MyState Bank website" class="logo-card" href="https://mystate.com.au" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="MyState Bank logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=mystate.com.au&amp;sz=128"/></span><span class="logo-name">MyState Bank</span></a><a aria-label="Santander UK website" class="logo-card" href="https://santander.co.uk" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Santander UK logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=santander.co.uk&amp;sz=128"/></span><span class="logo-name">Santander UK</span></a><a aria-label="PNC website" class="logo-card" href="https://pnc.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="PNC logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=pnc.com&amp;sz=128"/></span><span class="logo-name">PNC</span></a><a aria-label="Bank Hapoalim website" class="logo-card" href="https://bankhapoalim.co.il" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Bank Hapoalim logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=bankhapoalim.co.il&amp;sz=128"/></span><span class="logo-name">Bank Hapoalim</span></a><a aria-label="BMO website" class="logo-card" href="https://bmo.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="BMO logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=bmo.com&amp;sz=128"/></span><span class="logo-name">BMO</span></a><a aria-label="Bankwest website" class="logo-card" href="https://bankwest.com.au" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Bankwest logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=bankwest.com.au&amp;sz=128"/></span><span class="logo-name">Bankwest</span></a><a aria-label="Scotiabank website" class="logo-card" href="https://scotiabank.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Scotiabank logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=scotiabank.com&amp;sz=128"/></span><span class="logo-name">Scotiabank</span></a><a aria-label="Citizens Bank website" class="logo-card" href="https://citizensbank.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Citizens Bank logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=citizensbank.com&amp;sz=128"/></span><span class="logo-name">Citizens Bank</span></a><a aria-label="Erste Bank website" class="logo-card" href="https://erstebank.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Erste Bank logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=erstebank.com&amp;sz=128"/></span><span class="logo-name">Erste Bank</span></a><a aria-label="UOB website" class="logo-card" href="https://uobgroup.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="UOB logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=uobgroup.com&amp;sz=128"/></span><span class="logo-name">UOB</span></a><a aria-label="Akbank website" class="logo-card" href="https://akbank.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Akbank logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=akbank.com&amp;sz=128"/></span><span class="logo-name">Akbank</span></a><a aria-label="Bank Leumi website" class="logo-card" href="https://leumi.co.il" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Bank Leumi logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card')?.querySelector('.logo-name')?.style.setProperty('display','inline');" src="https://www.google.com/s2/favicons?domain=leumi.co.il&amp;sz=128"/></span><span class="logo-name">Bank Leumi</span></a><a aria-label="Hyundai Card website" class="logo-card" href="https://www.hyundaicard.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Hyundai Card logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card')?.querySelector('.logo-name')?.style.setProperty('display','inline');" src="https://www.google.com/s2/favicons?domain=hyundaicard.com&amp;sz=128"/></span><span class="logo-name">Hyundai Card</span></a><a aria-label="Mastercard website" class="logo-card" href="https://mastercard.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Mastercard logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=mastercard.com&amp;sz=128"/></span><span class="logo-name">Mastercard</span></a><a aria-label="Truist website" class="logo-card" href="https://truist.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Truist logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=truist.com&amp;sz=128"/></span><span class="logo-name">Truist</span></a><a aria-label="Bradesco website" class="logo-card" href="https://banco.bradesco" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Bradesco logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=banco.bradesco&amp;sz=128"/></span><span class="logo-name">Bradesco</span></a><a aria-label="CIMB website" class="logo-card" href="https://cimb.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="CIMB logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=cimb.com&amp;sz=128"/></span><span class="logo-name">CIMB</span></a><a aria-label="Virgin Money website" class="logo-card" href="https://uk.virginmoney.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Virgin Money logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=uk.virginmoney.com&amp;sz=128"/></span><span class="logo-name">Virgin Money</span></a><a aria-label="BPI website" class="logo-card" href="https://bpi.com.ph" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="BPI logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=bpi.com.ph&amp;sz=128"/></span><span class="logo-name">BPI</span></a><a aria-label="Desjardins website" class="logo-card" href="https://desjardins.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Desjardins logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=desjardins.com&amp;sz=128"/></span><span class="logo-name">Desjardins</span></a><a aria-label="Mashreq website" class="logo-card" href="https://mashreqbank.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Mashreq logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=mashreqbank.com&amp;sz=128"/></span><span class="logo-name">Mashreq</span></a><a aria-label="MyState Bank website" class="logo-card" href="https://mystate.com.au" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="MyState Bank logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=mystate.com.au&amp;sz=128"/></span><span class="logo-name">MyState Bank</span></a><a aria-label="Santander UK website" class="logo-card" href="https://santander.co.uk" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Santander UK logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=santander.co.uk&amp;sz=128"/></span><span class="logo-name">Santander UK</span></a><a aria-label="PNC website" class="logo-card" href="https://pnc.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="PNC logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=pnc.com&amp;sz=128"/></span><span class="logo-name">PNC</span></a><a aria-label="Bank Hapoalim website" class="logo-card" href="https://bankhapoalim.co.il" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Bank Hapoalim logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=bankhapoalim.co.il&amp;sz=128"/></span><span class="logo-name">Bank Hapoalim</span></a><a aria-label="BMO website" class="logo-card" href="https://bmo.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="BMO logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=bmo.com&amp;sz=128"/></span><span class="logo-name">BMO</span></a><a aria-label="Bankwest website" class="logo-card" href="https://bankwest.com.au" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Bankwest logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=bankwest.com.au&amp;sz=128"/></span><span class="logo-name">Bankwest</span></a><a aria-label="Scotiabank website" class="logo-card" href="https://scotiabank.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Scotiabank logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=scotiabank.com&amp;sz=128"/></span><span class="logo-name">Scotiabank</span></a><a aria-label="Citizens Bank website" class="logo-card" href="https://citizensbank.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Citizens Bank logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=citizensbank.com&amp;sz=128"/></span><span class="logo-name">Citizens Bank</span></a><a aria-label="Erste Bank website" class="logo-card" href="https://erstebank.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Erste Bank logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=erstebank.com&amp;sz=128"/></span><span class="logo-name">Erste Bank</span></a><a aria-label="UOB website" class="logo-card" href="https://uobgroup.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="UOB logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=uobgroup.com&amp;sz=128"/></span><span class="logo-name">UOB</span></a><a aria-label="Akbank website" class="logo-card" href="https://akbank.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Akbank logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=akbank.com&amp;sz=128"/></span><span class="logo-name">Akbank</span></a><a aria-label="Bank Leumi website" class="logo-card" href="https://leumi.co.il" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Bank Leumi logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card')?.querySelector('.logo-name')?.style.setProperty('display','inline');" src="https://www.google.com/s2/favicons?domain=leumi.co.il&amp;sz=128"/></span><span class="logo-name">Bank Leumi</span></a><a aria-label="Hyundai Card website" class="logo-card" href="https://www.hyundaicard.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Hyundai Card logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card')?.querySelector('.logo-name')?.style.setProperty('display','inline');" src="https://www.google.com/s2/favicons?domain=hyundaicard.com&amp;sz=128"/></span><span class="logo-name">Hyundai Card</span></a><a aria-label="Mastercard website" class="logo-card" href="https://mastercard.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Mastercard logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=mastercard.com&amp;sz=128"/></span><span class="logo-name">Mastercard</span></a><a aria-label="Truist website" class="logo-card" href="https://truist.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Truist logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=truist.com&amp;sz=128"/></span><span class="logo-name">Truist</span></a><a aria-label="Bradesco website" class="logo-card" href="https://banco.bradesco" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Bradesco logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=banco.bradesco&amp;sz=128"/></span><span class="logo-name">Bradesco</span></a><a aria-label="CIMB website" class="logo-card" href="https://cimb.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="CIMB logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=cimb.com&amp;sz=128"/></span><span class="logo-name">CIMB</span></a><a aria-label="Virgin Money website" class="logo-card" href="https://uk.virginmoney.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Virgin Money logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=uk.virginmoney.com&amp;sz=128"/></span><span class="logo-name">Virgin Money</span></a></div>
+<div class="logo-track"><a aria-label="BPI website" class="logo-card" href="https://bpi.com.ph" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="BPI logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=bpi.com.ph&amp;sz=64"/></span><span class="logo-name">BPI</span></a><a aria-label="Desjardins website" class="logo-card" href="https://desjardins.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Desjardins logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=desjardins.com&amp;sz=64"/></span><span class="logo-name">Desjardins</span></a><a aria-label="Mashreq website" class="logo-card" href="https://mashreqbank.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Mashreq logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=mashreqbank.com&amp;sz=64"/></span><span class="logo-name">Mashreq</span></a><a aria-label="MyState Bank website" class="logo-card" href="https://mystate.com.au" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="MyState Bank logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=mystate.com.au&amp;sz=64"/></span><span class="logo-name">MyState Bank</span></a><a aria-label="Santander UK website" class="logo-card" href="https://santander.co.uk" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Santander UK logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=santander.co.uk&amp;sz=64"/></span><span class="logo-name">Santander UK</span></a><a aria-label="PNC website" class="logo-card" href="https://pnc.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="PNC logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=pnc.com&amp;sz=64"/></span><span class="logo-name">PNC</span></a><a aria-label="Bank Hapoalim website" class="logo-card" href="https://bankhapoalim.co.il" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Bank Hapoalim logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=bankhapoalim.co.il&amp;sz=64"/></span><span class="logo-name">Bank Hapoalim</span></a><a aria-label="BMO website" class="logo-card" href="https://bmo.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="BMO logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=bmo.com&amp;sz=64"/></span><span class="logo-name">BMO</span></a><a aria-label="Bankwest website" class="logo-card" href="https://bankwest.com.au" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Bankwest logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=bankwest.com.au&amp;sz=64"/></span><span class="logo-name">Bankwest</span></a><a aria-label="Scotiabank website" class="logo-card" href="https://scotiabank.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Scotiabank logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=scotiabank.com&amp;sz=64"/></span><span class="logo-name">Scotiabank</span></a><a aria-label="Citizens Bank website" class="logo-card" href="https://citizensbank.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Citizens Bank logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=citizensbank.com&amp;sz=64"/></span><span class="logo-name">Citizens Bank</span></a><a aria-label="Erste Bank website" class="logo-card" href="https://erstebank.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Erste Bank logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=erstebank.com&amp;sz=64"/></span><span class="logo-name">Erste Bank</span></a><a aria-label="UOB website" class="logo-card" href="https://uobgroup.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="UOB logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=uobgroup.com&amp;sz=64"/></span><span class="logo-name">UOB</span></a><a aria-label="Akbank website" class="logo-card" href="https://akbank.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Akbank logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=akbank.com&amp;sz=64"/></span><span class="logo-name">Akbank</span></a><a aria-label="Bank Leumi website" class="logo-card" href="https://leumi.co.il" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Bank Leumi logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card')?.querySelector('.logo-name')?.style.setProperty('display','inline');" src="https://www.google.com/s2/favicons?domain=leumi.co.il&amp;sz=64"/></span><span class="logo-name">Bank Leumi</span></a><a aria-label="Hyundai Card website" class="logo-card" href="https://www.hyundaicard.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Hyundai Card logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card')?.querySelector('.logo-name')?.style.setProperty('display','inline');" src="https://www.google.com/s2/favicons?domain=hyundaicard.com&amp;sz=64"/></span><span class="logo-name">Hyundai Card</span></a><a aria-label="Mastercard website" class="logo-card" href="https://mastercard.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Mastercard logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=mastercard.com&amp;sz=64"/></span><span class="logo-name">Mastercard</span></a><a aria-label="Truist website" class="logo-card" href="https://truist.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Truist logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=truist.com&amp;sz=64"/></span><span class="logo-name">Truist</span></a><a aria-label="Bradesco website" class="logo-card" href="https://banco.bradesco" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Bradesco logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=banco.bradesco&amp;sz=64"/></span><span class="logo-name">Bradesco</span></a><a aria-label="CIMB website" class="logo-card" href="https://cimb.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="CIMB logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=cimb.com&amp;sz=64"/></span><span class="logo-name">CIMB</span></a><a aria-label="Virgin Money website" class="logo-card" href="https://uk.virginmoney.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Virgin Money logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=uk.virginmoney.com&amp;sz=64"/></span><span class="logo-name">Virgin Money</span></a><a aria-label="BPI website" class="logo-card" href="https://bpi.com.ph" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="BPI logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=bpi.com.ph&amp;sz=64"/></span><span class="logo-name">BPI</span></a><a aria-label="Desjardins website" class="logo-card" href="https://desjardins.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Desjardins logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=desjardins.com&amp;sz=64"/></span><span class="logo-name">Desjardins</span></a><a aria-label="Mashreq website" class="logo-card" href="https://mashreqbank.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Mashreq logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=mashreqbank.com&amp;sz=64"/></span><span class="logo-name">Mashreq</span></a><a aria-label="MyState Bank website" class="logo-card" href="https://mystate.com.au" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="MyState Bank logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=mystate.com.au&amp;sz=64"/></span><span class="logo-name">MyState Bank</span></a><a aria-label="Santander UK website" class="logo-card" href="https://santander.co.uk" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Santander UK logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=santander.co.uk&amp;sz=64"/></span><span class="logo-name">Santander UK</span></a><a aria-label="PNC website" class="logo-card" href="https://pnc.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="PNC logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=pnc.com&amp;sz=64"/></span><span class="logo-name">PNC</span></a><a aria-label="Bank Hapoalim website" class="logo-card" href="https://bankhapoalim.co.il" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Bank Hapoalim logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=bankhapoalim.co.il&amp;sz=64"/></span><span class="logo-name">Bank Hapoalim</span></a><a aria-label="BMO website" class="logo-card" href="https://bmo.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="BMO logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=bmo.com&amp;sz=64"/></span><span class="logo-name">BMO</span></a><a aria-label="Bankwest website" class="logo-card" href="https://bankwest.com.au" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Bankwest logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=bankwest.com.au&amp;sz=64"/></span><span class="logo-name">Bankwest</span></a><a aria-label="Scotiabank website" class="logo-card" href="https://scotiabank.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Scotiabank logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=scotiabank.com&amp;sz=64"/></span><span class="logo-name">Scotiabank</span></a><a aria-label="Citizens Bank website" class="logo-card" href="https://citizensbank.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Citizens Bank logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=citizensbank.com&amp;sz=64"/></span><span class="logo-name">Citizens Bank</span></a><a aria-label="Erste Bank website" class="logo-card" href="https://erstebank.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Erste Bank logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=erstebank.com&amp;sz=64"/></span><span class="logo-name">Erste Bank</span></a><a aria-label="UOB website" class="logo-card" href="https://uobgroup.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="UOB logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=uobgroup.com&amp;sz=64"/></span><span class="logo-name">UOB</span></a><a aria-label="Akbank website" class="logo-card" href="https://akbank.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Akbank logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=akbank.com&amp;sz=64"/></span><span class="logo-name">Akbank</span></a><a aria-label="Bank Leumi website" class="logo-card" href="https://leumi.co.il" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Bank Leumi logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card')?.querySelector('.logo-name')?.style.setProperty('display','inline');" src="https://www.google.com/s2/favicons?domain=leumi.co.il&amp;sz=64"/></span><span class="logo-name">Bank Leumi</span></a><a aria-label="Hyundai Card website" class="logo-card" href="https://www.hyundaicard.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Hyundai Card logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card')?.querySelector('.logo-name')?.style.setProperty('display','inline');" src="https://www.google.com/s2/favicons?domain=hyundaicard.com&amp;sz=64"/></span><span class="logo-name">Hyundai Card</span></a><a aria-label="Mastercard website" class="logo-card" href="https://mastercard.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Mastercard logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=mastercard.com&amp;sz=64"/></span><span class="logo-name">Mastercard</span></a><a aria-label="Truist website" class="logo-card" href="https://truist.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Truist logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=truist.com&amp;sz=64"/></span><span class="logo-name">Truist</span></a><a aria-label="Bradesco website" class="logo-card" href="https://banco.bradesco" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Bradesco logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=banco.bradesco&amp;sz=64"/></span><span class="logo-name">Bradesco</span></a><a aria-label="CIMB website" class="logo-card" href="https://cimb.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="CIMB logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=cimb.com&amp;sz=64"/></span><span class="logo-name">CIMB</span></a><a aria-label="Virgin Money website" class="logo-card" href="https://uk.virginmoney.com" rel="noopener noreferrer" target="_blank"><span class="logo-mark"><img alt="Virgin Money logo" loading="lazy" onerror="this.style.display='none';this.closest('.logo-card').querySelector('.logo-name').style.display='inline';" src="https://www.google.com/s2/favicons?domain=uk.virginmoney.com&amp;sz=64"/></span><span class="logo-name">Virgin Money</span></a></div>
 </div>
 </section>
 <section class="section" id="skills"><div class="container"><span class="label">Capabilities</span><h2 class="section-h">Skills &amp; Expertise</h2><p class="sub">A modular, scalable approach to design, from pixels to platforms.</p><div class="skills-grid"><div class="skill"><small>DS</small><h4>Design Systems</h4><p>Scalable component libraries, governance models, and adoption frameworks.</p></div><div class="skill"><small>TE</small><h4>Token Engineering</h4><p>3-tier token architecture for multi-brand, multi-platform deployment.</p></div><div class="skill"><small>PS</small><h4>Product Strategy</h4><p>Business-aligned UX decisions, roadmap contribution, measurable outcomes.</p></div><div class="skill"><small>A11Y</small><h4>WCAG 2.2 / Accessibility</h4><p>AA-compliant design, contrast systems, and inclusive interaction patterns.</p></div><div class="skill"><small>CT</small><h4>Custom Tooling</h4><p>Configuration engines, system logic, and automated delivery workflows.</p></div><div class="skill"><small>AI</small><h4>Claude &amp; Agentic AI</h4><p>Claude, Claude Code, and MCP-connected agents drive my design-to-dev workflows — plus ChatGPT, Gemini, NotebookLM, and Figma Make.</p></div><div class="skill"><small>ER</small><h4>Evidence-Based Research</h4><p>Behavioral analysis, usability testing, and data-driven iteration cycles.</p></div><div class="skill"><small>SS</small><h4>System Scalability</h4><p>Architecture that grows with the product, not against it.</p></div><div class="skill"><small>XP</small><h4>Cross-Platform Architecture</h4><p>Unified design logic across web, mobile, and white-label platforms.</p></div></div><div class="vals"><span class="val">Strategic thinking</span><span class="val">Collaborative execution</span><span class="val">Data-driven decisions</span></div></div></section>
@@ -3026,6 +3158,9 @@ try {
 <div class="uc-widget-grid">
 <div class="cs-img-block"><div class="cs-img-card uc-widget-frame"><img alt="Personetics Widget color palette screen showing primary and secondary color token configuration with reference examples." class="" loading="lazy" src="./assets/cs1/solution-colors.png"/></div><div class="cs-img-below"><span class="cs-img-label">Color Token Mapping</span><span class="cs-nda-pill">⚿ NDA-Protected Visual</span></div></div>
 <div class="cs-img-block"><div class="cs-img-card uc-widget-frame"><img alt="Personetics Widget typography screen showing story-title font controls and live reference preview." class="" loading="lazy" src="./assets/cs1/solution-typography.png"/></div><div class="cs-img-below"><span class="cs-img-label">Typography Variables</span><span class="cs-nda-pill">⚿ NDA-Protected Visual</span></div></div>
+</div>
+<button class="cs-more-toggle pill" type="button" onclick="toggleMoreShots(this)" aria-expanded="false">+2 more configuration screens</button>
+<div class="uc-widget-grid cs-more-shots" hidden>
 <div class="cs-img-block"><div class="cs-img-card uc-widget-frame"><img alt="Personetics Widget formats screen showing date and language rules with a live mobile reference preview." class="" loading="lazy" src="./assets/cs1/process.png"/></div><div class="cs-img-below"><span class="cs-img-label">Format Localization</span><span class="cs-nda-pill">⚿ NDA-Protected Visual</span></div></div>
 <div class="cs-img-block"><div class="cs-img-card uc-widget-frame"><img alt="Personetics Widget assets screen showing icon replacement and upload controls for category assets." class="" loading="lazy" src="./assets/cs1/solution-assets.png"/></div><div class="cs-img-below"><span class="cs-img-label">Asset Replacement</span><span class="cs-nda-pill">⚿ NDA-Protected Visual</span></div></div>
 </div>
@@ -3039,7 +3174,8 @@ try {
 <div class="cs-img-card uc-widget-frame"><img alt="Personetics Widget border radius screen showing configurable radius values and highlighted usage in the reference preview." class="" loading="lazy" src="./assets/cs1/solution-borders.png"/></div>
 <div class="cs-img-below"><span class="cs-img-label">Component Rule Injection</span><span class="cs-nda-pill">⚿ NDA-Protected Visual</span></div>
 </div></div>
-<div class="uc-widget-strip">
+<button class="cs-more-toggle pill" type="button" onclick="toggleMoreShots(this)" aria-expanded="false">+3 more configuration screens</button>
+<div class="uc-widget-strip cs-more-shots" hidden>
 <div class="cs-img-block"><div class="cs-img-card uc-widget-frame"><img alt="Personetics Widget shadow configuration screen showing shadow variables for partner theming." class="" loading="lazy" src="./assets/cs1/solution-shadows.png"/></div><div class="cs-img-below"><span class="cs-img-label">Shadow Rules</span><span class="cs-nda-pill">⚿ NDA-Protected Visual</span></div></div>
 <div class="cs-img-block"><div class="cs-img-card uc-widget-frame"><img alt="Personetics Widget motion screen showing speed and motion allocation settings." class="" loading="lazy" src="./assets/cs1/solution-motion.png"/></div><div class="cs-img-below"><span class="cs-img-label">Motion Settings</span><span class="cs-nda-pill">⚿ NDA-Protected Visual</span></div></div>
 <div class="cs-img-block"><div class="cs-img-card uc-widget-frame"><img alt="Personetics Widget date-format screen showing platform-specific date examples and reference preview." class="" loading="lazy" src="./assets/cs1/solution-formats.png"/></div><div class="cs-img-below"><span class="cs-img-label">Platform Formatting</span><span class="cs-nda-pill">⚿ NDA-Protected Visual</span></div></div>
@@ -3309,7 +3445,7 @@ function triggerMobileHeroWow(){
   card.classList.remove('mobile-wow');
   void card.offsetWidth;
   card.classList.add('mobile-wow');
-  setTimeout(()=>card.classList.remove('mobile-wow'),1300);
+  setTimeout(()=>card.classList.remove('mobile-wow'),750);
 }
 if(card){
   if('IntersectionObserver' in window){
@@ -3573,6 +3709,133 @@ window.addEventListener('load',updateScrollProgress);
       }
     });
   }
+})();
+</script>
+<script>
+document.querySelectorAll('.cs-more-toggle').forEach(function(btn){
+  btn.dataset.moreLabel = btn.textContent;
+  btn.dataset.lessLabel = 'Show fewer screens';
+});
+function toggleMoreShots(btn){
+  const wrap = btn.nextElementSibling;
+  if(!wrap) return;
+  const expanded = btn.getAttribute('aria-expanded') === 'true';
+  if(expanded){
+    wrap.setAttribute('hidden','');
+    btn.setAttribute('aria-expanded','false');
+    btn.textContent = btn.dataset.moreLabel;
+  } else {
+    wrap.removeAttribute('hidden');
+    btn.setAttribute('aria-expanded','true');
+    btn.textContent = btn.dataset.lessLabel;
+  }
+}
+</script>
+<script>
+(function(){
+  const FONT_STACKS = {
+    modern: null, // unset -> falls back to the default system stack via var()
+    serif: "Georgia, 'Times New Roman', serif",
+    rounded: "ui-rounded, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+  };
+  const fab = document.getElementById('rebrandFab');
+  const panel = document.getElementById('rebrandPanel');
+  const closeBtn = document.getElementById('rebrandClose');
+  const resetBtn = document.getElementById('rebrandReset');
+  const fabIcon = document.getElementById('rebrandFabIcon');
+  const swatches = [...document.querySelectorAll('.rebrand-swatch')];
+  const radiusOpts = [...document.querySelectorAll('#rebrandRadius .rebrand-opt')];
+  const fontOpts = [...document.querySelectorAll('#rebrandFont .rebrand-opt')];
+  if(!fab || !panel) return;
+
+  function openPanel(){
+    panel.classList.add('is-open');
+    fab.setAttribute('aria-expanded','true');
+  }
+  function closePanel(){
+    panel.classList.remove('is-open');
+    fab.setAttribute('aria-expanded','false');
+  }
+  fab.addEventListener('click', ()=> panel.classList.contains('is-open') ? closePanel() : openPanel());
+  closeBtn.addEventListener('click', closePanel);
+  document.addEventListener('keydown', e=>{ if(e.key === 'Escape') closePanel(); });
+  document.addEventListener('click', e=>{
+    if(panel.classList.contains('is-open') && !panel.contains(e.target) && !fab.contains(e.target)) closePanel();
+  });
+
+  function setActive(list, matchFn){
+    list.forEach(el=>{
+      const match = matchFn(el);
+      el.classList.toggle('is-active', match);
+      el.setAttribute('aria-pressed', match ? 'true' : 'false');
+    });
+  }
+
+  function applyColor(p, p2){
+    if(p){
+      document.body.style.setProperty('--p', p);
+      document.body.style.setProperty('--p2', p2);
+    } else {
+      document.body.style.removeProperty('--p');
+      document.body.style.removeProperty('--p2');
+    }
+    if(fabIcon) fabIcon.style.background = p || '';
+    setActive(swatches, el => (el.dataset.p||'') === (p||'#C0392B') || (!p && el.dataset.p === '#C0392B'));
+  }
+  function applyRadius(val){
+    if(val && val !== 'soft') document.body.setAttribute('data-radius', val);
+    else document.body.removeAttribute('data-radius');
+    setActive(radiusOpts, el => el.dataset.radius === (val || 'soft'));
+  }
+  function applyFont(val){
+    const stack = FONT_STACKS[val];
+    if(stack) document.body.style.setProperty('--font-choice', stack);
+    else document.body.style.removeProperty('--font-choice');
+    setActive(fontOpts, el => el.dataset.font === (val || 'modern'));
+  }
+
+  function save(state){
+    try{ localStorage.setItem('ori-rebrand', JSON.stringify(state)); }catch(e){}
+  }
+  function load(){
+    try{ return JSON.parse(localStorage.getItem('ori-rebrand') || 'null'); }catch(e){ return null; }
+  }
+
+  let state = load() || { p:null, p2:null, radius:'soft', font:'modern' };
+  applyColor(state.p, state.p2);
+  applyRadius(state.radius);
+  applyFont(state.font);
+
+  swatches.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const isOriginal = btn.dataset.p === '#C0392B' && btn === swatches[0];
+      state.p = isOriginal ? null : btn.dataset.p;
+      state.p2 = isOriginal ? null : btn.dataset.p2;
+      applyColor(state.p, state.p2);
+      save(state);
+    });
+  });
+  radiusOpts.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      state.radius = btn.dataset.radius;
+      applyRadius(state.radius);
+      save(state);
+    });
+  });
+  fontOpts.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      state.font = btn.dataset.font;
+      applyFont(state.font);
+      save(state);
+    });
+  });
+  resetBtn.addEventListener('click', ()=>{
+    state = { p:null, p2:null, radius:'soft', font:'modern' };
+    applyColor(null, null);
+    applyRadius('soft');
+    applyFont('modern');
+    save(state);
+  });
 })();
 </script>
 </body>
