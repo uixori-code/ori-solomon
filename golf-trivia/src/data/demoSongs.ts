@@ -1,4 +1,4 @@
-import { SAMPLE_VIDEO_ID } from '../config';
+import { LEVELS, SAMPLE_VIDEO_ID } from '../config';
 import type { Level, Song } from '../types';
 
 // Phase 1 test data: made-up names and view counts, roughly inside each level's range
@@ -15,7 +15,7 @@ const VIEWS: Record<Level, number[]> = {
 
 const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
 
-export const DEMO_SONGS: Song[] = (Object.keys(VIEWS) as unknown as Level[]).flatMap((level) =>
+export const DEMO_SONGS: Song[] = LEVELS.flatMap((level) =>
   VIEWS[level].map((exactViews, i) => ({
     id: `test-${level}${LETTERS[i].toLowerCase()}`,
     songName: `Test Song ${level}${LETTERS[i]}`,

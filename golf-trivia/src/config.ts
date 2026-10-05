@@ -35,6 +35,7 @@ export const SONG_TIME_LIMIT_SEC = 90;
 
 export const MIN_TEAMS = 2;
 export const MAX_TEAMS = 3;
+export const DEFAULT_TEAM_NAMES = ['Team A', 'Team B', 'Team C'];
 export const MIN_ROUNDS = 1;
 export const MAX_ROUNDS = 15;
 export const DEFAULT_ROUNDS = 5;

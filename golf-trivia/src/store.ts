@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import {
   DEFAULT_ROUNDS,
+  DEFAULT_TEAM_NAMES,
   MAX_GUESSES,
   MAX_ROUNDS,
   MAX_TEAMS,
@@ -61,8 +62,6 @@ export interface GameActions {
 
 export type GameStore = GameState & GameActions;
 
-const DEFAULT_NAMES = ['Team A', 'Team B', 'Team C'];
-
 export function drawSong(
   songs: readonly Song[],
   playedKeys: readonly string[],
@@ -77,7 +76,7 @@ const initialState = (): GameState => ({
   phase: 'setup',
   songs: [],
   playedKeys: [],
-  setup: { teamNames: DEFAULT_NAMES.slice(0, MIN_TEAMS), maxRounds: DEFAULT_ROUNDS },
+  setup: { teamNames: DEFAULT_TEAM_NAMES.slice(0, MIN_TEAMS), maxRounds: DEFAULT_ROUNDS },
   teams: [],
   currentTeamIndex: 0,
   round: 1,
@@ -145,7 +144,7 @@ export function createGameStore(rng: () => number = Math.random) {
       startGame: (config) => {
         const names = config.teamNames
           .slice(0, MAX_TEAMS)
-          .map((name, i) => name.trim() || DEFAULT_NAMES[i]);
+          .map((name, i) => name.trim() || DEFAULT_TEAM_NAMES[i]);
         if (names.length < MIN_TEAMS) {
           throw new RangeError(`A game needs at least ${MIN_TEAMS} teams`);
         }
