@@ -255,15 +255,17 @@ describe('validateSongs', () => {
   it('passes clean data', () => {
     expect(validateSongs(POOL)).toEqual([]);
   });
-  it('flags a song at or above the 10B penalty, fractional views, bad embed and duplicates', () => {
+  it('flags a song at or above the 10B penalty, fractional views and a bad embed link', () => {
     const issues = validateSongs([
       song(1, 10_500_000_000, 'Too Big'),
       song(1, 1.5, 'Fractional'),
       { ...song(2, 5, 'No Embed'), embedUrl: 'https://www.youtube.com/results?search_query=x' },
-      song(3, 5, 'Dupe'),
-      song(3, 6, ' dupe '),
     ]);
-    expect(issues).toHaveLength(4);
+    expect(issues).toHaveLength(3);
     expect(issues.join('\n')).toMatch(/Too Big.*not below/);
+  });
+
+  it('does not treat the same song in two categories as a problem (the game never repeats a name)', () => {
+    expect(validateSongs([song(1, 5, 'Waka Waka'), song(2, 6, ' waka  waka ')])).toEqual([]);
   });
 });

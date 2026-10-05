@@ -19,17 +19,18 @@ export default function App() {
   const embedUrl = useGameStore((s) => s.active?.song.embedUrl ?? null);
   const songId = useGameStore((s) => s.active?.song.id ?? null);
   const [issues, setIssues] = useState<string[]>([]);
-  const [loadError, setLoadError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
 
   // Load the song list, and start the YouTube API loading in the background.
   useEffect(() => {
     player.init();
     loadSongs()
-      .then((songs) => {
-        setSongs(songs);
-        setIssues(validateSongs(songs));
+      .then(({ songs, isTest, notice: loadNotice, problems }) => {
+        setSongs(songs, isTest);
+        setNotice(loadNotice);
+        setIssues([...problems, ...validateSongs(songs)]);
       })
-      .catch((err: unknown) => setLoadError(err instanceof Error ? err.message : String(err)));
+      .catch((err: unknown) => setNotice(`Couldn't load the songs: ${err instanceof Error ? err.message : String(err)}`));
   }, [setSongs]);
 
   // Cue the hidden player as soon as a song is drawn.
@@ -49,14 +50,14 @@ export default function App() {
     <div className="app">
       <Header />
 
-      {loadError && (
-        <p className="notice notice-error" role="alert">
-          Couldn't load the songs: {loadError}
+      {notice && (
+        <p className="notice" role="status">
+          {notice}
         </p>
       )}
       {issues.length > 0 && (
         <div className="notice notice-error" role="alert">
-          <b>Song data problems ({issues.length}):</b>
+          <b>Songs left out because of data problems ({issues.length}):</b>
           <ul>
             {issues.slice(0, 4).map((issue) => (
               <li key={issue}>{issue}</li>

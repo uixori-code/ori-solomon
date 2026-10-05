@@ -1,4 +1,3 @@
-import { IS_TEST_DATA } from '../data/songSource';
 import { useGameStore } from '../store';
 import { TestBadge } from './TestBadge';
 
@@ -6,6 +5,7 @@ export function Header() {
   const phase = useGameStore((s) => s.phase);
   const round = useGameStore((s) => s.round);
   const maxRounds = useGameStore((s) => s.maxRounds);
+  const isTestData = useGameStore((s) => s.isTestData);
   const inGame = phase === 'pickLevel' || phase === 'listening' || phase === 'revealed';
 
   return (
@@ -23,7 +23,7 @@ export function Header() {
       )}
       {phase === 'gameOver' && <div className="round-pill">Final results</div>}
       <div className="header-right">
-        {IS_TEST_DATA && <TestBadge />}
+        {isTestData && <TestBadge />}
         <span className="rule-hint">Lowest views wins</span>
       </div>
     </header>

@@ -15,6 +15,10 @@ export interface Song {
   /** Whole number of views. Never rounded. */
   exactViews: number;
   embedUrl: string;
+  /** e.g. "Rock_Metal", "Pop". Absent on the built-in test songs. */
+  category?: string;
+  /** "Foreign" or "Israeli". Absent on the built-in test songs. */
+  region?: string;
 }
 
 export interface ActiveSong {

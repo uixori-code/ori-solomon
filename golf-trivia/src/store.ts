@@ -19,6 +19,10 @@ export type Phase = 'setup' | 'pickLevel' | 'listening' | 'revealed' | 'gameOver
 export interface SetupConfig {
   teamNames: string[];
   maxRounds: number;
+  /** Only play these categories (e.g. "Rock_Metal"). Empty or missing = all. */
+  categories?: string[];
+  /** "Foreign", "Israeli", or "all" / missing for both. */
+  region?: string;
 }
 
 /** What handleGuess did: ignored (stray click), wrong (song continues), solved, or failed (3rd wrong). */
@@ -26,6 +30,11 @@ export type GuessResult = 'ignored' | 'wrong' | 'solved' | 'failed';
 
 export interface GameState {
   phase: Phase;
+  /** Every song that was loaded. */
+  allSongs: Song[];
+  /** True while the built-in test songs are in use. */
+  isTestData: boolean;
+  /** The songs this game draws from: allSongs narrowed by the setup's genre and region. */
   songs: Song[];
   /** Normalised names of songs already drawn this game, so none repeats. */
   playedKeys: string[];
@@ -44,8 +53,10 @@ export interface GameState {
 }
 
 export interface GameActions {
-  setSongs: (songs: Song[]) => void;
+  setSongs: (songs: Song[], isTest?: boolean) => void;
   startGame: (config: SetupConfig) => void;
+  /** Ends the game early (used when no level has a song left). */
+  endGame: () => void;
   /** Draws a random unplayed song at this level. Returns false if none is left. */
   selectLevel: (level: Level) => boolean;
   /** Records that a clip of this length was played (the longest one sets the surcharge). */
@@ -72,8 +83,19 @@ export function drawSong(
   return pool.length ? pool[Math.floor(rng() * pool.length)] : null;
 }
 
+/** allSongs narrowed to the chosen categories and region. */
+export function filterSongs(songs: readonly Song[], config: Pick<SetupConfig, 'categories' | 'region'>): Song[] {
+  const categories = config.categories?.length ? config.categories : null;
+  const region = config.region && config.region !== 'all' ? config.region : null;
+  return songs.filter(
+    (song) => (!categories || (song.category !== undefined && categories.includes(song.category))) && (!region || song.region === region),
+  );
+}
+
 const initialState = (): GameState => ({
   phase: 'setup',
+  allSongs: [],
+  isTestData: false,
   songs: [],
   playedKeys: [],
   setup: { teamNames: DEFAULT_TEAM_NAMES.slice(0, MIN_TEAMS), maxRounds: DEFAULT_ROUNDS },
@@ -139,7 +161,12 @@ export function createGameStore(rng: () => number = Math.random) {
     return {
       ...initialState(),
 
-      setSongs: (songs) => set({ songs }),
+      setSongs: (songs, isTest = false) => set({ allSongs: songs, songs, isTestData: isTest }),
+
+      endGame: () => {
+        if (get().phase !== 'pickLevel') return;
+        set({ phase: 'gameOver', active: null, scoreFlash: null });
+      },
 
       startGame: (config) => {
         const names = config.teamNames
@@ -151,7 +178,8 @@ export function createGameStore(rng: () => number = Math.random) {
         const maxRounds = Math.min(MAX_ROUNDS, Math.max(MIN_ROUNDS, Math.round(config.maxRounds)));
         set({
           phase: 'pickLevel',
-          setup: { teamNames: names, maxRounds },
+          songs: filterSongs(get().allSongs, config),
+          setup: { teamNames: names, maxRounds, categories: config.categories, region: config.region },
           teams: names.map((name, i) => ({ id: i + 1, name, totalViewsScore: 0 })),
           currentTeamIndex: 0,
           round: 1,

@@ -16,6 +16,7 @@ const LEVEL_INFO: Record<Level, { name: string; views: string }> = {
 export function LevelPicker() {
   const team = useGameStore(selectCurrentTeam);
   const selectLevel = useGameStore((s) => s.selectLevel);
+  const endGame = useGameStore((s) => s.endGame);
   const remaining = useGameStore(useShallow((s) => LEVELS.map((level) => selectRemainingAtLevel(s, level))));
   const [message, setMessage] = useState<string | null>(null);
 
@@ -62,6 +63,14 @@ export function LevelPicker() {
         <p className="notice" role="status">
           {message}
         </p>
+      )}
+      {remaining.every((n) => n === 0) && (
+        <div className="notice" role="status">
+          No songs are left at any level.{' '}
+          <button type="button" className="link-btn inline" onClick={endGame}>
+            End the game and show the results
+          </button>
+        </div>
       )}
     </div>
   );

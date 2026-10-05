@@ -2,7 +2,7 @@
 
 Music trivia for 2–3 teams. Teams hear a hidden song in growing clips and name it; the team with the **lowest total YouTube views** wins.
 
-**Status: Phase 1.** All screens, the scoring logic and the hidden player work. The songs are made-up test songs and every one plays the same sample video. The Supabase / YouTube-API song pipeline is Phase 2.
+Without any setup the game runs on 30 made-up **test songs** that all play one sample video. With Supabase configured (see "Real songs" below) it plays your sheet's songs instead.
 
 ## Run it on your Mac
 
@@ -31,12 +31,42 @@ Open the URL it prints (http://localhost:5173) in Chrome or Safari. Don't open `
 
 The host judges each guess with the ✓ Correct / ✗ Wrong buttons.
 
+## Real songs (Supabase + YouTube), Rock & Metal first, then Pop
+
+The sheet only has YouTube *search* links, which can't be embedded, so each song needs a video found for it. Three steps, all run from the `golf-trivia` folder:
+
+**1. Create the table.** Supabase → SQL Editor → paste `scripts/schema.sql` → Run. (Safe to re-run; it keeps rows you already have.)
+
+**2. Fill in `.env`.** `cp .env.example .env`, then add your Supabase URL and keys and your YouTube API key (the file explains where each one comes from).
+
+**3. Import the songs.** In Google Sheets: File → Download → Microsoft Excel (.xlsx), and save it as `songs.xlsx` here.
+
+```sh
+node scripts/import-sheet.mjs songs.xlsx            # dry run: prints a report, writes nothing
+node scripts/import-sheet.mjs songs.xlsx --upload   # writes the Rock_Metal then Pop songs to Supabase
+```
+
+Read the dry-run report first. It lists songs it skipped (any song at or above 10,000,000,000 views is rejected), duplicates it dropped, and levels whose view ranges overlap (a sign a level is mislabelled in the sheet; reported, never changed). Use `--only=Rock_Metal,Pop,Hip_Hop_Rap` or `--all` for more categories.
+
+**4. Find a video for each song.**
+
+```sh
+node scripts/fill-embed-urls.mjs --limit=95
+```
+
+Rock & Metal songs are searched first, then Pop. YouTube's free quota allows about **100 searches a day**, so run this once a day until it reports nothing left; it skips songs that already have a video and stops by itself if the quota runs out. `--category=Pop` limits it to one genre. Songs that got "no result" are retried on the next run.
+
+**5. Play.** `npm run dev` (restart it after editing `.env`). Only songs that already have a video are playable; the setup screen lets you choose genres and Foreign / Israeli, and shows how many songs each level has.
+
+If Supabase can't be reached, the game says so and falls back to the test songs.
+
 ## Layout
 
 - `src/scoring.ts`, `src/winner.ts`, `src/format.ts`: pure logic (`calculateGuessScore`, `determineWinner`, `formatViews`).
 - `src/store.ts`: Zustand store, including `handleGuess(teamId, isCorrect, songExactViews)`.
 - `src/player/`: the hidden YouTube player (and the simulated one).
-- `src/data/songSource.ts`: the single place songs come from. Phase 2 swaps this for the Supabase loader.
+- `src/data/songSource.ts`: where songs come from (Supabase, or the test songs).
+- `scripts/`: `schema.sql`, `import-sheet.mjs`, `fill-embed-urls.mjs`.
 
 ## Checks
 
