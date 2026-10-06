@@ -54,7 +54,9 @@ Read the dry-run report first. It lists songs it skipped (any song at or above 1
 node scripts/fill-embed-urls.mjs --limit=95
 ```
 
-Rock & Metal songs are searched first, then Pop. YouTube's free quota allows about **100 searches a day**, so run this once a day until it reports nothing left; it skips songs that already have a video and stops by itself if the quota runs out. `--category=Pop` limits it to one genre. Songs that got "no result" are retried on the next run.
+Rock & Metal songs are searched first, then Pop. Inside a genre it takes one song from each Foreign / Israeli × Level 1–5 group in turn, so even after the first day you have songs at every level, not just Level 1. YouTube's free quota allows about **100 searches a day** (each search costs 100 of your 10,000 daily units), so run this once a day until it reports nothing left; it skips songs that already have a video and stops by itself if the quota runs out. `--category=Pop` limits it to one genre. Songs that got "no result" are retried on the next run.
+
+Already know the right video for a song, or a match came out wrong? Paste `https://www.youtube.com/embed/<videoId>` into that row's `embed_url` in Supabase. The script never overwrites a filled row, and it costs no quota. Please don't create extra Google Cloud projects or keys to get more quota: that breaks YouTube's API terms.
 
 **5. Play.** `npm run dev` (restart it after editing `.env`). Only songs that already have a video are playable; the setup screen lets you choose genres and Foreign / Israeli, and shows how many songs each level has.
 

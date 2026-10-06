@@ -5,6 +5,7 @@ import {
   cellText,
   dedupeRows,
   extractRows,
+  fillOrder,
   findHeader,
   parseViews,
   selectAndOrder,
@@ -127,6 +128,64 @@ describe('dedupeRows / selectAndOrder', () => {
     ];
     expect(selectAndOrder(all).map((r) => r.artist_and_song)).toEqual(['C', 'D', 'B', 'A']);
     expect(selectAndOrder(all, ['rock_metal', 'POP']).map((r) => r.artist_and_song)).toEqual(['C', 'D', 'B']);
+  });
+});
+
+describe('fillOrder (which songs get a YouTube search first)', () => {
+  // Like the real tabs: rows sorted by level, so plain id order would search every Level 1 song first.
+  let nextId = 1;
+  const song = (category, region, level) => ({ id: nextId++, category, region, level, artist_and_song: `${category} ${region} L${level} #${nextId}` });
+  const sheetOrder = (category, perBucket) =>
+    ['Foreign', 'Israeli'].flatMap((region) => [1, 2, 3, 4, 5].flatMap((level) => Array.from({ length: perBucket }, () => song(category, region, level))));
+
+  it('puts one song from every region+level bucket before any bucket gets a second song', () => {
+    const rows = sheetOrder('Rock_Metal', 4); // 40 rows, plain id order would start with 4 x Foreign L1
+    const first10 = fillOrder(rows).slice(0, 10);
+    expect(first10.map((r) => `${r.region[0]}${r.level}`)).toEqual(['F1', 'F2', 'F3', 'F4', 'F5', 'I1', 'I2', 'I3', 'I4', 'I5']);
+    const first20 = fillOrder(rows).slice(0, 20);
+    expect(new Set(first20.map((r) => `${r.region}${r.level}`)).size).toBe(10);
+  });
+
+  it('a 10-search run covers all 5 levels, not 10 Level 1 songs', () => {
+    const rows = sheetOrder('Rock_Metal', 4).filter((r) => r.region === 'Foreign');
+    const levels = fillOrder(rows).slice(0, 10).map((r) => r.level);
+    expect(levels.sort()).toEqual([1, 1, 2, 2, 3, 3, 4, 4, 5, 5]);
+  });
+
+  it('keeps Rock_Metal before Pop before everything else', () => {
+    const rows = [...sheetOrder('Hip_Hop_Rap', 1), ...sheetOrder('Pop', 1), ...sheetOrder('Rock_Metal', 1)];
+    const cats = fillOrder(rows).map((r) => r.category);
+    expect(cats.slice(0, 10).every((c) => c === 'Rock_Metal')).toBe(true);
+    expect(cats.slice(10, 20).every((c) => c === 'Pop')).toBe(true);
+    expect(cats.slice(20).every((c) => c === 'Hip_Hop_Rap')).toBe(true);
+  });
+
+  it('puts songs with no usable level or region last in their category, in id order', () => {
+    const rows = [
+      { id: 1, category: 'Pop', region: 'Foreign', level: null },
+      { id: 2, category: 'Pop', region: '', level: 2 },
+      { id: 3, category: 'Pop', region: 'Foreign', level: 1 },
+      { id: 4, category: 'Rock_Metal', region: 'Foreign', level: 3 },
+    ];
+    expect(fillOrder(rows).map((r) => r.id)).toEqual([4, 3, 1, 2]);
+  });
+
+  it('never drops, repeats or mutates', () => {
+    const rows = sheetOrder('Pop', 3).concat(sheetOrder('Rock_Metal', 2));
+    const copy = rows.map((r) => ({ ...r }));
+    const ordered = fillOrder(rows);
+    expect(rows).toEqual(copy);
+    expect(ordered).toHaveLength(rows.length);
+    expect(new Set(ordered.map((r) => r.id)).size).toBe(rows.length);
+  });
+
+  it('is stable: within a bucket the lower id goes first, and a custom id column works', () => {
+    const rows = [
+      { songId: 20, category: 'Pop', region: 'Foreign', level: 1 },
+      { songId: 10, category: 'Pop', region: 'Foreign', level: 1 },
+    ];
+    expect(fillOrder(rows, 'songId').map((r) => r.songId)).toEqual([10, 20]);
+    expect(fillOrder([])).toEqual([]);
   });
 });
 

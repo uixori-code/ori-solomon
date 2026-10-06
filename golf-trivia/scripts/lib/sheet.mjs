@@ -135,6 +135,60 @@ export function selectAndOrder(rows, only = null) {
     .map(({ row }) => row);
 }
 
+/**
+ * The order in which songs without a video are searched. Categories keep CATEGORY_ORDER (Rock_Metal, Pop, then
+ * the rest A-Z). Inside a category it takes one song from each region+level bucket in turn (Foreign L1..L5,
+ * Israeli L1..L5, then the second song of each bucket, and so on), so a run cut short by the daily quota
+ * leaves a playable mix of levels instead of only the first level in the sheet. Songs with no usable level or
+ * region come last in their category. Returns a new array and never drops or repeats a row.
+ */
+export function fillOrder(rows, idKey = 'id') {
+  const indexed = rows.map((row, i) => ({ row, i }));
+  const byId = (a, b) => {
+    const x = Number(a.row[idKey]);
+    const y = Number(b.row[idKey]);
+    if (Number.isFinite(x) && Number.isFinite(y) && x !== y) return x - y;
+    return a.i - b.i;
+  };
+
+  const groups = new Map();
+  for (const item of indexed) {
+    const name = String(item.row.category ?? '');
+    const key = name.toLowerCase();
+    if (!groups.has(key)) groups.set(key, { name, items: [] });
+    groups.get(key).items.push(item);
+  }
+  const categoryRank = (name) => {
+    const i = CATEGORY_ORDER.findIndex((c) => c.toLowerCase() === name.toLowerCase());
+    return i < 0 ? CATEGORY_ORDER.length : i;
+  };
+  const orderedGroups = [...groups.values()].sort(
+    (a, b) => categoryRank(a.name) - categoryRank(b.name) || a.name.localeCompare(b.name),
+  );
+
+  const out = [];
+  for (const { items } of orderedGroups) {
+    const usable = (r) => Number.isInteger(r.level) && r.level >= 1 && r.level <= 5 && String(r.region ?? '').trim() !== '';
+    const classified = items.filter(({ row }) => usable(row)).sort(byId);
+    const rest = items.filter(({ row }) => !usable(row)).sort(byId);
+
+    const regions = [...new Set(classified.map(({ row }) => String(row.region)))].sort((a, b) =>
+      a.toLowerCase() === 'foreign' ? -1 : b.toLowerCase() === 'foreign' ? 1 : a.localeCompare(b),
+    );
+    const seen = new Map();
+    const spread = classified.map((item) => {
+      const bucket = `${item.row.region}|${item.row.level}`;
+      const round = seen.get(bucket) ?? 0;
+      seen.set(bucket, round + 1);
+      return { item, round, region: regions.indexOf(String(item.row.region)), level: item.row.level };
+    });
+    spread.sort((a, b) => a.round - b.round || a.region - b.region || a.level - b.level || byId(a.item, b.item));
+
+    out.push(...spread.map(({ item }) => item.row), ...rest.map(({ row }) => row));
+  }
+  return out;
+}
+
 /** Counts, the highest view count, and adjacent levels whose view ranges overlap (a sign of mislabelled levels). */
 export function analyze(rows) {
   const counts = {};

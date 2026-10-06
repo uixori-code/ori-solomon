@@ -5,10 +5,12 @@
 //   node scripts/fill-embed-urls.mjs --limit=95         stop after 95 searches (the free YouTube quota is ~100 searches/day)
 //   node scripts/fill-embed-urls.mjs --category=Pop     only that category
 //
+// Order: within a category, one song from each Foreign/Israeli x Level 1-5 bucket in turn, so a run cut short by the
+// daily quota still leaves a playable mix of levels (not just the first level in the sheet).
 // Re-running is safe: rows that already have an embed_url are skipped.
 import 'dotenv/config';
 import { createClient } from '@supabase/supabase-js';
-import { CATEGORY_ORDER } from './lib/sheet.mjs';
+import { fillOrder } from './lib/sheet.mjs';
 
 const TABLE = 'songs_trivia';
 const ID_COLUMN = 'id'; // change if your primary key has another name
@@ -76,7 +78,7 @@ async function fetchPendingRows() {
   for (let from = 0; ; from += pageSize) {
     const { data, error } = await supabase
       .from(TABLE)
-      .select(`${ID_COLUMN}, category, artist_and_song`)
+      .select(`${ID_COLUMN}, category, region, level, artist_and_song`)
       .is('embed_url', null)
       .order(ID_COLUMN)
       .range(from, from + pageSize - 1);
@@ -84,13 +86,10 @@ async function fetchPendingRows() {
     rows.push(...data);
     if (data.length < pageSize) break;
   }
-  const rank = (row) => {
-    const i = CATEGORY_ORDER.findIndex((c) => c.toLowerCase() === String(row.category).toLowerCase());
-    return i < 0 ? CATEGORY_ORDER.length : i;
-  };
-  return rows
-    .filter((row) => !categoryFilter || String(row.category).toLowerCase() === categoryFilter)
-    .sort((a, b) => rank(a) - rank(b) || a[ID_COLUMN] - b[ID_COLUMN]);
+  return fillOrder(
+    rows.filter((row) => !categoryFilter || String(row.category).toLowerCase() === categoryFilter),
+    ID_COLUMN,
+  );
 }
 
 async function main() {
@@ -98,6 +97,8 @@ async function main() {
   const todo = pending.slice(0, limit === Infinity ? undefined : limit);
   console.log(`${pending.length} song(s) without a video${categoryFilter ? ` in ${categoryFilter}` : ''}; searching ${todo.length} now.`);
   console.log(`Each search costs 100 YouTube quota units; the free quota is 10,000 a day (about 100 searches).`);
+  const mix = [1, 2, 3, 4, 5].map((level) => `L${level} ${todo.filter((row) => row.level === level).length}`);
+  console.log(`This run covers: ${mix.join(' · ')}`);
 
   let updated = 0;
   let noResult = 0;
