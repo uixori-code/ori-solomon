@@ -62,6 +62,10 @@ Already know the right video for a song, or a match came out wrong? Paste `https
 
 If Supabase can't be reached, the game says so and falls back to the test songs.
 
+## How the host knows the answer
+
+The shared screen shows each song only as a number (`Song #137`), never the title. On the setup screen, press **Download host song list** to save one page that maps every number to its song, genre, level and views. Keep it on your phone (AirDrop or email it to yourself) or print it, and look the number up before pressing Correct or Wrong. It has a search box. It shows every answer, so don't show it to the teams. Real songs are numbered by their permanent row id in Supabase, so a saved list stays valid after re-importing; test songs are 1 to 30.
+
 ## Layout
 
 - `src/scoring.ts`, `src/winner.ts`, `src/format.ts`: pure logic (`calculateGuessScore`, `determineWinner`, `formatViews`).

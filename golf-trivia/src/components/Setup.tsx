@@ -15,6 +15,7 @@ import {
   WRONG_GUESS_PCT,
 } from '../config';
 import { formatViews } from '../format';
+import { downloadSongIndex } from '../host/songIndex';
 import { filterSongs, useGameStore } from '../store';
 import { cls } from '../cls';
 import { teamStyle } from '../teamColors';
@@ -42,6 +43,7 @@ export function Setup() {
   );
   const perLevel = LEVELS.map((level) => pool.filter((s) => s.level === level).length);
   const songsReady = pool.length > 0;
+  const [onlyThisGame, setOnlyThisGame] = useState(false);
 
   const toggleCategory = (category: string) => {
     const next = new Set(selectedCategories);
@@ -170,6 +172,16 @@ export function Setup() {
         <button className="btn btn-primary" type="submit" disabled={!songsReady}>
           {songsReady ? 'Start game' : allSongs.length === 0 ? 'Loading songs…' : 'No songs match'}
         </button>
+
+        <div className="host-list">
+          <button type="button" className="btn" disabled={allSongs.length === 0} onClick={() => downloadSongIndex(onlyThisGame ? pool : allSongs)}>
+            Download host song list
+          </button>
+          <label className="muted">
+            <input type="checkbox" checked={onlyThisGame} onChange={(e) => setOnlyThisGame(e.target.checked)} /> only the songs in this game
+          </label>
+          <p className="muted">Songs show as numbers on screen. This list maps each number to its title, for you only.</p>
+        </div>
       </form>
 
       <aside className="panel rules">

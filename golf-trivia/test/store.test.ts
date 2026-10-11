@@ -7,6 +7,7 @@ import type { Level, Song } from '../src/types';
 const embedUrl = `https://www.youtube.com/embed/${SAMPLE_VIDEO_ID}`;
 const song = (level: Level, exactViews: number, name = `Song ${level}-${exactViews}`): Song => ({
   id: name,
+  number: Math.abs([...name].reduce((a, c) => a * 31 + c.charCodeAt(0), 7)) % 100000 + 1,
   songName: name,
   level,
   exactViews,

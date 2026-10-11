@@ -30,7 +30,7 @@ export function RevealPanel() {
         {result.songName}
       </h2>
       <p className="muted reveal-sub">
-        Level {result.level} · <TeamTag id={result.teamId} name={result.teamName} />
+        <b className="song-no">#{result.songNumber}</b> · Level {result.level} · <TeamTag id={result.teamId} name={result.teamName} />
       </p>
 
       <dl className="breakdown">

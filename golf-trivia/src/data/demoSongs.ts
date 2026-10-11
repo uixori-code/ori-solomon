@@ -18,6 +18,7 @@ const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
 export const DEMO_SONGS: Song[] = LEVELS.flatMap((level) =>
   VIEWS[level].map((exactViews, i) => ({
     id: `test-${level}${LETTERS[i].toLowerCase()}`,
+    number: (level - 1) * 6 + i + 1, // 1..30
     songName: `Test Song ${level}${LETTERS[i]}`,
     level,
     exactViews,

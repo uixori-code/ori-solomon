@@ -10,6 +10,8 @@ export interface Team {
 
 export interface Song {
   id: string;
+  /** Permanent number shown on screen instead of the title; the host's list maps it to the song. */
+  number: number;
   songName: string;
   level: Level;
   /** Whole number of views. Never rounded. */
@@ -38,6 +40,7 @@ export interface HistoryEntry {
   round: number;
   teamId: number;
   teamName: string;
+  songNumber: number;
   songName: string;
   level: Level;
   exactViews: number;

@@ -16,6 +16,9 @@ export function songProblems(song: Song): string[] {
   if (!(LEVELS as readonly number[]).includes(song.level)) {
     problems.push(`${song.songName}: level must be 1-5, got ${song.level}`);
   }
+  if (!Number.isInteger(song.number) || song.number < 1) {
+    problems.push(`${song.songName}: no song number (the row id must be a positive whole number)`);
+  }
   if (!parseVideoId(song.embedUrl)) {
     problems.push(`${song.songName}: no playable embed URL`);
   }

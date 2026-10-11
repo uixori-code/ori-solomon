@@ -44,7 +44,9 @@ export function SongPanel() {
     <div className="panel stage-panel song-panel">
       <div className="song-head">
         <p className="turn-label">
-          <TeamTag id={team.id} name={team.name} /> <span>Level {active.song.level}</span>
+          <TeamTag id={team.id} name={team.name} /> <span>
+            Level {active.song.level} · Song <b className="song-no">#{active.song.number}</b>
+          </span>
         </p>
         <Countdown startedAt={active.startedAt} limitSec={SONG_TIME_LIMIT_SEC} onExpire={failActiveSong} />
       </div>

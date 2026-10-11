@@ -20,6 +20,7 @@ export function rowsToSongs(rows: readonly SongRow[]): { songs: Song[]; problems
   for (const row of rows) {
     const song: Song = {
       id: String(row.id),
+      number: Number(row.id), // the row id never changes, so a printed list stays valid
       songName: row.artist_and_song,
       level: row.level as Level,
       // Number(null) is 0, which would turn a row with no views into a free song: make it NaN so it is rejected.

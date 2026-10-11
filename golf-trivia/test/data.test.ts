@@ -22,6 +22,7 @@ describe('rowsToSongs (Supabase rows -> playable songs)', () => {
     expect(problems).toEqual([]);
     expect(songs[0]).toEqual({
       id: '1',
+      number: 1,
       songName: 'Queen - Bohemian Rhapsody',
       level: 1,
       exactViews: 1_700_000_000,
@@ -50,6 +51,7 @@ describe('rowsToSongs (Supabase rows -> playable songs)', () => {
 
 const mk = (id: string, level: Level, category?: string, region?: string): Song => ({
   id,
+  number: 1,
   songName: id,
   level,
   exactViews: 1,

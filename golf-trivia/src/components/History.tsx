@@ -23,7 +23,7 @@ export function History() {
               <span className="h-song" dir="auto">
                 {entry.songName}
                 <small>
-                  {entry.teamName} · L{entry.level}
+                  #{entry.songNumber} · {entry.teamName} · L{entry.level}
                 </small>
               </span>
               <span className={cls('h-pts', entry.outcome !== 'solved' && 'is-bad')}>

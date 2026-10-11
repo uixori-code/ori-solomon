@@ -133,6 +133,7 @@ export function createGameStore(rng: () => number = Math.random) {
         round: s.round,
         teamId: team.id,
         teamName: team.name,
+        songNumber: active.song.number,
         songName: active.song.songName,
         level: active.song.level,
         exactViews: d.exactViews ?? active.song.exactViews,
