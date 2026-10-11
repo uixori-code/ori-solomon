@@ -28,6 +28,17 @@ export const LISTEN_SURCHARGE_PCT: Record<ListenStep, number> = {
 export const isListenStep = (n: number): n is ListenStep =>
   (LISTEN_STEPS as readonly number[]).includes(n);
 
+/** A hint (the song's genre and region) adds this many percent to the song's views. */
+export const HINT_SURCHARGE_PCT = 10;
+
+/** Passing on a song costs this many views; the song is revealed and the turn ends. */
+export const PASS_PENALTY = 3_000_000_000;
+
+/** Solving this many songs in a row on the first guess starts a streak... */
+export const STREAK_NEEDED = 3;
+/** ...and every first-guess solve that continues the streak is this many percent cheaper. */
+export const STREAK_BONUS_PCT = 10;
+
 export const LEVELS = [1, 2, 3, 4, 5] as const;
 
 /** Seconds per song, counted from the first listen. 0 turns the timer off. */

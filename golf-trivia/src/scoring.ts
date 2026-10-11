@@ -1,5 +1,6 @@
 import {
   CAP_AT_MISS_PENALTY,
+  HINT_SURCHARGE_PCT,
   LISTEN_SURCHARGE_PCT,
   MAX_GUESSES,
   MISS_PENALTY,
@@ -13,6 +14,10 @@ export interface ScoreInput {
   listenSeconds: number;
   /** Wrong guesses made before this correct one (0, 1 or 2). */
   wrongGuessesBefore: number;
+  /** The genre/region hint was used. */
+  hintUsed?: boolean;
+  /** Percent taken off the total for a first-guess streak. */
+  streakPct?: number;
 }
 
 export interface ScoreBreakdown {
@@ -21,6 +26,11 @@ export interface ScoreBreakdown {
   wrongPct: number;
   listenAmount: number;
   wrongAmount: number;
+  hintPct: number;
+  hintAmount: number;
+  streakPct: number;
+  /** Views the streak discount took off (positive). */
+  streakAmount: number;
   /** base + listenAmount + wrongAmount, before the cap. */
   uncapped: number;
   /** What is actually added to the team's total. */
@@ -34,7 +44,7 @@ export interface ScoreBreakdown {
  * two surcharge rows always add up exactly to the combined, rounded surcharge.
  */
 export function getScoreBreakdown(input: ScoreInput): ScoreBreakdown {
-  const { exactViews, listenSeconds, wrongGuessesBefore } = input;
+  const { exactViews, listenSeconds, wrongGuessesBefore, hintUsed = false, streakPct = 0 } = input;
   if (!Number.isSafeInteger(exactViews) || exactViews < 0) {
     throw new RangeError(`exactViews must be a non-negative whole number, got ${exactViews}`);
   }
@@ -47,10 +57,14 @@ export function getScoreBreakdown(input: ScoreInput): ScoreBreakdown {
 
   const listenPct = LISTEN_SURCHARGE_PCT[listenSeconds];
   const wrongPct = WRONG_GUESS_PCT * wrongGuessesBefore;
-  const surcharge = Math.round((exactViews * (listenPct + wrongPct)) / 100);
+  const hintPct = hintUsed ? HINT_SURCHARGE_PCT : 0;
+  const surcharge = Math.round((exactViews * (listenPct + wrongPct + hintPct)) / 100);
   const wrongAmount = Math.round((exactViews * wrongPct) / 100);
-  const listenAmount = surcharge - wrongAmount;
-  const uncapped = exactViews + surcharge;
+  const hintAmount = Math.round((exactViews * hintPct) / 100);
+  const listenAmount = surcharge - wrongAmount - hintAmount;
+  const beforeStreak = exactViews + surcharge;
+  const streakAmount = Math.round((beforeStreak * streakPct) / 100);
+  const uncapped = beforeStreak - streakAmount;
   const capped = CAP_AT_MISS_PENALTY && uncapped > MISS_PENALTY;
 
   return {
@@ -59,6 +73,10 @@ export function getScoreBreakdown(input: ScoreInput): ScoreBreakdown {
     wrongPct,
     listenAmount,
     wrongAmount,
+    hintPct,
+    hintAmount,
+    streakPct,
+    streakAmount,
     uncapped,
     total: capped ? MISS_PENALTY : uncapped,
     capped,
@@ -68,8 +86,9 @@ export function getScoreBreakdown(input: ScoreInput): ScoreBreakdown {
 export const calculateGuessScore = (input: ScoreInput): number => getScoreBreakdown(input).total;
 
 /** Surcharge percentages only, for the live "cost if correct now" line (never reveals the views). */
-export function surchargePercents(listenSeconds: number, wrongGuesses: number) {
+export function surchargePercents(listenSeconds: number, wrongGuesses: number, hintUsed = false) {
   const listenPct = isListenStep(listenSeconds) ? LISTEN_SURCHARGE_PCT[listenSeconds] : 0;
   const wrongPct = WRONG_GUESS_PCT * wrongGuesses;
-  return { listenPct, wrongPct, totalPct: listenPct + wrongPct };
+  const hintPct = hintUsed ? HINT_SURCHARGE_PCT : 0;
+  return { listenPct, wrongPct, hintPct, totalPct: listenPct + wrongPct + hintPct };
 }

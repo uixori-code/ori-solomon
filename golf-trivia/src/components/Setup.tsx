@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { categoryLabel, sortCategories } from '../categoryLabel';
 import {
   DEFAULT_TEAM_NAMES,
+  HINT_SURCHARGE_PCT,
   LEVELS,
   LISTEN_STEPS,
   LISTEN_SURCHARGE_PCT,
@@ -11,7 +12,10 @@ import {
   MIN_ROUNDS,
   MIN_TEAMS,
   MISS_PENALTY,
+  PASS_PENALTY,
   SONG_TIME_LIMIT_SEC,
+  STREAK_BONUS_PCT,
+  STREAK_NEEDED,
   WRONG_GUESS_PCT,
 } from '../config';
 import { formatViews } from '../format';
@@ -181,6 +185,9 @@ export function Setup() {
             <input type="checkbox" checked={onlyThisGame} onChange={(e) => setOnlyThisGame(e.target.checked)} /> only the songs in this game
           </label>
           <p className="muted">Songs show as numbers on screen. This list maps each number to its title, for you only.</p>
+          <a className="btn" href="?editor=1">
+            Song editor (start seconds)
+          </a>
         </div>
       </form>
 
@@ -203,6 +210,10 @@ export function Setup() {
           <li>
             <b>Miss all {MAX_GUESSES}</b>
             {SONG_TIME_LIMIT_SEC > 0 && <> or run out of time ({SONG_TIME_LIMIT_SEC}s)</>}: +{formatViews(MISS_PENALTY)} views.
+          </li>
+          <li>
+            <b>Extras:</b> a hint (genre &amp; region) adds +{HINT_SURCHARGE_PCT}%, passing costs +{formatViews(PASS_PENALTY)}, and{' '}
+            {STREAK_NEEDED} first-guess solves in a row make each next one {STREAK_BONUS_PCT}% cheaper.
           </li>
         </ol>
       </aside>

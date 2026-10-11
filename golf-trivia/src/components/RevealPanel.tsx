@@ -1,7 +1,8 @@
 import { cls } from '../cls';
-import { MAX_GUESSES, MISS_PENALTY } from '../config';
+import { MAX_GUESSES, MISS_PENALTY, PASS_PENALTY } from '../config';
 import { formatViews } from '../format';
 import { selectIsFinalTurn, useGameStore } from '../store';
+import { Confetti } from './Confetti';
 import { TeamTag } from './TeamTag';
 
 export function RevealPanel() {
@@ -12,18 +13,22 @@ export function RevealPanel() {
 
   if (!result) return null;
   const solved = result.outcome === 'solved';
-  const cutByCap = result.capped ? result.exactViews + result.listenAmount + result.wrongAmount - result.pointsAdded : 0;
+  const passed = result.outcome === 'passed';
+  const cutByCap = result.capped ? result.exactViews + result.listenAmount + result.wrongAmount + result.hintAmount - result.streakAmount - result.pointsAdded : 0;
 
   const banner = solved
     ? `Solved on guess ${result.guessesUsed}`
-    : result.outcome === 'timeout'
-      ? "Time's up"
-      : `Failed: ${MAX_GUESSES} wrong guesses`;
+    : passed
+      ? 'Passed'
+      : result.outcome === 'timeout'
+        ? "Time's up"
+        : `Failed: ${MAX_GUESSES} wrong guesses`;
 
   return (
-    <div className={cls('panel stage-panel reveal', solved ? 'is-solved' : 'is-failed')}>
+    <div className={cls('panel stage-panel reveal', solved ? 'is-solved pop' : 'is-failed')}>
+      {solved && <Confetti />}
       <p className="reveal-banner" role="status">
-        <span aria-hidden="true">{solved ? '✅' : result.outcome === 'timeout' ? '⏱' : '❌'}</span> {banner}
+        <span aria-hidden="true">{solved ? '✅' : passed ? '⏭' : result.outcome === 'timeout' ? '⏱' : '❌'}</span> {banner}
       </p>
 
       <h2 className="reveal-song" dir="auto">
@@ -54,6 +59,22 @@ export function RevealPanel() {
                 <dd>{formatViews(result.wrongAmount)}</dd>
               </div>
             )}
+            {result.hintAmount > 0 && (
+              <div>
+                <dt>
+                  + hint <em>+{result.hintPct}%</em>
+                </dt>
+                <dd>{formatViews(result.hintAmount)}</dd>
+              </div>
+            )}
+            {result.streakAmount > 0 && (
+              <div>
+                <dt>
+                  🔥 first-guess streak <em>−{result.streakPct}%</em>
+                </dt>
+                <dd>−{formatViews(result.streakAmount)}</dd>
+              </div>
+            )}
             {result.capped && (
               <div>
                 <dt>Capped at the {formatViews(MISS_PENALTY)} fail penalty</dt>
@@ -68,8 +89,8 @@ export function RevealPanel() {
               <dd>{formatViews(result.exactViews)}</dd>
             </div>
             <div>
-              <dt>Fixed penalty instead</dt>
-              <dd>{formatViews(MISS_PENALTY)}</dd>
+              <dt>{passed ? 'Pass penalty' : 'Fixed penalty instead'}</dt>
+              <dd>{formatViews(passed ? PASS_PENALTY : MISS_PENALTY)}</dd>
             </div>
           </>
         )}

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { MISS_PENALTY, SAMPLE_VIDEO_ID } from '../src/config';
+import { MISS_PENALTY, PASS_PENALTY, SAMPLE_VIDEO_ID } from '../src/config';
 import { validateSongs } from '../src/data/validate';
 import { createGameStore, selectIsFinalTurn } from '../src/store';
 import type { Level, Song } from '../src/types';
@@ -268,5 +268,62 @@ describe('validateSongs', () => {
 
   it('does not treat the same song in two categories as a problem (the game never repeats a name)', () => {
     expect(validateSongs([song(1, 5, 'Waka Waka'), song(2, 6, ' waka  waka ')])).toEqual([]);
+  });
+});
+
+describe('extras', () => {
+  it('passing costs the pass penalty and reveals the song', () => {
+    const store = newGame();
+    startSong(store, 1, 1);
+    store.getState().passSong();
+    expect(score(store, 1)).toBe(PASS_PENALTY);
+    expect(store.getState().lastResult?.outcome).toBe('passed');
+    expect(store.getState().phase).toBe('revealed');
+  });
+
+  it('a hint is charged once, in the score', () => {
+    const store = createGameStore();
+    store.getState().setSongs([song(1, 100_000_000, 'Hundred Mil')]);
+    store.getState().startGame({ teamNames: ['A', 'B'], maxRounds: 1 });
+    const s = startSong(store, 1, 1);
+    store.getState().showHint();
+    store.getState().showHint();
+    store.getState().handleGuess(1, true, s.exactViews);
+    expect(score(store, 1)).toBe(110_000_000);
+  });
+
+  it('pausing freezes the clock and blocks guesses; resuming shifts the start', () => {
+    vi.useFakeTimers();
+    try {
+      vi.setSystemTime(1_000_000);
+      const store = newGame();
+      const s = startSong(store, 1, 1);
+      const startedAt = store.getState().active!.startedAt!;
+      store.getState().pauseGame();
+      expect(store.getState().handleGuess(1, true, s.exactViews)).toBe('ignored');
+      vi.setSystemTime(1_000_000 + 30_000);
+      store.getState().resumeGame();
+      expect(store.getState().active!.startedAt).toBe(startedAt + 30_000);
+      expect(store.getState().pausedAt).toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('three first-guess solves in a row make the third 10% cheaper', () => {
+    const store = createGameStore();
+    store.getState().setSongs(Array.from({ length: 6 }, (_, i) => song(1, 100_000_000, `Streak ${i}`)));
+    store.getState().startGame({ teamNames: ['A', 'B'], maxRounds: 3 });
+    const amounts: number[] = [];
+    for (let i = 0; i < 3; i++) {
+      const s = startSong(store, 1, 1);
+      store.getState().handleGuess(1, true, s.exactViews);
+      amounts.push(store.getState().lastResult!.pointsAdded);
+      store.getState().nextTurn(); // team B
+      startSong(store, 1, 1);
+      store.getState().failActiveSong();
+      store.getState().nextTurn();
+    }
+    expect(amounts).toEqual([100_000_000, 100_000_000, 90_000_000]);
   });
 });

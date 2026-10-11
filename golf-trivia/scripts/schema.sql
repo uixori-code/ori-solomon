@@ -58,3 +58,13 @@ create policy "anyone can read songs" on public.songs_trivia for select to anon 
 --
 -- drop policy "TEMP anon insert" on public.songs_trivia;
 -- drop policy "TEMP anon update" on public.songs_trivia;
+
+-- Second the music really starts (for videos with a silent intro). The game plays every clip from here.
+alter table public.songs_trivia add column if not exists start_sec numeric not null default 0;
+
+-- The only write the browser may do: change one song's start second. (A function, so the anon key can't edit anything else.)
+create or replace function public.set_start_sec(song_id bigint, sec numeric)
+returns void language sql security definer set search_path = public as $$
+  update public.songs_trivia set start_sec = greatest(0, least(sec, 3600)) where id = song_id;
+$$;
+grant execute on function public.set_start_sec(bigint, numeric) to anon;

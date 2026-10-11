@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { History } from './components/History';
 import { Header } from './components/Header';
 import { LevelPicker } from './components/LevelPicker';
@@ -6,14 +6,48 @@ import { RevealPanel } from './components/RevealPanel';
 import { Scoreboard } from './components/Scoreboard';
 import { Setup } from './components/Setup';
 import { SongPanel } from './components/SongPanel';
+import { SongEditor } from './components/SongEditor';
 import { WinnerScreen } from './components/WinnerScreen';
 import { loadSongs } from './data/songSource';
 import { validateSongs } from './data/validate';
 import { player } from './player';
+import { playSfx } from './sound';
 import { useGameStore } from './store';
 import { parseVideoId } from './youtube';
 
+const isEditor = new URLSearchParams(window.location.search).get('editor') === '1';
+
+/** Plays the sound cues that follow the game: wrong guesses, results and the final win. */
+function useGameSounds() {
+  const phase = useGameStore((s) => s.phase);
+  const outcome = useGameStore((s) => s.lastResult?.outcome);
+  const wrongGuesses = useGameStore((s) => s.active?.wrongGuesses ?? 0);
+  const prevWrong = useRef(wrongGuesses);
+  const prevPhase = useRef(phase);
+
+  useEffect(() => {
+    if (wrongGuesses > prevWrong.current) playSfx('wrong');
+    prevWrong.current = wrongGuesses;
+  }, [wrongGuesses]);
+
+  useEffect(() => {
+    // Only on a real change of phase, so reopening a saved game doesn't blare a result.
+    if (prevPhase.current !== phase) {
+      if (phase === 'revealed') playSfx(outcome === 'solved' ? 'correct' : outcome === 'passed' ? 'pass' : 'fail');
+      if (phase === 'gameOver') playSfx('win');
+    }
+    prevPhase.current = phase;
+  }, [phase, outcome]);
+}
+
 export default function App() {
+  return isEditor ? <SongEditor /> : <Game />;
+}
+
+function Game() {
+  useGameSounds();
+  const pausedAt = useGameStore((s) => s.pausedAt);
+  const resumeGame = useGameStore((s) => s.resumeGame);
   const phase = useGameStore((s) => s.phase);
   const setSongs = useGameStore((s) => s.setSongs);
   const embedUrl = useGameStore((s) => s.active?.song.embedUrl ?? null);
@@ -82,6 +116,17 @@ export default function App() {
             <History />
           </div>
         </main>
+      )}
+      {pausedAt !== null && (
+        <div className="pause-overlay" role="dialog" aria-modal="true" aria-label="Game paused">
+          <div className="pause-card">
+            <p className="pause-title">⏸ Paused</p>
+            <p className="muted">The song timer is frozen and the music is stopped.</p>
+            <button type="button" className="btn btn-primary" onClick={resumeGame} autoFocus>
+              ▶ Resume
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

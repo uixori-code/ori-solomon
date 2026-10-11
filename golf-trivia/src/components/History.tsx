@@ -3,7 +3,7 @@ import { formatDelta } from '../format';
 import { useGameStore } from '../store';
 import { teamStyle } from '../teamColors';
 
-const ICON = { solved: '✅', failed: '❌', timeout: '⏱' } as const;
+const ICON = { solved: '✅', failed: '❌', timeout: '⏱', passed: '⏭' } as const;
 
 /** Only revealed songs are listed, so this panel never gives a hint about the current song. */
 export function History() {

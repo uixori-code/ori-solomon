@@ -1,4 +1,5 @@
-import { create } from 'zustand';
+import { create, type StateCreator } from 'zustand';
+import { persist } from 'zustand/middleware';
 import {
   DEFAULT_ROUNDS,
   DEFAULT_TEAM_NAMES,
@@ -8,6 +9,9 @@ import {
   MIN_ROUNDS,
   MIN_TEAMS,
   MISS_PENALTY,
+  PASS_PENALTY,
+  STREAK_BONUS_PCT,
+  STREAK_NEEDED,
   isListenStep,
 } from './config';
 import { songKey } from './data/songKey';
@@ -45,6 +49,8 @@ export interface GameState {
   round: number;
   maxRounds: number;
   active: ActiveSong | null;
+  /** Epoch ms when the host paused the song, null when running. */
+  pausedAt: number | null;
   lastResult: HistoryEntry | null;
   /** Revealed songs only, newest first. */
   history: HistoryEntry[];
@@ -61,6 +67,15 @@ export interface GameActions {
   selectLevel: (level: Level) => boolean;
   /** Records that a clip of this length was played (the longest one sets the surcharge). */
   playClip: (seconds: number) => void;
+  /** Sets the second the music starts for the song being played (and every later draw of it). */
+  setStartSec: (startSec: number) => void;
+  /** Reveals the genre/region hint for this song (adds HINT_SURCHARGE_PCT to its cost). */
+  showHint: () => void;
+  /** Gives up on the song: it is revealed, the team is charged PASS_PENALTY and the turn ends. */
+  passSong: () => void;
+  /** Freezes the song timer (the UI also stops the audio). */
+  pauseGame: () => void;
+  resumeGame: () => void;
   handleGuess: (teamId: number, isCorrect: boolean, songExactViews: number) => GuessResult;
   /** The song timer ran out. */
   failActiveSong: () => void;
@@ -104,6 +119,7 @@ const initialState = (): GameState => ({
   round: 1,
   maxRounds: DEFAULT_ROUNDS,
   active: null,
+  pausedAt: null,
   lastResult: null,
   history: [],
   scoreFlash: null,
@@ -117,10 +133,53 @@ interface SettleDetail {
   listenAmount?: number;
   wrongAmount?: number;
   capped?: boolean;
+  hintPct?: number;
+  hintAmount?: number;
+  streakPct?: number;
+  streakAmount?: number;
 }
 
-export function createGameStore(rng: () => number = Math.random) {
-  return create<GameStore>()((set, get) => {
+/** How many songs in a row this team has solved on the first guess (newest history first). */
+export function firstGuessStreak(history: readonly HistoryEntry[], teamId: number): number {
+  let n = 0;
+  for (const e of history) {
+    if (e.teamId !== teamId) continue;
+    if (e.outcome === 'solved' && e.guessesUsed === 1) n++;
+    else break;
+  }
+  return n;
+}
+
+/** Only the live game is saved (not the song list, which is reloaded). A game that was mid-song reopens paused. */
+const SAVE_KEY = 'golf-trivia-save-v1';
+const savedKeys = ['phase', 'setup', 'teams', 'currentTeamIndex', 'round', 'maxRounds', 'active', 'pausedAt', 'lastResult', 'history', 'playedKeys', 'scoreFlash'] as const;
+
+const safeStorage = {
+  getItem: (name: string) => {
+    try {
+      return window.localStorage.getItem(name);
+    } catch {
+      return null;
+    }
+  },
+  setItem: (name: string, value: string) => {
+    try {
+      window.localStorage.setItem(name, value);
+    } catch {
+      /* storage blocked or full: the game still works, it just can't be resumed */
+    }
+  },
+  removeItem: (name: string) => {
+    try {
+      window.localStorage.removeItem(name);
+    } catch {
+      /* ignore */
+    }
+  },
+};
+
+export function createGameStore(rng: () => number = Math.random, saveProgress = false) {
+  const creator: StateCreator<GameStore> = (set, get) => {
     /** Adds the points to the current team, records the result and moves to the reveal. */
     const settle = (outcome: Outcome, pointsAdded: number, d: SettleDetail) => {
       const s = get();
@@ -145,6 +204,10 @@ export function createGameStore(rng: () => number = Math.random) {
         listenAmount: d.listenAmount ?? 0,
         wrongAmount: d.wrongAmount ?? 0,
         capped: d.capped ?? false,
+        hintPct: d.hintPct ?? 0,
+        hintAmount: d.hintAmount ?? 0,
+        streakPct: d.streakPct ?? 0,
+        streakAmount: d.streakAmount ?? 0,
         pointsAdded,
       };
 
@@ -162,7 +225,12 @@ export function createGameStore(rng: () => number = Math.random) {
     return {
       ...initialState(),
 
-      setSongs: (songs, isTest = false) => set({ allSongs: songs, songs, isTestData: isTest }),
+      setSongs: (songs, isTest = false) => {
+        // A saved game that is already under way keeps its genre/region filter.
+        const s = get();
+        const narrowed = s.phase === 'setup' ? songs : filterSongs(songs, s.setup);
+        set({ allSongs: songs, songs: narrowed, isTestData: isTest });
+      },
 
       endGame: () => {
         if (get().phase !== 'pickLevel') return;
@@ -186,6 +254,7 @@ export function createGameStore(rng: () => number = Math.random) {
           round: 1,
           maxRounds,
           active: null,
+          pausedAt: null,
           lastResult: null,
           history: [],
           scoreFlash: null,
@@ -200,7 +269,7 @@ export function createGameStore(rng: () => number = Math.random) {
         if (!song) return false;
         set({
           phase: 'listening',
-          active: { song, wrongGuesses: 0, maxListenSec: 0, startedAt: null },
+          active: { song, wrongGuesses: 0, maxListenSec: 0, startedAt: null, hintUsed: false },
           playedKeys: [...s.playedKeys, songKey(song.songName)],
         });
         return true;
@@ -208,7 +277,7 @@ export function createGameStore(rng: () => number = Math.random) {
 
       playClip: (seconds) => {
         const s = get();
-        if (s.phase !== 'listening' || !s.active || !isListenStep(seconds)) return;
+        if (s.phase !== 'listening' || s.pausedAt !== null || !s.active || !isListenStep(seconds)) return;
         set({
           active: {
             ...s.active,
@@ -218,11 +287,57 @@ export function createGameStore(rng: () => number = Math.random) {
         });
       },
 
+      setStartSec: (startSec) => {
+        const s = get();
+        if (!s.active || !Number.isFinite(startSec)) return;
+        const sec = Math.max(0, Math.min(3600, startSec));
+        const apply = (song: Song) => (song.id === s.active!.song.id ? { ...song, startSec: sec } : song);
+        set({
+          // A new start makes earlier listening meaningless: clear it so the clip lengths and cost start fresh.
+          active: {
+            ...s.active,
+            song: apply(s.active.song),
+            ...((s.active.song.startSec ?? 0) !== sec && { maxListenSec: 0, startedAt: null }),
+          },
+          allSongs: s.allSongs.map(apply),
+          songs: s.songs.map(apply),
+        });
+      },
+
+      showHint: () => {
+        const s = get();
+        if (s.phase !== 'listening' || s.pausedAt !== null || !s.active || s.active.hintUsed) return;
+        set({ active: { ...s.active, hintUsed: true } });
+      },
+
+      passSong: () => {
+        const s = get();
+        if (s.phase !== 'listening' || s.pausedAt !== null || !s.active) return;
+        settle('passed', PASS_PENALTY, { guessesUsed: s.active.wrongGuesses });
+      },
+
+      pauseGame: () => {
+        const s = get();
+        if (s.phase !== 'listening' || s.pausedAt !== null) return;
+        set({ pausedAt: Date.now() });
+      },
+
+      resumeGame: () => {
+        const s = get();
+        if (s.pausedAt === null) return;
+        const frozenFor = Date.now() - s.pausedAt;
+        set({
+          pausedAt: null,
+          // Slide the start forward so the time spent paused doesn't count against the song.
+          active: s.active && s.active.startedAt !== null ? { ...s.active, startedAt: s.active.startedAt + frozenFor } : s.active,
+        });
+      },
+
       handleGuess: (teamId, isCorrect, songExactViews) => {
         const s = get();
         const team = s.teams[s.currentTeamIndex];
         const active = s.active;
-        if (s.phase !== 'listening' || !active || !team || team.id !== teamId) return 'ignored';
+        if (s.phase !== 'listening' || s.pausedAt !== null || !active || !team || team.id !== teamId) return 'ignored';
         // A guess can't be judged before the team has heard at least one clip.
         if (active.maxListenSec < 1) return 'ignored';
         if (songExactViews !== active.song.exactViews) {
@@ -236,6 +351,9 @@ export function createGameStore(rng: () => number = Math.random) {
             exactViews: songExactViews,
             listenSeconds: active.maxListenSec,
             wrongGuessesBefore: active.wrongGuesses,
+            hintUsed: active.hintUsed,
+            streakPct:
+              active.wrongGuesses === 0 && firstGuessStreak(s.history, team.id) + 1 >= STREAK_NEEDED ? STREAK_BONUS_PCT : 0,
           });
           settle('solved', b.total, {
             guessesUsed: active.wrongGuesses + 1,
@@ -245,6 +363,10 @@ export function createGameStore(rng: () => number = Math.random) {
             listenAmount: b.listenAmount,
             wrongAmount: b.wrongAmount,
             capped: b.capped,
+            hintPct: b.hintPct,
+            hintAmount: b.hintAmount,
+            streakPct: b.streakPct,
+            streakAmount: b.streakAmount,
           });
           return 'solved';
         }
@@ -259,7 +381,7 @@ export function createGameStore(rng: () => number = Math.random) {
 
       failActiveSong: () => {
         const s = get();
-        if (s.phase !== 'listening' || !s.active) return;
+        if (s.phase !== 'listening' || s.pausedAt !== null || !s.active) return;
         settle('timeout', MISS_PENALTY, { guessesUsed: s.active.wrongGuesses });
       },
 
@@ -272,7 +394,7 @@ export function createGameStore(rng: () => number = Math.random) {
           return;
         }
         set({
-          active: { song: next, wrongGuesses: 0, maxListenSec: 0, startedAt: null },
+          active: { song: next, wrongGuesses: 0, maxListenSec: 0, startedAt: null, hintUsed: false },
           playedKeys: [...s.playedKeys, songKey(next.songName)],
         });
       },
@@ -286,7 +408,7 @@ export function createGameStore(rng: () => number = Math.random) {
           set({ phase: 'gameOver', active: null, scoreFlash: null });
           return;
         }
-        set({ phase: 'pickLevel', currentTeamIndex: next, round, active: null, scoreFlash: null });
+        set({ phase: 'pickLevel', currentTeamIndex: next, round, active: null, pausedAt: null, scoreFlash: null });
       },
 
       playAgain: () => get().startGame(get().setup),
@@ -298,17 +420,44 @@ export function createGameStore(rng: () => number = Math.random) {
           currentTeamIndex: 0,
           round: 1,
           active: null,
+          pausedAt: null,
           lastResult: null,
           history: [],
           scoreFlash: null,
           playedKeys: [],
         }),
     };
-  });
+  };
+
+  if (!saveProgress) return create<GameStore>()(creator);
+  return create<GameStore>()(
+    persist(creator, {
+      name: SAVE_KEY,
+      storage: {
+        getItem: (name) => {
+          const raw = safeStorage.getItem(name);
+          try {
+            return raw ? JSON.parse(raw) : null;
+          } catch {
+            return null;
+          }
+        },
+        setItem: (name, value) => safeStorage.setItem(name, JSON.stringify(value)),
+        removeItem: safeStorage.removeItem,
+      },
+      partialize: (s) => Object.fromEntries(savedKeys.map((k) => [k, s[k]])) as unknown as GameStore,
+      merge: (saved, current) => {
+        const next = { ...current, ...(saved as Partial<GameStore>) };
+        // Reopening mid-song must not eat the clock: come back paused.
+        if (next.phase === 'listening' && next.pausedAt === null) next.pausedAt = Date.now();
+        return next;
+      },
+    }),
+  );
 }
 
 /** The app's single store. Tests build isolated ones with createGameStore(). */
-export const useGameStore = createGameStore();
+export const useGameStore = createGameStore(Math.random, true);
 
 export const selectCurrentTeam = (s: GameState): Team | undefined => s.teams[s.currentTeamIndex];
 

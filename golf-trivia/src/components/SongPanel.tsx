@@ -1,14 +1,20 @@
+import { useState } from 'react';
 import { cls } from '../cls';
+import { categoryLabel } from '../categoryLabel';
 import {
+  HINT_SURCHARGE_PCT,
   MAX_GUESSES,
   MISS_PENALTY,
+  PASS_PENALTY,
   SONG_TIME_LIMIT_SEC,
   type ListenStep,
 } from '../config';
 import { formatViews } from '../format';
 import { player, usePlayerSnapshot } from '../player';
+import { saveStartSec } from '../data/supabaseSongs';
 import { surchargePercents } from '../scoring';
-import { selectCurrentTeam, useGameStore } from '../store';
+import { firstGuessStreak, selectCurrentTeam, useGameStore } from '../store';
+import { STREAK_BONUS_PCT, STREAK_NEEDED } from '../config';
 import { Countdown } from './Countdown';
 import { GuessPips } from './GuessPips';
 import { ListenLadder } from './ListenLadder';
@@ -22,11 +28,21 @@ export function SongPanel() {
   const handleGuess = useGameStore((s) => s.handleGuess);
   const failActiveSong = useGameStore((s) => s.failActiveSong);
   const skipUnplayable = useGameStore((s) => s.skipUnplayable);
+  const setStartSec = useGameStore((s) => s.setStartSec);
+  const showHint = useGameStore((s) => s.showHint);
+  const passSong = useGameStore((s) => s.passSong);
+  const pauseGame = useGameStore((s) => s.pauseGame);
+  const pausedAt = useGameStore((s) => s.pausedAt);
+  const nextStreak = useGameStore((s) => (s.teams[s.currentTeamIndex] ? firstGuessStreak(s.history, s.teams[s.currentTeamIndex].id) : 0));
+  const isTestData = useGameStore((s) => s.isTestData);
   const snapshot = usePlayerSnapshot();
+  const [startDraft, setStartDraft] = useState<string | null>(null);
+  const [saveNote, setSaveNote] = useState<string | null>(null);
+  const [confirmPass, setConfirmPass] = useState(false);
 
   if (!team || !active) return null;
 
-  const { listenPct, wrongPct, totalPct } = surchargePercents(active.maxListenSec, active.wrongGuesses);
+  const { listenPct, wrongPct, hintPct, totalPct } = surchargePercents(active.maxListenSec, active.wrongGuesses, active.hintUsed);
   const heardSomething = active.maxListenSec >= 1;
   const playing = snapshot.status === 'playing' || snapshot.status === 'buffering';
   const playable = snapshot.status === 'ready' || playing;
@@ -35,20 +51,53 @@ export function SongPanel() {
   const canSkip = snapshot.status === 'error' || !heardSomething;
   const progress = snapshot.clipSeconds ? Math.min(1, snapshot.elapsedMs / (snapshot.clipSeconds * 1000)) : 0;
 
+  const hintText = [active.song.category ? categoryLabel(active.song.category) : null, active.song.region ?? null]
+    .filter(Boolean)
+    .join(' · ');
+  const streakOn = active.wrongGuesses === 0 && nextStreak + 1 >= STREAK_NEEDED;
+  const lastClip = snapshot.clipSeconds;
+
+  const pause = () => {
+    player.stop();
+    pauseGame();
+  };
+
   const listen = (seconds: ListenStep) => {
     playClip(seconds);
-    player.play(seconds);
+    player.play(seconds, active.song.startSec ?? 0);
+  };
+
+  const applyStart = async () => {
+    const sec = Number(startDraft);
+    if (startDraft === null || startDraft.trim() === '' || !Number.isFinite(sec) || sec < 0) return;
+    setStartSec(sec);
+    player.stop();
+    setStartDraft(null);
+    const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+    const key = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
+    if (isTestData || !url || !key) return setSaveNote('Start set for this game only.');
+    try {
+      await saveStartSec(url, key, active.song.id, sec);
+      setSaveNote('Start saved for this song.');
+    } catch (err) {
+      setSaveNote(`Set for this game, but not saved (${err instanceof Error ? err.message : err}).`);
+    }
   };
 
   return (
-    <div className="panel stage-panel song-panel">
+    <div key={active.wrongGuesses} className={cls('panel stage-panel song-panel', active.wrongGuesses > 0 && 'shake')}>
       <div className="song-head">
         <p className="turn-label">
           <TeamTag id={team.id} name={team.name} /> <span>
             Level {active.song.level} · Song <b className="song-no">#{active.song.number}</b>
           </span>
         </p>
-        <Countdown startedAt={active.startedAt} limitSec={SONG_TIME_LIMIT_SEC} onExpire={failActiveSong} />
+        <div className="head-actions">
+          <Countdown startedAt={active.startedAt} limitSec={SONG_TIME_LIMIT_SEC} onExpire={failActiveSong} pausedAt={pausedAt} />
+          <button type="button" className="icon-btn" onClick={pause} aria-label="Pause the game" title="Pause">
+            ⏸
+          </button>
+        </div>
       </div>
 
       <div className="mystery" aria-live="polite">
@@ -76,6 +125,14 @@ export function SongPanel() {
       <div className="listen-block">
         <div className="block-head">
           <span className="block-label">Listen</span>
+          <button
+            type="button"
+            className="link-btn replay-btn"
+            disabled={!playable || !lastClip}
+            onClick={() => lastClip && listen(lastClip as ListenStep)}
+          >
+            ↻ Replay last clip{lastClip ? ` (${lastClip}s)` : ''}
+          </button>
           <span className="longest">
             {heardSomething ? (
               <>
@@ -92,6 +149,24 @@ export function SongPanel() {
         </div>
       </div>
 
+      <div className="start-row">
+        <label className="block-label" htmlFor="start-sec">Music starts at</label>
+        <input
+          id="start-sec"
+          type="number"
+          min={0}
+          step={0.5}
+          inputMode="decimal"
+          value={startDraft ?? String(active.song.startSec ?? 0)}
+          onChange={(e) => setStartDraft(e.target.value)}
+        />
+        <span className="muted">sec</span>
+        <button type="button" className="link-btn" disabled={startDraft === null} onClick={applyStart}>
+          Set start
+        </button>
+        {saveNote && <small className="muted" role="status">{saveNote}</small>}
+      </div>
+
       <div className="status-row">
         <div className="status-cell">
           <span className="block-label">Guesses</span>
@@ -101,12 +176,47 @@ export function SongPanel() {
           <span className="block-label">Cost if correct now</span>
           {heardSomething ? (
             <span>
-              +{listenPct}% listen · +{wrongPct}% wrong = <strong>+{totalPct}% on views</strong>
+              +{listenPct}% listen · +{wrongPct}% wrong{hintPct > 0 && ` · +${hintPct}% hint`} = <strong>+{totalPct}% on views</strong>
+              {streakOn && <span className="streak-note"> 🔥 streak: −{STREAK_BONUS_PCT}% if solved now</span>}
             </span>
           ) : (
             <span className="muted">play a clip first</span>
           )}
         </div>
+      </div>
+
+      <div className="hint-row">
+        {active.hintUsed ? (
+          <p className="hint-chip" role="status">
+            💡 Hint: <b>{hintText}</b>
+          </p>
+        ) : (
+          <button type="button" className="btn btn-small" disabled={!hintText} onClick={showHint}>
+            💡 Hint: genre &amp; region (+{HINT_SURCHARGE_PCT}%)
+          </button>
+        )}
+        {confirmPass ? (
+          <span className="pass-confirm">
+            Pass costs <b>+{formatViews(PASS_PENALTY)}</b> and shows the song.
+            <button
+              type="button"
+              className="btn btn-small btn-danger"
+              onClick={() => {
+                setConfirmPass(false);
+                passSong();
+              }}
+            >
+              Yes, pass
+            </button>
+            <button type="button" className="btn btn-small" onClick={() => setConfirmPass(false)}>
+              Keep playing
+            </button>
+          </span>
+        ) : (
+          <button type="button" className="btn btn-small" onClick={() => setConfirmPass(true)}>
+            ⏭ Pass (+{formatViews(PASS_PENALTY)})
+          </button>
+        )}
       </div>
 
       {active.wrongGuesses > 0 && (

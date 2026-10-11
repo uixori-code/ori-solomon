@@ -71,7 +71,23 @@ describe('calculateGuessScore: more cases', () => {
 
 describe('surchargePercents', () => {
   it('reports only percentages', () => {
-    expect(surchargePercents(4, 1)).toEqual({ listenPct: 4, wrongPct: 15, totalPct: 19 });
-    expect(surchargePercents(0, 0)).toEqual({ listenPct: 0, wrongPct: 0, totalPct: 0 });
+    expect(surchargePercents(4, 1)).toEqual({ listenPct: 4, wrongPct: 15, hintPct: 0, totalPct: 19 });
+    expect(surchargePercents(0, 0)).toEqual({ listenPct: 0, wrongPct: 0, hintPct: 0, totalPct: 0 });
+  });
+});
+
+describe('hint and streak', () => {
+  it('a hint adds 10% on top of the listen and wrong surcharges', () => {
+    const b = getScoreBreakdown({ exactViews: M100, listenSeconds: 4, wrongGuessesBefore: 1, hintUsed: true });
+    expect(b.hintAmount).toBe(10_000_000);
+    expect(b.listenAmount).toBe(4_000_000);
+    expect(b.wrongAmount).toBe(15_000_000);
+    expect(b.total).toBe(M100 + 29_000_000);
+  });
+
+  it('a streak takes its percent off the whole total, rows still add up', () => {
+    const b = getScoreBreakdown({ exactViews: M100, listenSeconds: 2, wrongGuessesBefore: 0, streakPct: 10 });
+    expect(b.streakAmount).toBe(10_200_000);
+    expect(b.total).toBe(M100 + b.listenAmount - b.streakAmount);
   });
 });

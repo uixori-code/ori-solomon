@@ -174,12 +174,12 @@ export function createYouTubeController(emit: Emit): PlayerController {
       else pendingVideoId = videoId;
     },
 
-    play(seconds) {
+    play(seconds, startSec = 0) {
       if (!ready || !player) return;
       clearTimers();
       clip = { seconds, playedMs: 0, lastTick: performance.now() };
       emit({ status: 'buffering', clipSeconds: seconds, elapsedMs: 0, error: null });
-      player.seekTo(0, true);
+      player.seekTo(startSec, true);
       player.playVideo();
       ticker = window.setInterval(tick, TICK_MS);
       startWatchdog = window.setTimeout(

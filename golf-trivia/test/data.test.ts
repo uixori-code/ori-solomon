@@ -29,7 +29,12 @@ describe('rowsToSongs (Supabase rows -> playable songs)', () => {
       embedUrl: `https://www.youtube.com/embed/${SAMPLE_VIDEO_ID}`,
       category: 'Rock_Metal',
       region: 'Foreign',
+      startSec: 0,
     });
+  });
+
+  it('reads the start second when a row has one', () => {
+    expect(rowsToSongs([row({ start_sec: '5.5' })]).songs[0].startSec).toBe(5.5);
   });
 
   it('reads bigint views that arrive as strings', () => {

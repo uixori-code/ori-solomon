@@ -14,7 +14,7 @@ export type Emit = (patch: Partial<PlayerSnapshot>) => void;
 export interface PlayerController {
   /** Cue a video. Nothing plays until play() is called. */
   load(videoId: string): void;
-  /** Play the first `seconds` seconds of the cued video, then stop. */
-  play(seconds: number): void;
+  /** Play `seconds` seconds of the cued video, starting at `startSec`, then stop. */
+  play(seconds: number, startSec?: number): void;
   stop(): void;
 }

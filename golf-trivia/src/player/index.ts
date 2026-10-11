@@ -24,7 +24,7 @@ export const player = {
   isSimulated: simulated,
   init: () => void ctl(),
   load: (videoId: string) => ctl().load(videoId),
-  play: (seconds: number) => ctl().play(seconds),
+  play: (seconds: number, startSec = 0) => ctl().play(seconds, startSec),
   stop: () => controller?.stop(),
   /** Report that the current song has nothing playable (bad or missing embed URL). */
   fail: (message: string) => emit({ status: 'error', error: message }),

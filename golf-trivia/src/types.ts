@@ -21,6 +21,8 @@ export interface Song {
   category?: string;
   /** "Foreign" or "Israeli". Absent on the built-in test songs. */
   region?: string;
+  /** Second the music really starts (skips a silent intro). Clips play from here. 0 = from the beginning. */
+  startSec?: number;
 }
 
 export interface ActiveSong {
@@ -31,9 +33,11 @@ export interface ActiveSong {
   maxListenSec: number;
   /** Epoch ms of the first listen, null until then. Drives the countdown. */
   startedAt: number | null;
+  /** True once the host showed the genre/region hint (costs HINT_SURCHARGE_PCT). */
+  hintUsed: boolean;
 }
 
-export type Outcome = 'solved' | 'failed' | 'timeout';
+export type Outcome = 'solved' | 'failed' | 'timeout' | 'passed';
 
 export interface HistoryEntry {
   id: number;
@@ -53,5 +57,10 @@ export interface HistoryEntry {
   listenAmount: number;
   wrongAmount: number;
   capped: boolean;
+  hintPct: number;
+  hintAmount: number;
+  /** Streak discount in percent, and the (positive) number of views it took off. */
+  streakPct: number;
+  streakAmount: number;
   pointsAdded: number;
 }

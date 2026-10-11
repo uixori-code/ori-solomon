@@ -11,6 +11,7 @@ export interface SongRow {
   artist_and_song: string;
   exact_views: number | string | null;
   embed_url: string | null;
+  start_sec?: number | string | null;
 }
 
 /** Turns table rows into playable songs. Rows that can't be played safely are dropped and reported. */
@@ -28,6 +29,7 @@ export function rowsToSongs(rows: readonly SongRow[]): { songs: Song[]; problems
       embedUrl: row.embed_url ?? '',
       category: row.category ?? undefined,
       region: row.region ?? undefined,
+      startSec: Number(row.start_sec) > 0 ? Number(row.start_sec) : 0,
     };
     const issues = songProblems(song);
     if (issues.length) problems.push(...issues);
@@ -41,18 +43,33 @@ const PAGE = 1000; // Supabase returns at most 1000 rows per request
 /** Every song that has both a view count and a video. Songs without a video yet are simply not loaded. */
 export async function fetchSupabaseSongs(url: string, anonKey: string) {
   const supabase = createClient(url, anonKey, { auth: { persistSession: false } });
+  const base = 'id, category, region, level, artist_and_song, exact_views, embed_url';
+  // start_sec only exists once scripts/schema.sql has been re-run; until then load songs without it.
+  let columns = `${base}, start_sec`;
   const rows: SongRow[] = [];
   for (let from = 0; ; from += PAGE) {
-    const { data, error } = await supabase
+    let { data, error } = await supabase
       .from('songs_trivia')
-      .select('id, category, region, level, artist_and_song, exact_views, embed_url')
+      .select(columns)
       .not('embed_url', 'is', null)
       .not('exact_views', 'is', null)
       .order('id')
       .range(from, from + PAGE - 1);
+    if (error && columns !== base && /start_sec/.test(error.message)) {
+      columns = base;
+      from -= PAGE;
+      continue;
+    }
     if (error) throw new Error(error.message);
-    rows.push(...(data as SongRow[]));
-    if (data.length < PAGE) break;
+    rows.push(...(data as unknown as SongRow[]));
+    if (data!.length < PAGE) break;
   }
   return rowsToSongs(rows);
+}
+
+/** Saves a song's start second for good. Goes through the set_start_sec function so the anon key can't edit anything else. */
+export async function saveStartSec(url: string, anonKey: string, songId: string, startSec: number) {
+  const supabase = createClient(url, anonKey, { auth: { persistSession: false } });
+  const { error } = await supabase.rpc('set_start_sec', { song_id: Number(songId), sec: startSec });
+  if (error) throw new Error(error.message);
 }
