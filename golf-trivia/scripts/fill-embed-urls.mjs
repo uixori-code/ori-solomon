@@ -61,7 +61,7 @@ async function searchVideoId(query) {
   if (!res.ok) {
     const reason = body?.error?.errors?.[0]?.reason;
     const message = body?.error?.message ?? res.statusText;
-    if (res.status === 403 && ['quotaExceeded', 'dailyLimitExceeded'].includes(reason)) {
+    if (res.status === 429 || (res.status === 403 && ['quotaExceeded', 'dailyLimitExceeded'].includes(reason))) {
       throw new FatalError(`YouTube quota used up for today: ${message}`);
     }
     if (res.status === 400 || (res.status === 403 && reason === 'keyInvalid')) {

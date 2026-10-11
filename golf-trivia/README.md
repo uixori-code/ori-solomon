@@ -62,6 +62,19 @@ Already know the right video for a song, or a match came out wrong? Paste `https
 
 If Supabase can't be reached, the game says so and falls back to the test songs.
 
+## Run the video search automatically
+
+Instead of running step 4 by hand every day, a macOS LaunchAgent can do it for you at 06:35 each day, and again at 21:00 only if the morning run failed (if the Mac was asleep, it runs when it wakes). It only runs `node scripts/fill-embed-urls.mjs --limit=95`, shows a notification with the result, and removes itself when every song has a video. Nothing runs until you install it:
+
+```sh
+scripts/daily/install-daily-fill.sh              # install and load
+scripts/daily/install-daily-fill.sh --run-now    # run it now to test
+scripts/daily/install-daily-fill.sh --status     # loaded or not, plus the last log lines
+scripts/daily/install-daily-fill.sh --uninstall  # unload and delete it completely
+```
+
+It writes only `~/Library/LaunchAgents/com.golftrivia.fill.plist` and the log `~/Library/Logs/golf-trivia-fill.log`, and reads keys from `.env` as usual. If you move the project folder, re-run the installer.
+
 ## How the host knows the answer
 
 The shared screen shows each song only as a number (`Song #137`), never the title. On the setup screen, press **Download host song list** to save one page that maps every number to its song, genre, level and views. Keep it on your phone (AirDrop or email it to yourself) or print it, and look the number up before pressing Correct or Wrong. It has a search box. It shows every answer, so don't show it to the teams. Real songs are numbered by their permanent row id in Supabase, so a saved list stays valid after re-importing; test songs are 1 to 30.
