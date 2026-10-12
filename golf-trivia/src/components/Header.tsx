@@ -1,4 +1,6 @@
 import { setSoundOn, useSoundOn } from '../sound';
+import { useState } from 'react';
+import { player } from '../player';
 import { useGameStore } from '../store';
 import { setTvMode, useTvMode } from '../tvMode';
 import { TestBadge } from './TestBadge';
@@ -10,7 +12,15 @@ export function Header() {
   const isTestData = useGameStore((s) => s.isTestData);
   const soundOn = useSoundOn();
   const tv = useTvMode();
+  const newSetup = useGameStore((s) => s.newSetup);
+  const [confirmReset, setConfirmReset] = useState(false);
   const inGame = phase === 'pickLevel' || phase === 'listening' || phase === 'revealed';
+  const resettable = inGame || phase === 'gameOver';
+  const reset = () => {
+    player.stop();
+    setConfirmReset(false);
+    newSetup();
+  };
 
   return (
     <header className="header">
@@ -28,6 +38,22 @@ export function Header() {
       {phase === 'gameOver' && <div className="round-pill">Final results</div>}
       <div className="header-right">
         {isTestData && <TestBadge />}
+        {resettable &&
+          (confirmReset ? (
+            <span className="pass-confirm">
+              Reset the game? Scores are lost.
+              <button type="button" className="btn btn-small btn-danger" onClick={reset}>
+                Yes, reset
+              </button>
+              <button type="button" className="btn btn-small" onClick={() => setConfirmReset(false)}>
+                Cancel
+              </button>
+            </span>
+          ) : (
+            <button type="button" className="btn btn-small" onClick={() => setConfirmReset(true)}>
+              ↺ Reset game
+            </button>
+          ))}
         <span className="rule-hint">Lowest views wins</span>
         <button
           type="button"
