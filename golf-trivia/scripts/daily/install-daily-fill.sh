@@ -1,5 +1,5 @@
 #!/bin/bash
-# Installs (or removes) a macOS LaunchAgent that runs run-daily-fill.sh every day at 06:35, plus a 21:00 retry if the morning run failed.
+# Installs (or removes) a macOS LaunchAgent that runs run-daily-fill.sh every day at 10:15, plus a 21:00 retry if the morning run failed.
 #   ./install-daily-fill.sh              install and load
 #   ./install-daily-fill.sh --run-now    run the job now (to test)
 #   ./install-daily-fill.sh --status     loaded or not, plus the last log lines
@@ -44,7 +44,7 @@ case "${1:-install}" in
   </dict>
   <key>StartCalendarInterval</key>
   <array>
-    <dict><key>Hour</key><integer>6</integer><key>Minute</key><integer>35</integer></dict>
+    <dict><key>Hour</key><integer>10</integer><key>Minute</key><integer>15</integer></dict>
     <dict><key>Hour</key><integer>21</integer><key>Minute</key><integer>0</integer></dict>
   </array>
   <key>StandardOutPath</key><string>$(xml_escape "$LOG")</string>
@@ -55,7 +55,7 @@ PLISTEOF
     plutil -lint "$PLIST" >/dev/null
     is_loaded && launchctl bootout "$DOMAIN/$LABEL" 2>/dev/null || true
     launchctl bootstrap "$DOMAIN" "$PLIST"
-    echo "Installed: runs daily at 06:35, with a retry at 21:00 if that failed (a missed run happens when the Mac wakes)."
+    echo "Installed: runs daily at 10:15, with a retry at 21:00 if that failed (a missed run happens when the Mac wakes)."
     echo "  node:    $NODE_BIN"
     echo "  project: $PROJECT"
     echo "  plist:   $PLIST"

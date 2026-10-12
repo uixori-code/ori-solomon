@@ -48,7 +48,7 @@ if grep -q "^0 song(s) without a video" "$OUT"; then
   exec "$HERE/install-daily-fill.sh" --uninstall
 elif grep -q "YouTube quota used up" "$OUT"; then
   echo "[$(stamp)] RESULT failed (quota)" >> "$LOG"
-  notify "Quota used up; will retry at 21:00 (or tomorrow 06:35)"
+  notify "Quota used up; will retry at 21:00 (or tomorrow 10:15)"
 elif [ "$status" -ne 0 ]; then
   echo "[$(stamp)] RESULT failed (error)" >> "$LOG"
   notify "Error: $(grep -v '^[[:space:]]*$' "$OUT" | tail -n 1 | cut -c1-150)"

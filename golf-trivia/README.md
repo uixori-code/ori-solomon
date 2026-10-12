@@ -64,7 +64,7 @@ If Supabase can't be reached, the game says so and falls back to the test songs.
 
 ## Run the video search automatically
 
-Instead of running step 4 by hand every day, a macOS LaunchAgent can do it for you at 06:35 each day, and again at 21:00 only if the morning run failed (if the Mac was asleep, it runs when it wakes). It only runs `node scripts/fill-embed-urls.mjs --limit=95`, shows a notification with the result, and removes itself when every song has a video. Nothing runs until you install it:
+Instead of running step 4 by hand every day, a macOS LaunchAgent can do it for you at 10:15 each day, and again at 21:00 only if the morning run failed (if the Mac was asleep, it runs when it wakes). It only runs `node scripts/fill-embed-urls.mjs --limit=95`, shows a notification with the result, and removes itself when every song has a video. Nothing runs until you install it:
 
 ```sh
 scripts/daily/install-daily-fill.sh              # install and load
