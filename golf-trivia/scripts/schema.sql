@@ -68,3 +68,10 @@ returns void language sql security definer set search_path = public as $$
   update public.songs_trivia set start_sec = greatest(0, least(sec, 3600)) where id = song_id;
 $$;
 grant execute on function public.set_start_sec(bigint, numeric) to anon;
+
+-- Year the song came out (optional). The release-year hint only appears for songs that have one.
+alter table public.songs_trivia add column if not exists release_year smallint;
+
+-- Decoy answers for the guess dropdown: real songs by the same artist that are not in the game (a JSON list of
+-- "Artist - Song" names). Filled by scripts/fill-decoys.mjs.
+alter table public.songs_trivia add column if not exists decoys jsonb;

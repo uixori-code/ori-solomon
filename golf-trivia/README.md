@@ -73,7 +73,22 @@ scripts/daily/install-daily-fill.sh --status     # loaded or not, plus the last 
 scripts/daily/install-daily-fill.sh --uninstall  # unload and delete it completely
 ```
 
+Songs whose search finds nothing are listed in `no-result-report.md` and are not searched again (`--retry-no-result` searches them again). To fill one by hand, with no quota used: `node scripts/set-embed-url.mjs "part of the song name" <youtubeVideoId>`. A song listed under two genres is searched once and saved to both rows.
+
 It writes only `~/Library/LaunchAgents/com.golftrivia.fill.plist` and the log `~/Library/Logs/golf-trivia-fill.log`, and reads keys from `.env` as usual. If you move the project folder, re-run the installer.
+
+## The guess box and decoy songs
+
+Teams type part of a title or artist (Hebrew or English), pick a song from the list and lock it in. A wrong pick costs a
+normal wrong guess and can't be picked again on that song. The host can still judge by ear (the "Host judges instead" fold-out).
+
+The list holds every game song plus **decoys**: 5 real songs by the same artist that are not in the game. To fill them:
+
+1. Run the lines at the bottom of `scripts/schema.sql` in the Supabase SQL editor (adds `decoys`, `release_year`, `start_sec`).
+2. `node scripts/fill-decoys.mjs --dry-run --limit=10` previews what would be saved, using Deezer's free public API (no key).
+3. `node scripts/fill-decoys.mjs` saves them (needs `SUPABASE_SERVICE_ROLE_KEY` in `.env`). Artists Deezer can't match are
+   listed at the end; fix those by hand in the table (a JSON list of `"Artist - Song"` names). Without decoys the game still
+   works: the list just holds the game's own songs.
 
 ## How the host knows the answer
 

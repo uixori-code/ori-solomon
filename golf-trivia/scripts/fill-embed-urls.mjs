@@ -11,6 +11,7 @@
 import 'dotenv/config';
 import { createClient } from '@supabase/supabase-js';
 import { fillOrder } from './lib/sheet.mjs';
+import { loadSkipped, saveSkipped } from './lib/noresult.mjs';
 
 const TABLE = 'songs_trivia';
 const ID_COLUMN = 'id'; // change if your primary key has another name
@@ -22,6 +23,7 @@ const SUPABASE_KEY = SUPABASE_SERVICE_ROLE_KEY || SUPABASE_ANON_KEY;
 
 const flag = (name) => process.argv.slice(2).find((a) => a.startsWith(`--${name}=`))?.slice(name.length + 3);
 const limit = flag('limit') === undefined ? Infinity : Number(flag('limit'));
+const retryNoResult = process.argv.includes('--retry-no-result');
 const categoryFilter = flag('category')?.toLowerCase();
 if (!(limit > 0)) {
   console.error('--limit must be a positive number, e.g. --limit=95');
@@ -87,14 +89,23 @@ async function fetchPendingRows() {
     if (data.length < pageSize) break;
   }
   return fillOrder(
-    rows.filter((row) => !categoryFilter || String(row.category).toLowerCase() === categoryFilter),
+    rows.filter((row) => !categoryFilter || String(row.category).toLowerCase() === categoryFilter)
+      .filter((row) => retryNoResult || !skippedNames.has(row.artist_and_song)),
     ID_COLUMN,
   );
 }
 
+const skipped = loadSkipped();
+// Entries are keyed by row id; the label is "Category: artist - song", so the song name also covers its duplicate rows.
+const skippedNames = new Set(Object.values(skipped).map((e) => e.label.split(': ').slice(1).join(': ')));
+
 async function main() {
   const pending = await fetchPendingRows();
-  const todo = pending.slice(0, limit === Infinity ? undefined : limit);
+  if (Object.keys(skipped).length) console.log(`${Object.keys(skipped).length} song(s) skipped because an earlier search found nothing (see no-result-report.md; --retry-no-result searches them again).`);
+  // The sheet can list the same song under two genres: search it once and save the video to every row with that name.
+  const seenNames = new Set();
+  const unique = pending.filter((row) => !seenNames.has(row.artist_and_song) && seenNames.add(row.artist_and_song));
+  const todo = unique.slice(0, limit === Infinity ? undefined : limit);
   console.log(`${pending.length} song(s) without a video${categoryFilter ? ` in ${categoryFilter}` : ''}; searching ${todo.length} now.`);
   console.log(`Each search costs 100 YouTube quota units; the free quota is 10,000 a day (about 100 searches).`);
   const mix = [1, 2, 3, 4, 5].map((level) => `L${level} ${todo.filter((row) => row.level === level).length}`);
@@ -112,12 +123,16 @@ async function main() {
       if (!videoId) {
         console.warn(`${label} -> no result (left empty, it will be retried next run)`);
         noResult++;
+        skipped[row[ID_COLUMN]] = { label: `${row.category}: ${row.artist_and_song}`, date: new Date().toLocaleDateString('sv-SE') };
+        saveSkipped(skipped);
+        skippedNames.add(row.artist_and_song);
       } else {
         const embedUrl = `https://www.youtube.com/embed/${videoId}`;
         const { data, error } = await supabase
           .from(TABLE)
           .update({ embed_url: embedUrl })
-          .eq(ID_COLUMN, row[ID_COLUMN])
+          .eq('artist_and_song', row.artist_and_song)
+          .is('embed_url', null)
           .select(ID_COLUMN);
         if (error) throw new Error(`Supabase update failed: ${error.message}`);
         if (!data?.length) {
@@ -138,7 +153,7 @@ async function main() {
     await sleep(DELAY_MS);
   }
 
-  console.log(`\nDone${stopped ? ' (stopped early)' : ''}. videos saved: ${updated}, no result: ${noResult}, errors: ${failed}, still without a video: ${pending.length - updated}.`);
+  console.log(`\nDone${stopped ? ' (stopped early)' : ''}. videos saved: ${updated}, no result: ${noResult}, errors: ${failed}, still without a video: ${unique.length - updated}.`);
 }
 
 main().catch((err) => {

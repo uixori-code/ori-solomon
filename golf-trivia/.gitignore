@@ -5,3 +5,10 @@ dist
 !.env.example
 *.log
 *.xlsx
+
+video/node_modules
+video/out
+video/clips
+video/public
+.fill-no-result.json
+no-result-report.md

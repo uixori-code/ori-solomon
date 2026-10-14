@@ -41,31 +41,6 @@ while IFS= read -r line || [ -n "$line" ]; do
 done <"$OUT"
 echo "[$(stamp)] exit code: $status" >> "$LOG"
 
-# Rewrite the "no result" report from the whole log: songs whose latest search found nothing.
-REPORT="$PROJECT/no-result-report.md"
-{
-  echo "# Songs with no video found (to fix later)"
-  echo
-  echo "Updated $(stamp). The script retries these on every run. If one keeps failing, paste"
-  echo "\`https://www.youtube.com/embed/<videoId>\` into that row's \`embed_url\` in Supabase (costs no quota)."
-  echo
-  awk '
-    match($0, /^\[[0-9-]+ [0-9:]+\] \[[0-9]+\/[0-9]+\] /) {
-      day = substr($0, 2, 10)
-      rest = substr($0, RLENGTH + 1)
-      i = index(rest, " -> ")
-      if (i == 0) next
-      song = substr(rest, 1, i - 1)
-      if (!(song in first)) { first[song] = ++n; order[n] = song }
-      if (rest ~ / -> no result/) { bad[song] = 1; when[song] = day } else { delete bad[song] }
-    }
-    END {
-      for (k = 1; k <= n; k++) if (order[k] in bad) { c++; rows = rows "| " c " | " order[k] " | " when[order[k]] " |\n" }
-      if (c == 0) print "No songs are waiting: every searched song found a video."
-      else { print c " song(s) with no result (Category: Song, last tried):\n"; print "| # | Song | Last tried |"; print "|---|------|------------|"; printf "%s", rows }
-    }' "$LOG"
-} > "$REPORT" 2>/dev/null || true
-
 if grep -q "^0 song(s) without a video" "$OUT"; then
   notify "All songs have a video"
   echo "[$(stamp)] nothing left to do, removing the schedule" >> "$LOG"
